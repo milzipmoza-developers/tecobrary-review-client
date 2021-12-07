@@ -1,5 +1,4 @@
 import React, {ReactElement, ReactNode} from "react";
-import {TransparentHeader} from "../headers/TransparentHeader";
 import {PageFrame} from "./PageFrame";
 import ScrollToTop from "../../routes/ScrollToTop";
 import Navigation from "../navigation/Navigation";
