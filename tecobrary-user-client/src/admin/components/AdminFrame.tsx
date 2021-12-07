@@ -15,6 +15,8 @@ export const AdminFrame = ({children}: Props): ReactElement => {
         <DefaultButton text="어드민 홈" to={"/admin"}/>
         <DefaultButton text="어드민 카테고리" to={"/admin/categories"}/>
         <DefaultButton text="어드민 마크" to={"/admin/marks"}/>
+        <DefaultButton text="어드민 도서" to={"/admin/books"}/>
+        <DefaultButton text="어드민 신간도서" to={"/admin/new-arrivals"}/>
       </AdminHeader>
       <AdminBody>
         {children}
