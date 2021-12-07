@@ -13,6 +13,7 @@ import Selector from "../../components/selector/Selector";
 import {ReviewType} from "../../types";
 import {CustomRadioButton} from "../../components/buttons/CustomRadioButton";
 import {DisableableButton} from "../../components/buttons/DisableableButton";
+import {UserPageFrame} from "../../components/page/UserPageFrame";
 
 interface Search {
   keyword: string
@@ -173,7 +174,7 @@ function ReviewAddPage(): ReactElement {
   }
 
   return (
-    <PageFrame top='8rem' header={true}>
+    <UserPageFrame top='8rem' header={true}>
       <Plain title='도서를 선택해보세요'
              subTitle={selectedBook?.book ? undefined : '다 읽지 않아도 리뷰를 남길 수 있어요'}
              subTitleMargin='0 1rem 6px 1rem'
@@ -259,7 +260,7 @@ function ReviewAddPage(): ReactElement {
                              onClick={() => console.log('제출하기')}/>
         </Plain>
       </SubmitButtonWrapper>
-    </PageFrame>
+    </UserPageFrame>
   )
 }
 

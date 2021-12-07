@@ -1,10 +1,11 @@
 import {ReactElement} from "react";
+import {UserPageFrame} from "../components/page/UserPageFrame";
 
 function CategoriesPage(): ReactElement {
   return (
-    <div>
+    <UserPageFrame>
       카테고리 목록
-    </div>
+    </UserPageFrame>
   )
 }
 

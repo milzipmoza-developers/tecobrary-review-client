@@ -7,6 +7,7 @@ import ExpandableCard from "../../components/card/ExpandableCard";
 import {CardBookList} from "../../components/list/CardBookList";
 import {getBooks} from "../../api/books";
 import {ReviewIcon} from "../../components/icons/ReviewIcon";
+import {UserPageFrame} from "../../components/page/UserPageFrame";
 
 interface QueryParam {
   category: string | null
@@ -44,7 +45,7 @@ function BookListPage(): ReactElement {
   }
 
   return (
-    <PageFrame top='8rem' header={true}>
+    <UserPageFrame top='8rem' header={true}>
       <PageContent>
         <Plain title='리뷰를 확인해보세요'
                subTitle={generateTitle()}
@@ -59,7 +60,7 @@ function BookListPage(): ReactElement {
           </ExpandableCard>
         </Plain>
       </PageContent>
-    </PageFrame>
+    </UserPageFrame>
   )
 }
 

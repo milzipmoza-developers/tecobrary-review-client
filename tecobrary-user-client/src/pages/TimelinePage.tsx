@@ -1,10 +1,11 @@
 import React, {ReactNode} from "react";
+import {UserPageFrame} from "../components/page/UserPageFrame";
 
 function TimelinePage() {
   return (
-    <div>
+    <UserPageFrame>
       타임라인
-    </div>
+    </UserPageFrame>
   )
 }
 

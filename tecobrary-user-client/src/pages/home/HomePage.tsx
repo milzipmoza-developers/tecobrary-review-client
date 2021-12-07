@@ -8,6 +8,7 @@ import {HomeNewBookCarousel} from "./newbook/HomeNewBookCarousel";
 import InterestCard from "./interest/InterestCard";
 import {PageContent} from "../../components/page/PageContent";
 import BookCategories from "./category/BookCategories";
+import {UserPageFrame} from "../../components/page/UserPageFrame";
 
 function HomePage(): ReactElement {
 
@@ -15,7 +16,7 @@ function HomePage(): ReactElement {
   const [categories] = useState<Category[]>(getBookCategories)
 
   return (
-    <PageFrame top='8rem'>
+    <UserPageFrame top='8rem'>
       <SpannedCard title='새로운 도서를 살펴보세요'>
         <HomeNewBookCarousel books={newArrivalBooks}/>
       </SpannedCard>
@@ -30,7 +31,7 @@ function HomePage(): ReactElement {
           <BookCategories categories={categories}/>
         </Plain>
       </PageContent>
-    </PageFrame>
+    </UserPageFrame>
   )
 }
 

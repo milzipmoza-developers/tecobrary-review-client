@@ -7,6 +7,7 @@ import BookDetailCard from "./BookDetailCard";
 import Plain from "../../components/plain/Plain";
 import {PageContent} from "../../components/page/PageContent";
 import BookReviewCard from "./BookReviewCard";
+import {UserPageFrame} from "../../components/page/UserPageFrame";
 
 interface Params {
   bookId?: string
@@ -20,7 +21,7 @@ function BookDetailPage(): ReactElement {
   const [bookDetailReview] = useState<BookDetailReview>(getBookDetailReview(Number.parseInt(bookId!) % 2 === 0 ? 3 : 6))
 
   return (
-    <PageFrame header={true}>
+    <UserPageFrame header={true}>
       <PageContent style={{marginBottom: '2rem'}}>
         <BookDetailCard {...bookDetail}/>
       </PageContent>
@@ -33,7 +34,7 @@ function BookDetailPage(): ReactElement {
                           counts={bookDetailReview.counts}/>
         </Plain>
       </PageContent>
-    </PageFrame>
+    </UserPageFrame>
   )
 }
 

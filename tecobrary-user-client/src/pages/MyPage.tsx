@@ -1,10 +1,11 @@
 import React, {ReactNode} from "react";
+import {UserPageFrame} from "../components/page/UserPageFrame";
 
 function MyPage() {
   return (
-    <div>
+    <UserPageFrame>
       마이페이지
-    </div>
+    </UserPageFrame>
   )
 }
 

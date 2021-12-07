@@ -6,6 +6,7 @@ import Plain from "../../components/plain/Plain";
 import {BookReview} from "../../interfaces";
 import {getBookReviews} from "../../api/bookDetail";
 import BookReviewInfiniteCard from "./BookReviewInfiniteCard";
+import {UserPageFrame} from "../../components/page/UserPageFrame";
 
 interface Params {
   bookId?: string | undefined
@@ -25,7 +26,7 @@ function BookReviewPage(): ReactElement {
   }
 
   return (
-    <PageFrame header={true}>
+    <UserPageFrame header={true}>
       <PageContent style={{marginTop: '8rem'}}>
         <Plain title='리뷰를 확인해보세요'
                margin='0 1rem 0 1rem'>
@@ -34,7 +35,7 @@ function BookReviewPage(): ReactElement {
                                   reviews={reviews}/>
         </Plain>
       </PageContent>
-    </PageFrame>
+    </UserPageFrame>
   )
 }
 
