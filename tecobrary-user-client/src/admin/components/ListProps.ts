@@ -14,19 +14,18 @@ export interface ListHeaderProps extends ListFlexProps, ListPropNameProps {
   propName: string
 }
 
+export interface Element {
+  [key: string]: string | ReactNode
+}
+
 export interface ListElementProps {
-  data: ListDataProps[],
+  data: Element[],
 }
 
-export interface ListDataProps extends ListPropNameProps {
-  propName: string,
-  value: string | ReactNode
-}
-
-export function findFromData(arr: ListDataProps[], propName: string): ListDataProps | undefined {
+export function getFromHeader(arr: ListHeaderProps[], propName: string): ListHeaderProps | undefined {
   return arr.find(o => o.propName === propName);
 }
 
-export function findFromHeader(arr: ListHeaderProps[], propName: string): ListHeaderProps | undefined {
-  return arr.find(o => o.propName === propName);
+export function getProperty<T, K extends keyof T>(o: T, propertyName: K): T[K] {
+  return o[propertyName]; // o[propertyName] is of type T[K]
 }

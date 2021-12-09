@@ -1,20 +1,25 @@
 import {ReactElement, ReactNode, useState} from "react";
 import styled from "styled-components";
 import DefaultButton from "./DefaultButton";
-import {findFromData, findFromHeader, ListElementProps, ListHeaderProps, ListPropNameProps} from "./ListProps";
+import {Element, getFromHeader, ListElementProps, ListHeaderProps, ListPropNameProps} from "./ListProps";
 
 interface Props {
   title: string
   headers: ListHeaderProps[],
-  elements?: ListElementProps[]
+  elements?: ListElementProps
   children?: ReactNode,
 }
 
 export const AdminList = ({title, headers, elements, children}: Props): ReactElement => {
 
+  const propNames: string[] = headers.map((header: ListPropNameProps) => header.propName)
+
+  const isNotEmptyElements = elements && elements.data && elements.data.length != 0
+  const isEmptyElements = !isNotEmptyElements
+
   const [page, setPage] = useState(1)
   const [isFirst, setIsFirst] = useState(true)
-  const [isLast, setIsLast] = useState(false)
+  const [isLast, setIsLast] = useState(isEmptyElements)
 
   const pageUp = () => {
     if (isLast) {
@@ -39,8 +44,6 @@ export const AdminList = ({title, headers, elements, children}: Props): ReactEle
     }
   }
 
-  const propNames: string[] = headers.map((header: ListPropNameProps) => header.propName)
-
   return (
     <div>
       <TitleWrapper>
@@ -54,27 +57,29 @@ export const AdminList = ({title, headers, elements, children}: Props): ReactEle
         ))}
       </HeaderWrapper>
       <BodyWrapper>
-        {elements ? elements.map((element: ListElementProps, index: number) => {
-          return (
-            <ElementWrapper key={index}>
-              {propNames.map((propName: string, index: number) => {
-                return (
-                  <ElementContent flex={findFromHeader(headers, propName)?.flex} key={index}>
-                    <ElementText>
-                      {findFromData(element.data, propName)?.value}
-                    </ElementText>
-                  </ElementContent>
-                )
-              })}
-            </ElementWrapper>
-          )
-        }) : '비어있음'}
+        {elements && isNotEmptyElements
+          ? elements.data.map((data: Element, index: number) => {
+            return (
+              <ElementWrapper key={index}>
+                {propNames.map((propName: string, index: number) => {
+                  return (
+                    <ElementContent flex={getFromHeader(headers, propName)?.flex} key={index}>
+                      <ElementText>
+                        {data[propName]}
+                      </ElementText>
+                    </ElementContent>
+                  )
+                })}
+              </ElementWrapper>
+            )
+          })
+          : <ElementEmptyBox className="empty">비어있음</ElementEmptyBox>}
       </BodyWrapper>
       <FooterWrapper>
         <FooterInner>
           <DefaultButton text={"이전"} disabled={!isFirst} onClick={pageDown}/>
           <FooterPageIndicator>{page}</FooterPageIndicator>
-          <DefaultButton text={"다음"} onClick={pageUp}/>
+          <DefaultButton text={"다음"} disabled={!isLast} onClick={pageUp}/>
         </FooterInner>
       </FooterWrapper>
     </div>
@@ -140,6 +145,11 @@ const ElementContent = styled.div<ElementContentProps>`
 `
 
 const ElementText = styled.div`
+  text-align: center;
+`
+
+const ElementEmptyBox = styled.div`
+  padding: 16px;
   text-align: center;
 `
 
