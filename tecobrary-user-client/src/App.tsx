@@ -14,6 +14,7 @@ import AdminCategoryPage from "./admin/pages/category/AdminCategoryPage";
 import AdminMarkPage from "./admin/pages/mark/AdminMarkPage";
 import AdminBookPage from "./admin/pages/book/AdminBookPage";
 import AdminNewArrivalPage from "./admin/pages/arrival/AdminNewArrivalPage";
+import AdminTagPage from "./admin/pages/tag/AdminTagPage";
 
 function App(): ReactElement {
     return (
@@ -31,8 +32,9 @@ function App(): ReactElement {
           <Route exact path={'/admin/categories'} component={AdminCategoryPage}/>
           <Route exact path={'/admin/marks'} component={AdminMarkPage}/>
           <Route exact path={'/admin/books'} component={AdminBookPage}/>
-          <Route exact path={'/admin/new-arrivals'} component={AdminNewArrivalPage}/>
-          <Route component={NotFoundPage}/>
+            <Route exact path={'/admin/new-arrivals'} component={AdminNewArrivalPage}/>
+            <Route exact path={'/admin/tags'} component={AdminTagPage}/>
+            <Route component={NotFoundPage}/>
       </Switch>
   );
 }
