@@ -145,7 +145,8 @@ const ElementContent = styled.div<ElementContentProps>`
 `
 
 const ElementText = styled.div`
-  text-align: center;
+  display: flex;
+  justify-content: center;
 `
 
 const ElementEmptyBox = styled.div`
