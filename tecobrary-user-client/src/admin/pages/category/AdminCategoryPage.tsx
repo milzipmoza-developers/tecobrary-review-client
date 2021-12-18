@@ -2,18 +2,12 @@ import {ReactElement} from "react";
 import {AdminFrame} from "../../components/AdminFrame";
 import {AdminList} from "../../components/AdminList";
 import {ListElementProps, ListHeaderProps} from "../../components/ListProps";
-import {colorCodeToReactNode} from "../../components/ColorCodeContainer";
 
 const headers: ListHeaderProps[] = [
   {
     flex: 1,
-    name: 'ID',
-    propName: 'id'
-  },
-  {
-    flex: 2,
-    name: '컬러코드',
-    propName: 'colorCode'
+    name: 'NO',
+    propName: 'no'
   },
   {
     flex: 2,
@@ -30,14 +24,12 @@ const headers: ListHeaderProps[] = [
 const elements: ListElementProps = {
   data: [
     {
-      id: '1',
-      colorCode: colorCodeToReactNode('#000000'),
+      no: '1',
       name: '객체지향',
       description: '이것은 객체지향 패러다임 카테고리이다.'
     },
     {
-      id: '2',
-      colorCode: colorCodeToReactNode('#1100EE'),
+      no: '2',
       name: '객체지향',
       description: '이것은 객체지향 패러다임 카테고리이다.'
     },
