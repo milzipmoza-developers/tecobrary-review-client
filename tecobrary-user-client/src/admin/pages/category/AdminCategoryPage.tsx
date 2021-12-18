@@ -1,7 +1,10 @@
-import {ReactElement} from "react";
+import {ReactElement, useState} from "react";
 import {AdminFrame} from "../../components/AdminFrame";
 import {AdminList} from "../../components/AdminList";
 import {ListElementProps, ListHeaderProps} from "../../components/ListProps";
+import styled from "styled-components";
+import DefaultButton from "../../components/DefaultButton";
+import {AdminModal} from "../../components/AdminModal";
 
 const headers: ListHeaderProps[] = [
   {
@@ -37,11 +40,42 @@ const elements: ListElementProps = {
 }
 
 function AdminCategoryPage(): ReactElement {
+  const [dialog, setDialog] = useState(false)
+
+  const showDialog = () => {
+    console.log('show', dialog)
+    setDialog(true)
+  }
+
+  const hideDialog = () => {
+    console.log('hide', dialog)
+    setDialog(false)
+  }
+
+  const submitDialog = () => {
+    console.log('submit', dialog)
+  }
+
   return (
-    <AdminFrame>
-      <AdminList title={"카테고리 목록"} headers={headers} elements={elements}/>
-    </AdminFrame>
+    <>
+      <AdminModal title={'카테고리 등록하기'}
+                  show={dialog}
+                  onHide={hideDialog}
+                  onSubmit={submitDialog}>
+        ㅇㅇ
+      </AdminModal>
+      <AdminFrame>
+        <ButtonWrapper>
+          <DefaultButton text={'새 카테고리 등록하기'} onClick={showDialog}/>
+        </ButtonWrapper>
+        <AdminList title={"카테고리 목록"} headers={headers} elements={elements}/>
+      </AdminFrame>
+    </>
   )
 }
 
 export default AdminCategoryPage
+
+const ButtonWrapper = styled.div`
+  margin-bottom: 16px;
+`
