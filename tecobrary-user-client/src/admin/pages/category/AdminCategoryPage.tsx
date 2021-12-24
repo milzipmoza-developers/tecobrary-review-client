@@ -42,31 +42,44 @@ const elements: ListElementProps = {
 function AdminCategoryPage(): ReactElement {
   const [dialog, setDialog] = useState(false)
 
-  const showDialog = () => {
-    console.log('show', dialog)
-    setDialog(true)
+  const [categoryName, setCategoryName] = useState('category name')
+  const [categoryDescription, setCategoryDescription] = useState('')
+  const [categoryImageUrl, setCategoryImageUrl] = useState('')
+
+  const _init = () => {
+    setCategoryName('')
+    setCategoryDescription('')
+    setCategoryImageUrl('')
   }
 
-  const hideDialog = () => {
-    console.log('hide', dialog)
-    setDialog(false)
-  }
+  const Dialog = {
+    show: () => {
+      console.log('show', dialog)
+      setDialog(true)
+    },
 
-  const submitDialog = () => {
-    console.log('submit', dialog)
+    hide: () => {
+      console.log('hide', dialog)
+      setDialog(false)
+      _init()
+    },
+
+    submit: () => {
+      console.log('submit', dialog)
+      _init()
+    }
   }
 
   return (
     <>
       <AdminModal title={'카테고리 등록하기'}
                   show={dialog}
-                  onHide={hideDialog}
-                  onSubmit={submitDialog}>
-        ㅇㅇ
+                  onHide={Dialog.hide}
+                  onSubmit={Dialog.submit}>
       </AdminModal>
       <AdminFrame>
         <ButtonWrapper>
-          <DefaultButton text={'새 카테고리 등록하기'} onClick={showDialog}/>
+          <DefaultButton text={'새 카테고리 등록하기'} onClick={Dialog.show}/>
         </ButtonWrapper>
         <AdminList title={"카테고리 목록"} headers={headers} elements={elements}/>
       </AdminFrame>
