@@ -20,4 +20,5 @@ const Wrapper = styled.div`
   flex-direction: row;
   display: flex;
   padding: 16px;
+  box-sizing: border-box;
 `
