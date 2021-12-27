@@ -2,7 +2,6 @@ import React, {ReactElement, useState} from "react";
 import {useParams} from "react-router-dom";
 import {BookDetail, BookDetailReview} from "../../interfaces";
 import {getBookDetail, getBookDetailReview} from "../../api/bookDetail";
-import {PageFrame} from "../../components/page/PageFrame";
 import BookDetailCard from "./BookDetailCard";
 import Plain from "../../components/plain/Plain";
 import {PageContent} from "../../components/page/PageContent";

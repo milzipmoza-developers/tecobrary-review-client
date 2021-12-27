@@ -1,4 +1,4 @@
-import {ReactElement, useState} from "react";
+import {ReactElement} from "react";
 import Card from "../../../components/card/Card";
 import {InterestCardNavigation} from "./InterestCardNavigation";
 

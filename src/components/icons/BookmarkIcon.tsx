@@ -1,5 +1,5 @@
 import {ReactElement, useState} from "react";
-import {Bookmark, BookmarkOutline, Heart} from "react-ionicons";
+import {Bookmark, BookmarkOutline} from "react-ionicons";
 
 interface Props {
   color?: string

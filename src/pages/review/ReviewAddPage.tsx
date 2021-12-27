@@ -1,5 +1,4 @@
 import React, {ReactElement, useEffect, useState} from "react";
-import {PageFrame} from "../../components/page/PageFrame";
 import Plain from "../../components/plain/Plain";
 import {CardBookList} from "../../components/list/CardBookList";
 import styled from "styled-components";

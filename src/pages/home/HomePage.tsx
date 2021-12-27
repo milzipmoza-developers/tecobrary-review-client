@@ -1,5 +1,4 @@
 import {ReactElement, useState} from "react";
-import {PageFrame} from "../../components/page/PageFrame";
 import {Category, NewBook} from "../../interfaces";
 import {getBookCategories, getNewArrivalBooks} from "../../api/home";
 import SpannedCard from "../../components/card/SpannedCard";

@@ -1,5 +1,4 @@
 import React, {ReactElement, useState} from "react";
-import {PageFrame} from "../../components/page/PageFrame";
 import {useParams} from "react-router-dom";
 import {PageContent} from "../../components/page/PageContent";
 import Plain from "../../components/plain/Plain";

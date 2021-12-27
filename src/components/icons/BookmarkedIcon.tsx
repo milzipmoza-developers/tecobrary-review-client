@@ -1,5 +1,5 @@
 import {ReactElement} from "react";
-import {Bookmark, ChatboxEllipses, Heart} from "react-ionicons";
+import {Bookmark} from "react-ionicons";
 
 interface Props {
   color?: string

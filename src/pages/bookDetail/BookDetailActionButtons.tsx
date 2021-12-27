@@ -1,9 +1,7 @@
 import {LikeIcon} from "../../components/icons/LikeIcon";
 import {BookmarkIcon} from "../../components/icons/BookmarkIcon";
 import styled from "styled-components";
-import {ReactElement} from "react";
-import {useHistory} from "react-router-dom";
-import React from "react";
+import React, {ReactElement} from "react";
 import {CountActionButton} from "../../components/buttons/CountActionButton";
 
 interface Props {

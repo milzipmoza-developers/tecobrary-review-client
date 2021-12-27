@@ -1,6 +1,5 @@
 import React, {ReactElement, useEffect, useState} from "react";
 import {useLocation} from "react-router-dom";
-import {PageFrame} from "../../components/page/PageFrame";
 import {PageContent} from "../../components/page/PageContent";
 import Plain from "../../components/plain/Plain";
 import ExpandableCard from "../../components/card/ExpandableCard";
