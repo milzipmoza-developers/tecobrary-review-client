@@ -1,10 +1,12 @@
-import {ReactElement, useState} from "react";
+import {ChangeEvent, ReactElement, useState} from "react";
 import {AdminFrame} from "../../components/AdminFrame";
 import {AdminList} from "../../components/AdminList";
 import {ListElementProps, ListHeaderProps} from "../../components/ListProps";
 import styled from "styled-components";
 import DefaultButton from "../../components/DefaultButton";
-import {AdminModal} from "../../components/AdminModal";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
+import {useRecoilState} from "recoil";
+import {AdminAlertColor, adminAlertStatus} from "../../status/AdminAlertStatus";
 
 const headers: ListHeaderProps[] = [
   {
@@ -39,51 +41,125 @@ const elements: ListElementProps = {
   ]
 }
 
-function AdminCategoryPage(): ReactElement {
-  const [dialog, setDialog] = useState(false)
+interface CategoryInput {
+  name: string
+  description: string
+  imageUrl: string
+}
 
-  const [categoryName, setCategoryName] = useState('category name')
-  const [categoryDescription, setCategoryDescription] = useState('')
-  const [categoryImageUrl, setCategoryImageUrl] = useState('')
+function AdminCategoryPage(): ReactElement {
+  const [alertStatus, setAlertStatus] = useRecoilState(adminAlertStatus)
+
+  const [showDialog, setShowDialog] = useState(false)
+  const [inputs, setInputs] = useState<CategoryInput>({
+    name: '',
+    description: '',
+    imageUrl: ''
+  })
 
   const _init = () => {
-    setCategoryName('')
-    setCategoryDescription('')
-    setCategoryImageUrl('')
+    setInputs({
+      name: '',
+      description: '',
+      imageUrl: ''
+    })
   }
 
-  const Dialog = {
+  const _showAlert = (message: string, severity: AdminAlertColor) => {
+    setAlertStatus({
+      ...alertStatus,
+      open: true,
+      severity: severity,
+      message: message
+    })
+  }
+
+  const InputAction = {
+    onNameChange: (e: ChangeEvent<HTMLInputElement>) => {
+      setInputs({
+        ...inputs,
+        name: e.target.value
+      })
+    },
+
+    onDescriptionChange: (e: ChangeEvent<HTMLInputElement>) => {
+      setInputs({
+        ...inputs,
+        description: e.target.value
+      })
+    },
+
+    onImageUrlChange: (e: ChangeEvent<HTMLInputElement>) => {
+      setInputs({
+        ...inputs,
+        imageUrl: e.target.value
+      })
+    }
+  }
+
+  const DialogAction = {
     show: () => {
-      console.log('show', dialog)
-      setDialog(true)
+      console.log('show', showDialog)
+      setShowDialog(true)
     },
 
     hide: () => {
-      console.log('hide', dialog)
-      setDialog(false)
+      console.log('hide', showDialog)
+      setShowDialog(false)
       _init()
     },
 
     submit: () => {
-      console.log('submit', dialog)
+      console.log('submit', inputs)
+      setShowDialog(false)
+      _showAlert('등록에 성공하였습니다.', 'success')
       _init()
     }
   }
 
   return (
-    <>
-      <AdminModal title={'카테고리 등록하기'}
-                  show={dialog}
-                  onHide={Dialog.hide}
-                  onSubmit={Dialog.submit}>
-      </AdminModal>
-      <AdminFrame>
-        <ButtonWrapper>
-          <DefaultButton text={'새 카테고리 등록하기'} onClick={Dialog.show}/>
-        </ButtonWrapper>
-        <AdminList title={"카테고리 목록"} headers={headers} elements={elements}/>
-      </AdminFrame>
-    </>
+    <AdminFrame>
+      <Dialog open={showDialog} onClose={DialogAction.hide} fullWidth>
+        <DialogTitle>카테고리 등록</DialogTitle>
+        <DialogContent>
+          <TextField
+            required
+            id="outlined-required"
+            label="이름"
+            fullWidth
+            margin="normal"
+            value={inputs.name}
+            onChange={InputAction.onNameChange}
+          />
+          <TextField
+            required
+            id="outlined-required"
+            label="설명"
+            fullWidth
+            margin="normal"
+            value={inputs.description}
+            onChange={InputAction.onDescriptionChange}
+          />
+          <TextField
+            required
+            id="outlined-required"
+            label="이미지"
+            fullWidth
+            margin="normal"
+            value={inputs.imageUrl}
+            onChange={InputAction.onImageUrlChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color="error" onClick={DialogAction.hide}>취소하기</Button>
+          <Button variant="contained" color="success" onClick={DialogAction.submit}>등록하기</Button>
+        </DialogActions>
+      </Dialog>
+      <ButtonWrapper>
+        <DefaultButton text={'새 카테고리 등록하기'} onClick={DialogAction.show}/>
+      </ButtonWrapper>
+      <AdminList title={"카테고리 목록"} headers={headers} elements={elements}/>
+    </AdminFrame>
   )
 }
 

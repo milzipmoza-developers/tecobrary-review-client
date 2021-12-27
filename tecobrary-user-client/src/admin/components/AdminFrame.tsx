@@ -2,12 +2,26 @@ import {ReactElement, ReactNode} from "react";
 import {AdminHeader} from "./AdminHeader";
 import DefaultButton from "./DefaultButton";
 import styled from "styled-components";
+import {Alert, Snackbar} from "@mui/material";
+import {useRecoilState} from "recoil";
+import {adminAlertStatus} from "../status/AdminAlertStatus";
 
 interface Props {
   children: ReactNode
 }
 
 export const AdminFrame = ({children}: Props): ReactElement => {
+
+  const [alertStatus, setAlertStatus] = useRecoilState(adminAlertStatus)
+
+  const handleAlertClose = () => {
+    if (alertStatus.open) {
+      setAlertStatus({
+        ...alertStatus,
+        open: !alertStatus.open
+      })
+    }
+  }
 
   return (
     <>
@@ -23,6 +37,16 @@ export const AdminFrame = ({children}: Props): ReactElement => {
       <AdminBody>
         {children}
       </AdminBody>
+      <Snackbar
+        open={alertStatus.open}
+        autoHideDuration={alertStatus.duration ? alertStatus.duration : 2000}
+        anchorOrigin={{vertical: "bottom", horizontal: "right"}}
+        onClose={handleAlertClose}
+      >
+        <Alert onClose={handleAlertClose} severity={alertStatus.severity}>
+          {alertStatus.message}
+        </Alert>
+      </Snackbar>
     </>
   )
 }
