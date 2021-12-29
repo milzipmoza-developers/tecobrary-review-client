@@ -6,7 +6,7 @@ interface IColorCodeProps {
   color: string
 }
 
-export const ColorCodeContainer = styled.div<IColorCodeProps>`
+export const ColorCodeWrapper = styled.div<IColorCodeProps>`
   background: ${props => props.background ? props.background : 'white'};
   color: ${props => props.color ? props.color : 'black'};
   width: fit-content;
@@ -14,8 +14,8 @@ export const ColorCodeContainer = styled.div<IColorCodeProps>`
   border-radius: 8px;
 `
 
-export const colorCodeToReactNode = (colorCode: string): ReactNode => (
-  <ColorCodeContainer background={colorCode} color={invertColor(colorCode)}>{colorCode}</ColorCodeContainer>
+export const colorCodeContainer = (colorCode: string): ReactNode => (
+  <ColorCodeWrapper background={colorCode} color={invertColor(colorCode)}>{colorCode}</ColorCodeWrapper>
 )
 
 function invertColor(hex: string) {
