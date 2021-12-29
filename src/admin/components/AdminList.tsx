@@ -1,48 +1,25 @@
-import {ReactElement, ReactNode, useState} from "react";
+import {ReactElement, ReactNode} from "react";
 import styled from "styled-components";
 import DefaultButton from "./DefaultButton";
 import {Element, getFromHeader, ListElementProps, ListHeaderProps, ListPropNameProps} from "./ListProps";
 
 interface Props {
   title: string
-  headers: ListHeaderProps[],
+  headers: ListHeaderProps[]
   elements?: ListElementProps
-  children?: ReactNode,
+  page?: number
+  isFirst?: boolean
+  isLast?: boolean
+  pageUp?: () => void
+  pageDown?: () => void
+  children?: ReactNode
 }
 
-export const AdminList = ({title, headers, elements, children}: Props): ReactElement => {
+export const AdminList = (props: Props): ReactElement => {
+
+  const {title, headers, elements, page, isFirst, isLast, pageUp, pageDown, children} = props
 
   const propNames: string[] = headers.map((header: ListPropNameProps) => header.propName)
-
-  const isNotEmptyElements = elements && elements.data && elements.data.length != 0
-  const isEmptyElements = !isNotEmptyElements
-
-  const [page, setPage] = useState(1)
-  const [isFirst, setIsFirst] = useState(true)
-  const [isLast, setIsLast] = useState(isEmptyElements)
-
-  const pageUp = () => {
-    if (isLast) {
-      return
-    }
-    if (isFirst) {
-      setIsFirst(false)
-    }
-    setPage(page + 1)
-  }
-
-  const pageDown = () => {
-    if (isFirst) {
-      return
-    }
-    if (page > 1) {
-      setPage(page - 1)
-      if (page == 2) {
-        setIsFirst(true)
-      }
-      return;
-    }
-  }
 
   return (
     <div>
@@ -57,7 +34,7 @@ export const AdminList = ({title, headers, elements, children}: Props): ReactEle
         ))}
       </HeaderWrapper>
       <BodyWrapper>
-        {elements && isNotEmptyElements
+        {elements
           ? elements.data.map((data: Element, index: number) => {
             return (
               <ElementWrapper key={index}>
@@ -77,9 +54,9 @@ export const AdminList = ({title, headers, elements, children}: Props): ReactEle
       </BodyWrapper>
       <FooterWrapper>
         <FooterInner>
-          <DefaultButton text={"이전"} disabled={!isFirst} onClick={pageDown}/>
+          <DefaultButton text={"이전"} disabled={isLast} onClick={pageDown}/>
           <FooterPageIndicator>{page}</FooterPageIndicator>
-          <DefaultButton text={"다음"} disabled={!isLast} onClick={pageUp}/>
+          <DefaultButton text={"다음"} disabled={isFirst} onClick={pageUp}/>
         </FooterInner>
       </FooterWrapper>
     </div>

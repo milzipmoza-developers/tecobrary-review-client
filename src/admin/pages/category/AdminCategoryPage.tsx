@@ -1,12 +1,16 @@
-import {ChangeEvent, ReactElement, useState} from "react";
+import {ChangeEvent, ReactElement, useEffect, useState} from "react";
 import {AdminFrame} from "../../components/AdminFrame";
 import {AdminList} from "../../components/AdminList";
-import {ListElementProps, ListHeaderProps} from "../../components/ListProps";
-import styled from "styled-components";
+import {ListHeaderProps} from "../../components/ListProps";
 import DefaultButton from "../../components/DefaultButton";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
 import {useRecoilState} from "recoil";
 import {AdminAlertColor, adminAlertStatus} from "../../status/AdminAlertStatus";
+import {CategoryApi} from "../../api/category/category.service";
+import {PageData, PageRequest} from "../../api/interfaces";
+import {Category, CategoryInput} from "../../api/category/category.model";
+import {CategoryMapper} from "../../api/category/category.mapper";
+import {ActionMenuWrapper} from "../../components/ActionMenuWrapper";
 
 const headers: ListHeaderProps[] = [
   {
@@ -15,47 +19,46 @@ const headers: ListHeaderProps[] = [
     propName: 'no'
   },
   {
-    flex: 2,
+    flex: 1,
     name: '이름',
     propName: 'name'
   },
   {
-    flex: 2,
+    flex: 1,
     name: '설명',
     propName: 'description'
+  },
+  {
+    flex: 1,
+    name: '이미지',
+    propName: 'image'
   }
 ]
-
-const elements: ListElementProps = {
-  data: [
-    {
-      no: '1',
-      name: '객체지향',
-      description: '이것은 객체지향 패러다임 카테고리이다.'
-    },
-    {
-      no: '2',
-      name: '객체지향',
-      description: '이것은 객체지향 패러다임 카테고리이다.'
-    },
-  ]
-}
-
-interface CategoryInput {
-  name: string
-  description: string
-  imageUrl: string
-}
 
 function AdminCategoryPage(): ReactElement {
   const [alertStatus, setAlertStatus] = useRecoilState(adminAlertStatus)
 
   const [showDialog, setShowDialog] = useState(false)
+  const [pageRequest, setPageRequest] = useState<PageRequest>({
+    page: 0,
+    size: 10
+  })
+  const [pageData, setPageData] = useState<PageData<Category>>({
+    total: 0,
+    size: 0,
+    isFirst: true,
+    isLast: true,
+    items: []
+  })
   const [inputs, setInputs] = useState<CategoryInput>({
     name: '',
     description: '',
     imageUrl: ''
   })
+
+  useEffect(() => {
+    QueryAction.getAll()
+  }, [pageRequest]);
 
   const _init = () => {
     setInputs({
@@ -65,13 +68,30 @@ function AdminCategoryPage(): ReactElement {
     })
   }
 
-  const _showAlert = (message: string, severity: AdminAlertColor) => {
+  const _showAlert = (message: string, severity: AdminAlertColor, duration?: number) => {
     setAlertStatus({
       ...alertStatus,
       open: true,
       severity: severity,
-      message: message
+      message: message,
+      duration: duration
     })
+  }
+
+  const QueryAction = {
+    getAll: async () => {
+      try {
+        const pageData = await CategoryApi.get(pageRequest);
+        setPageData({...pageData})
+      } catch (e) {
+        if (e.response && (400 <= e.response.status && e.response.status < 500)) {
+          _showAlert(`${e.response.data.message}`, 'warning', 5000)
+          return
+        }
+
+        _showAlert(`조회에 실패하였습니다. 사유 : ${e.message}`, 'error', 5000)
+      }
+    }
   }
 
   const InputAction = {
@@ -99,21 +119,70 @@ function AdminCategoryPage(): ReactElement {
 
   const DialogAction = {
     show: () => {
+      _init()
       console.log('show', showDialog)
       setShowDialog(true)
     },
 
     hide: () => {
-      console.log('hide', showDialog)
       setShowDialog(false)
+      console.log('hide', showDialog)
       _init()
     },
 
-    submit: () => {
-      console.log('submit', inputs)
-      setShowDialog(false)
-      _showAlert('등록에 성공하였습니다.', 'success')
-      _init()
+    submit: async () => {
+      try {
+        const result = await CategoryApi.create({
+          name: inputs.name,
+          description: inputs.description,
+          imageUrl: inputs.imageUrl
+        });
+        if (result) {
+          setShowDialog(false)
+          _showAlert('등록에 성공하였습니다.', 'success')
+          _init()
+          await QueryAction.getAll()
+          return
+        }
+
+        _showAlert('등록에 도중 문제가 발생하였습니다.', 'warning')
+        return
+      } catch (e) {
+        if (e.response && (400 <= e.response.status && e.response.status < 500)) {
+          _showAlert(`${e.response.data.message}`, 'warning', 5000)
+          return
+        }
+
+        _showAlert(`등록에 실패하였습니다. 사유 : ${e.message}`, 'error', 5000)
+      }
+    }
+  }
+
+  const PageAction = {
+    pageUp: () => {
+      const {isLast} = pageData
+      if (isLast) {
+        return
+      }
+      setPageRequest({
+        ...pageRequest,
+        page: pageRequest.page + 1
+      })
+    },
+
+    pageDown: () => {
+      const {isFirst} = pageData
+      const {page} = pageRequest
+
+      if (isFirst) {
+        return
+      }
+      if (page > 0) {
+        setPageRequest({
+          ...pageRequest,
+          page: pageRequest.page - 1
+        })
+      }
     }
   }
 
@@ -155,16 +224,20 @@ function AdminCategoryPage(): ReactElement {
           <Button variant="contained" color="success" onClick={DialogAction.submit}>등록하기</Button>
         </DialogActions>
       </Dialog>
-      <ButtonWrapper>
+      <ActionMenuWrapper>
         <DefaultButton text={'새 카테고리 등록하기'} onClick={DialogAction.show}/>
-      </ButtonWrapper>
-      <AdminList title={"카테고리 목록"} headers={headers} elements={elements}/>
+      </ActionMenuWrapper>
+      <AdminList title={"카테고리 목록"}
+                 headers={headers}
+                 elements={CategoryMapper.mapper(pageData.items)}
+                 page={pageRequest.page}
+                 pageUp={PageAction.pageUp}
+                 pageDown={PageAction.pageDown}
+                 isFirst={pageData.isFirst}
+                 isLast={pageData.isLast}/>
     </AdminFrame>
   )
 }
 
 export default AdminCategoryPage
 
-const ButtonWrapper = styled.div`
-  margin-bottom: 16px;
-`
