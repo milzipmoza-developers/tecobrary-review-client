@@ -12,12 +12,13 @@ interface Props {
   isLast?: boolean
   pageUp?: () => void
   pageDown?: () => void
+  onElementClick?: (element: Element) => void
   children?: ReactNode
 }
 
 export const AdminList = (props: Props): ReactElement => {
 
-  const {title, headers, elements, page, isFirst, isLast, pageUp, pageDown, children} = props
+  const {title, headers, elements, page, isFirst, isLast, pageUp, pageDown, onElementClick, children} = props
 
   const propNames: string[] = headers.map((header: ListPropNameProps) => header.propName)
 
@@ -37,7 +38,10 @@ export const AdminList = (props: Props): ReactElement => {
         {elements
           ? elements.data.map((data: Element, index: number) => {
             return (
-              <ElementWrapper key={index}>
+              <ElementWrapper
+                key={index}
+                id={`list-element-${index}`}
+                onClick={() => onElementClick ? onElementClick(data) : null}>
                 {propNames.map((propName: string, index: number) => {
                   return (
                     <ElementContent flex={getFromHeader(headers, propName)?.flex} key={index}>
@@ -108,6 +112,11 @@ const ElementWrapper = styled.div`
   flex-direction: row;
   padding: 8px;
   align-items: center;
+
+  &:hover {
+    background: rgb(203, 203, 203, 50%);
+    cursor: pointer;
+  }
 `
 
 interface ElementContentProps {
