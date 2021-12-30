@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useState} from "react";
+import React, {ReactElement} from "react";
 import styled from "styled-components";
 import {useHistory} from "react-router-dom";
 
@@ -40,19 +40,10 @@ const Text = styled.div<ButtonProps>`
 
 function DefaultButton({text, disabled, backgroundColor, to, onClick}: Props): ReactElement {
 
-  const [buttonDisabled, setButtonDisabled] = useState(disabled)
-
-  useEffect(() => {
-    if (disabled == undefined) {
-      return
-    }
-    setButtonDisabled(!disabled)
-  }, [disabled])
-
   const history = useHistory()
 
   const onClickAction = () => {
-    if (buttonDisabled) {
+    if (disabled) {
       doNothingOnClick()
       return
     }
@@ -69,8 +60,8 @@ function DefaultButton({text, disabled, backgroundColor, to, onClick}: Props): R
 
   return (
     <Wrapper className={"noselect"} onClick={onClickAction}
-             disabled={buttonDisabled ? buttonDisabled : false} backgroundColor={backgroundColor}>
-      <Text disabled={buttonDisabled ? buttonDisabled : false}>
+             disabled={disabled ? disabled : false} backgroundColor={backgroundColor}>
+      <Text disabled={disabled ? disabled : false}>
         {text}
       </Text>
     </Wrapper>

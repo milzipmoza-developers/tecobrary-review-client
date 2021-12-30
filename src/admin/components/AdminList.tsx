@@ -58,9 +58,9 @@ export const AdminList = (props: Props): ReactElement => {
       </BodyWrapper>
       <FooterWrapper>
         <FooterInner>
-          <DefaultButton text={"이전"} disabled={isLast} onClick={pageDown}/>
+          <DefaultButton text={"이전"} disabled={isFirst} onClick={pageDown}/>
           <FooterPageIndicator>{page}</FooterPageIndicator>
-          <DefaultButton text={"다음"} disabled={isFirst} onClick={pageUp}/>
+          <DefaultButton text={"다음"} disabled={isLast} onClick={pageUp}/>
         </FooterInner>
       </FooterWrapper>
     </div>
