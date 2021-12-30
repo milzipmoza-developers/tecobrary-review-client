@@ -25,6 +25,7 @@ export interface CreateBook {
 export interface Book {
   isbn: string,
   detail: BookDetail,
+  category?: BookCategory
 }
 
 interface BookDetail {
@@ -35,4 +36,10 @@ interface BookDetail {
   locale: string,
   publishDate: string,
   description: string
+}
+
+interface BookCategory {
+  no: string,
+  name: string,
+  imageUrl: string
 }

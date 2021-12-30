@@ -33,6 +33,20 @@ const requestBooks = async (pageRequest: PageRequest): Promise<AxiosResponse> =>
     })
 }
 
+const get = async (isbn: string): Promise<Book> => {
+  const response = await requestBook(isbn)
+  return {
+    isbn: response.data.data.isbn,
+    detail: response.data.data.detail,
+    category: response.data.data.category
+  }
+}
+
+const requestBook = async (isbn: string): Promise<AxiosResponse> => {
+  return await Api.server()
+    .get(`/api/books/${isbn}`)
+}
+
 const search = async (keyword: string): Promise<PageData<SearchBook>> => {
   const response = await requestSearch(
     {
@@ -59,5 +73,6 @@ const requestSearch = async (pageRequest: PageRequest, search: SearchBookQuery):
 export const BookApi = {
   create,
   search,
-  getAll
+  getAll,
+  get
 }
