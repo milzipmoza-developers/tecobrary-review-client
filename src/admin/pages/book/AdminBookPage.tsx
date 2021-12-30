@@ -1,7 +1,7 @@
 import React, {ChangeEvent, ReactElement, SyntheticEvent, useEffect, useState} from "react";
 import {AdminFrame} from "../../components/AdminFrame";
 import {AdminList} from "../../components/AdminList";
-import {ListHeaderProps} from "../../components/ListProps";
+import {Element, ListHeaderProps} from "../../components/ListProps";
 import {ActionMenuWrapper} from "../../components/ActionMenuWrapper";
 import DefaultButton from "../../components/DefaultButton";
 import {
@@ -27,6 +27,7 @@ import {PageData, PageRequest} from "../../api/interfaces";
 import {BookApi} from "../../api/book/book.service";
 import {BookMapper} from "../../api/book/book.mapper";
 import {BookPreview} from "../../components/AdminBookPreview";
+import {useHistory} from "react-router-dom";
 
 
 const headers: ListHeaderProps[] = [
@@ -68,6 +69,8 @@ export interface OptionBook {
 }
 
 function AdminBookPage(): ReactElement {
+  const history = useHistory();
+
   const [alertStatus, setAlertStatus] = useRecoilState(adminAlertStatus)
   const [showDialog, setShowDialog] = useState(false)
 
@@ -263,6 +266,10 @@ function AdminBookPage(): ReactElement {
     }
   }
 
+  const onElementClick = (element: Element) => {
+    history.push(`/admin/books/${element.isbn}`)
+  }
+
   return (
     <AdminFrame>
       <Dialog open={showDialog} onClose={DialogAction.hide} fullScreen>
@@ -328,7 +335,8 @@ function AdminBookPage(): ReactElement {
                  pageUp={PageAction.pageUp}
                  pageDown={PageAction.pageDown}
                  isFirst={pageData.isFirst}
-                 isLast={pageData.isLast}/>
+                 isLast={pageData.isLast}
+                 onElementClick={onElementClick}/>
     </AdminFrame>
   )
 }

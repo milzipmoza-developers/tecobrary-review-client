@@ -15,6 +15,7 @@ import AdminMarkPage from "./admin/pages/mark/AdminMarkPage";
 import AdminBookPage from "./admin/pages/book/AdminBookPage";
 import AdminNewArrivalPage from "./admin/pages/arrival/AdminNewArrivalPage";
 import AdminTagPage from "./admin/pages/tag/AdminTagPage";
+import AdminBookDetailPage from "./admin/pages/book/AdminBookDetailPage";
 
 function App(): ReactElement {
     return (
@@ -31,10 +32,11 @@ function App(): ReactElement {
           <Route exact path={'/admin'} component={AdminHomePage}/>
           <Route exact path={'/admin/categories'} component={AdminCategoryPage}/>
           <Route exact path={'/admin/marks'} component={AdminMarkPage}/>
+          <Route exact path={'/admin/books/:isbn'} component={AdminBookDetailPage}/>
           <Route exact path={'/admin/books'} component={AdminBookPage}/>
-            <Route exact path={'/admin/new-arrivals'} component={AdminNewArrivalPage}/>
-            <Route exact path={'/admin/tags'} component={AdminTagPage}/>
-            <Route component={NotFoundPage}/>
+          <Route exact path={'/admin/new-arrivals'} component={AdminNewArrivalPage}/>
+          <Route exact path={'/admin/tags'} component={AdminTagPage}/>
+          <Route component={NotFoundPage}/>
       </Switch>
   );
 }
