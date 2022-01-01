@@ -2,13 +2,17 @@ export interface ApiCreateRequest<T> {
   create: T
 }
 
-export interface UpdateRequest<T> {
+export interface ApiUpdateRequest<T> {
   update: T
 }
 
 export interface PageRequest {
   page: number,
   size: number
+}
+
+export interface KeywordRequest {
+  keyword: string
 }
 
 export interface PageData<T> {

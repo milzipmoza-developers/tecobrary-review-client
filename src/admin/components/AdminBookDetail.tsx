@@ -84,9 +84,14 @@ const AdminBookDetail = ({book, readOnly}: Props) => {
           <Image src={book.detail.imageUrl}/>
         </BookImageWrapper>
       </BookDetailWrapper>
-      <BookCategoryWrapper>
-        {JSON.stringify(book.category)}
-      </BookCategoryWrapper>
+      <BookAdditionalWrapper>
+        {book.category ? <CategoryCard>
+          <CategoryImage src={book.category.imageUrl}/>
+          <div>
+            <div>{book.category.name}</div>
+          </div>
+        </CategoryCard> : null}
+      </BookAdditionalWrapper>
     </div>
   )
 }
@@ -98,14 +103,6 @@ const BookDetailWrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-`
-
-const BookCategoryWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin-top: 16px;
 `
 
 const BookDetailInfoWrapper = styled.div`
@@ -128,4 +125,26 @@ const Image = styled.img`
   width: 100%; /* or any custom size */
   height: 40vh;
   object-fit: contain;
+`
+
+const BookAdditionalWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 16px;
+`
+
+const CategoryCard = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+  border-radius: 16px;
+  padding: 16px;
+`
+
+const CategoryImage = styled.img`
+  object-fit: contain;
+  width: 100px;
+  margin-right: 16px;
 `

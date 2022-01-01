@@ -1,7 +1,7 @@
-import {ApiCreateRequest, PageData, PageRequest} from "../interfaces";
+import {ApiCreateRequest, ApiUpdateRequest, PageData, PageRequest} from "../interfaces";
 import {AxiosResponse} from "axios";
 import * as Api from "../axios.config";
-import {Book, CreateBook, SearchBook, SearchBookQuery} from "./book.model";
+import {Book, BookCategory, CreateBook, SearchBook, SearchBookQuery} from "./book.model";
 
 const create = async (createDto: CreateBook): Promise<boolean> => {
   const response = await requestCreateBook({create: createDto})
@@ -11,6 +11,26 @@ const create = async (createDto: CreateBook): Promise<boolean> => {
 const requestCreateBook = async (requestBody: ApiCreateRequest<CreateBook>): Promise<AxiosResponse> => {
   return await Api.server()
     .post("/api/books", requestBody)
+}
+
+const addCategory = async (isbn: string, categoryDto: BookCategory): Promise<boolean> => {
+  const response = await requestBookAddCategory(isbn, {update: categoryDto})
+  return response.data.data
+}
+
+const requestBookAddCategory = async (isbn: string, requestBody: ApiUpdateRequest<BookCategory>): Promise<AxiosResponse> => {
+  return await Api.server()
+    .post(`/api/books/${isbn}/add-category`, requestBody)
+}
+
+const clearCategory = async (isbn: string): Promise<boolean> => {
+  const response = await requestBookClearCategory(isbn)
+  return response.data.data
+}
+
+const requestBookClearCategory = async (isbn: string): Promise<AxiosResponse> => {
+  return await Api.server()
+    .post(`/api/books/${isbn}/clear-category`)
 }
 
 const getAll = async (pageRequest: PageRequest): Promise<PageData<Book>> => {
@@ -72,7 +92,9 @@ const requestSearch = async (pageRequest: PageRequest, search: SearchBookQuery):
 
 export const BookApi = {
   create,
+  addCategory,
   search,
   getAll,
-  get
+  get,
+  clearCategory
 }

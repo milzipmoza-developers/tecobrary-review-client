@@ -1,10 +1,10 @@
-import {ApiCreateRequest, PageData, PageRequest} from "../interfaces";
+import {ApiCreateRequest, KeywordRequest, PageData, PageRequest} from "../interfaces";
 import * as Api from "../axios.config"
 import {AxiosResponse} from "axios";
 import {Category, CreateCategory} from "./category.model";
 
-const get = async (pageRequest: PageRequest): Promise<PageData<Category>> => {
-  const response = await requestGetCategories(pageRequest)
+const get = async (pageRequest: PageRequest, keywordRequest?: KeywordRequest): Promise<PageData<Category>> => {
+  const response = await requestGetCategories(pageRequest, keywordRequest)
   return {
     total: response.data.data.total,
     size: response.data.data.size,
@@ -19,10 +19,13 @@ const create = async (createDto: CreateCategory): Promise<string> => {
   return response.data
 }
 
-const requestGetCategories = async (pageRequest: PageRequest): Promise<AxiosResponse> => {
+const requestGetCategories = async (pageRequest: PageRequest, keywordRequest?: KeywordRequest): Promise<AxiosResponse> => {
   return await Api.server()
     .get("/api/categories", {
-      params: {...pageRequest}
+      params: {
+        ...pageRequest,
+        ...keywordRequest
+      }
     });
 }
 

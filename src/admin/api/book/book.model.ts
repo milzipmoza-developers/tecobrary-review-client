@@ -38,7 +38,7 @@ interface BookDetail {
   description: string
 }
 
-interface BookCategory {
+export interface BookCategory {
   no: string,
   name: string,
   imageUrl: string
