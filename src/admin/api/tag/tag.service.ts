@@ -34,7 +34,30 @@ const requestGetTags = async (pageRequest: PageRequest, search: SearchTag): Prom
     })
 }
 
+const getAllAddable = async (pageRequest: PageRequest, tagName: string, isbn: string): Promise<PageData<Tag>> => {
+  const response = await requestGetAllAddable(pageRequest, tagName, isbn)
+  return {
+    total: response.data.data.total,
+    size: response.data.data.size,
+    isFirst: response.data.data.isFirst,
+    isLast: response.data.data.isLast,
+    items: response.data.data.items
+  }
+}
+
+const requestGetAllAddable = async (pageRequest: PageRequest, tagName: string, isbn: string): Promise<AxiosResponse> => {
+  return await Api.server()
+    .get("/api/tags/book-addable", {
+      params: {
+        ...pageRequest,
+        tagName,
+        isbn
+      }
+    })
+}
+
 export const TagApi = {
   get,
+  getAllAddable,
   create,
 }

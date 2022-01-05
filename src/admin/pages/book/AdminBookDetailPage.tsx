@@ -27,6 +27,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import styled from "styled-components";
 import {Category} from "../../api/category/category.model";
 import {CategoryApi} from "../../api/category/category.service";
+import {Tag} from "../../api/tag/tag.model";
+import {TagApi} from "../../api/tag/tag.service";
 
 interface PathParams {
   isbn?: string
@@ -37,18 +39,22 @@ function AdminBookDetailPage(): ReactElement {
   const history = useHistory()
 
   const [alertStatus, setAlertStatus] = useRecoilState(adminAlertStatus)
-  const [showDialog, setShowDialog] = useState(false)
+
+  const [readOnly, setReadOnly] = useState(true)
+  const [book, setBook] = useState<Book>()
 
   const [open, setOpen] = useState(false)
-  const [options, setOptions] = useState<Category[]>([])
-  const loading = open && options.length === 0
-
+  const [showDialog, setShowDialog] = useState(false)
   const [keyword, setKeyword] = useState('')
-  const [readOnly, setReadOnly] = useState(true)
-
+  const [options, setOptions] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState<Category>()
 
-  const [book, setBook] = useState<Book | null>()
+  const [tagOpen, setTagOpen] = useState(false)
+  const [showTagDialog, setShowTagDialog] = useState(false)
+  const [tagName, setTagName] = useState('')
+  const [tagOptions, setTagOptions] = useState<Tag[]>([])
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+
 
   useEffect(() => {
     Query.get()
@@ -56,6 +62,7 @@ function AdminBookDetailPage(): ReactElement {
 
   const _init = () => {
     setSelectedCategory(undefined)
+    setSelectedTags([])
     setKeyword('')
   }
 
@@ -122,7 +129,13 @@ function AdminBookDetailPage(): ReactElement {
     }
   }
 
-  const DialogAction = {
+  const PageAction = {
+    editable: () => {
+      console.log('editable')
+    }
+  }
+
+  const CategoryAction = {
     show: () => {
       _init()
       console.log('show', showDialog)
@@ -131,7 +144,6 @@ function AdminBookDetailPage(): ReactElement {
 
     hide: () => {
       setShowDialog(false)
-      console.log('hide', showDialog)
       _init()
     },
 
@@ -170,7 +182,54 @@ function AdminBookDetailPage(): ReactElement {
     },
   }
 
-  const SearchAction = {
+  const TagAction = {
+    show: () => {
+      _init()
+      console.log('show tag dialog', showDialog)
+      setShowTagDialog(true)
+    },
+
+    hide: () => {
+      setShowTagDialog(false)
+      _init()
+    },
+
+    init: () => {
+      _init()
+    },
+
+    submit: async () => {
+      try {
+        if (!isbn || selectedTags.length == 0) {
+          return
+        }
+        const result = await BookApi.addTags(isbn, selectedTags.map(it => ({
+          no: it.no,
+          name: it.name,
+          colorCode: it.colorCode
+        })))
+        if (result) {
+          setShowTagDialog(false)
+          _showAlert('등록에 성공하였습니다.', 'success')
+          _init()
+          Query.get()
+          return
+        }
+
+        _showAlert('도서 태그 등록 도중 문제가 발생하였습니다.', 'warning')
+        return
+      } catch (e) {
+        if (e.response && (400 <= e.response.status && e.response.status < 500)) {
+          _showAlert(`${e.response.data.message}`, 'warning', 5000)
+          return
+        }
+
+        _showAlert(`도서 태그 등록에 실패하였습니다. 사유 : ${e.message}`, 'error', 5000)
+      }
+    },
+  }
+
+  const CategorySearch = {
     search: async (): Promise<boolean> => {
       try {
         const pageData = await CategoryApi.get(
@@ -194,7 +253,7 @@ function AdminBookDetailPage(): ReactElement {
         return
       }
 
-      const result = await SearchAction.search()
+      const result = await CategorySearch.search()
       if (!result) {
         return
       }
@@ -219,15 +278,73 @@ function AdminBookDetailPage(): ReactElement {
     }
   }
 
+  const TagSearch = {
+    search: async (): Promise<boolean> => {
+      if (!book) {
+        return false
+      }
+      try {
+        const pageData = await TagApi.getAllAddable(
+          {page: 0, size: 10},
+          tagName,
+          book.isbn
+        )
+        setTagOptions([...pageData.items])
+        return true
+      } catch (e) {
+        if (e.response && (400 <= e.response.status && e.response.status < 500)) {
+          _showAlert(`${e.response.data.message}`, 'warning', 5000)
+        }
+
+        _showAlert(`조회에 실패하였습니다. 사유 : ${e.message}`, 'error', 5000)
+        return false
+      }
+    },
+
+    onEnterPress: async (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.keyCode != 13) {
+        return
+      }
+
+      const result = await TagSearch.search()
+      if (!result) {
+        return
+      }
+      setTagOpen(true)
+    },
+
+    onClose: async () => {
+      setTagOpen(false)
+      setTagOptions([])
+    },
+
+    onKeywordChange: (e: ChangeEvent<HTMLInputElement>) => {
+      setTagName(e.target.value)
+    },
+
+    onChangeValue: (e: SyntheticEvent, value: AutocompleteValue<Tag, undefined, undefined, undefined>) => {
+      if (!value) {
+        return
+      }
+
+      const tag = selectedTags.find(it => it.no == value.no);
+      if (tag) {
+        return;
+      }
+      selectedTags.push(value)
+      setSelectedTags(selectedTags)
+    }
+  }
+
   return (
     <AdminFrame>
-      <Dialog open={showDialog} onClose={DialogAction.hide} fullWidth>
+      <Dialog open={showDialog} onClose={CategoryAction.hide} fullWidth>
         <AppBar sx={{position: 'relative'}} color="secondary">
           <Toolbar>
             <IconButton
               edge="start"
               color="inherit"
-              onClick={DialogAction.hide}
+              onClick={CategoryAction.hide}
               aria-label="close"
             >
               <CloseIcon/>
@@ -243,10 +360,10 @@ function AdminBookDetailPage(): ReactElement {
               id="search-auto-complete"
               sx={{width: '100%'}}
               open={open}
-              onClose={SearchAction.onClose}
+              onClose={CategorySearch.onClose}
               isOptionEqualToValue={(option, value) => option.no === value.no}
               getOptionLabel={(option) => `${option.name}`}
-              onChange={SearchAction.onChangeValue}
+              onChange={CategorySearch.onChangeValue}
               filterOptions={(x) => x}
               options={options}
               renderInput={(params) => {
@@ -257,14 +374,14 @@ function AdminBookDetailPage(): ReactElement {
                     {...rest}
                     sx={{ml: 1, flex: 2}}
                     placeholder="검색어를 입력하세요."
-                    onKeyDown={SearchAction.onEnterPress}
+                    onKeyDown={CategorySearch.onEnterPress}
                     value={keyword}
-                    onChange={SearchAction.onKeywordChange}
+                    onChange={CategorySearch.onKeywordChange}
                   />
                 </>
               }}
             />
-            <IconButton sx={{p: '10px'}} aria-label="search" onClick={SearchAction.search}>
+            <IconButton sx={{p: '10px'}} aria-label="search" onClick={CategorySearch.search}>
               <SearchIcon/>
             </IconButton>
           </Paper>
@@ -273,14 +390,76 @@ function AdminBookDetailPage(): ReactElement {
           {JSON.stringify(selectedCategory)}
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" onClick={DialogAction.hide}>취소하기</Button>
-          <Button variant="contained" color="success" onClick={DialogAction.submit}>등록하기</Button>
+          <Button variant="contained" color="error" onClick={CategoryAction.hide}>취소하기</Button>
+          <Button variant="contained" color="success" onClick={CategoryAction.submit}>등록하기</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={showTagDialog} onClose={TagAction.hide} fullWidth>
+        <AppBar sx={{position: 'relative'}} color="secondary">
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={TagAction.hide}
+              aria-label="close"
+            >
+              <CloseIcon/>
+            </IconButton>
+            <Typography sx={{ml: 2, flex: 1}} variant="h6" component="div">
+              도서 태그 등록하기
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <SearchInputWrapper>
+          <Paper sx={{p: '2px 4px', display: 'flex', alignItems: 'center', width: 700}}>
+            <Autocomplete
+              id="search-auto-complete"
+              sx={{width: '100%'}}
+              open={tagOpen}
+              onClose={TagSearch.onClose}
+              isOptionEqualToValue={(option, value) => option.no === value.no}
+              getOptionLabel={(option) => `${option.name}`}
+              onChange={TagSearch.onChangeValue}
+              filterOptions={(x) => x}
+              options={tagOptions}
+              renderInput={(params) => {
+                const {InputLabelProps, InputProps, ...rest} = params
+                return <>
+                  <InputBase
+                    {...params.InputProps}
+                    {...rest}
+                    sx={{ml: 1, flex: 2}}
+                    placeholder="검색어를 입력하세요."
+                    onKeyDown={TagSearch.onEnterPress}
+                    value={tagName}
+                    onChange={TagSearch.onKeywordChange}
+                  />
+                </>
+              }}
+            />
+            <IconButton sx={{p: '10px'}} aria-label="search" onClick={TagSearch.search}>
+              <SearchIcon/>
+            </IconButton>
+          </Paper>
+        </SearchInputWrapper>
+        <DialogContent>
+          {JSON.stringify(tagOptions)}
+          <br/>
+          <br/>
+          <div>선택된 태그</div>
+          {JSON.stringify(selectedTags)}
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color="error" onClick={TagAction.hide}>취소하기</Button>
+          <Button variant="contained" color="success" onClick={TagAction.submit}>등록하기</Button>
         </DialogActions>
       </Dialog>
       <ActionMenuWrapper>
-        <DefaultButton text={'도서 수정하기'} onClick={DialogAction.show} disabled={readOnly}/>
-        <DefaultButton text={'도서 카테고리 수정하기'} onClick={DialogAction.show}/>
+        <DefaultButton text={'도서 수정하기'} onClick={CategoryAction.show} disabled={readOnly}/>
+        <DefaultButton text={'도서 카테고리 수정하기'} onClick={CategoryAction.show}/>
         <DefaultButton text={'도서 카테고리 해제하기'} onClick={BookAction.clear} disabled={!book?.category}/>
+        <DefaultButton text={'도서 태그 추가하기'} onClick={TagAction.show}/>
       </ActionMenuWrapper>
       <AdminBookDetail book={book} readOnly={readOnly}/>
     </AdminFrame>

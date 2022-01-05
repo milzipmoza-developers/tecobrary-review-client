@@ -25,7 +25,8 @@ export interface CreateBook {
 export interface Book {
   isbn: string,
   detail: BookDetail,
-  category?: BookCategory
+  category?: BookCategory,
+  tags: BookTag[]
 }
 
 interface BookDetail {
@@ -42,4 +43,10 @@ export interface BookCategory {
   no: string,
   name: string,
   imageUrl: string
+}
+
+export interface BookTag {
+  no: string,
+  name: string,
+  colorCode: string
 }

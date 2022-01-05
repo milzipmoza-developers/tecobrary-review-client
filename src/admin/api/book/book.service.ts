@@ -1,7 +1,7 @@
 import {ApiCreateRequest, ApiUpdateRequest, PageData, PageRequest} from "../interfaces";
 import {AxiosResponse} from "axios";
 import * as Api from "../axios.config";
-import {Book, BookCategory, CreateBook, SearchBook, SearchBookQuery} from "./book.model";
+import {Book, BookCategory, BookTag, CreateBook, SearchBook, SearchBookQuery} from "./book.model";
 
 const create = async (createDto: CreateBook): Promise<boolean> => {
   const response = await requestCreateBook({create: createDto})
@@ -33,6 +33,16 @@ const requestBookClearCategory = async (isbn: string): Promise<AxiosResponse> =>
     .post(`/api/books/${isbn}/clear-category`)
 }
 
+const addTags = async (isbn: string, tagDtos: BookTag[]): Promise<boolean> => {
+  const response = await requestBookAddTags(isbn, {update: tagDtos})
+  return response.data.data
+}
+
+const requestBookAddTags = async (isbn: string, requestBody: ApiUpdateRequest<BookTag[]>): Promise<AxiosResponse> => {
+  return await Api.server()
+    .post(`/api/books/${isbn}/add-tag`, requestBody)
+}
+
 const getAll = async (pageRequest: PageRequest): Promise<PageData<Book>> => {
   const response = await requestBooks(pageRequest)
   return {
@@ -58,7 +68,8 @@ const get = async (isbn: string): Promise<Book> => {
   return {
     isbn: response.data.data.isbn,
     detail: response.data.data.detail,
-    category: response.data.data.category
+    category: response.data.data.category,
+    tags: response.data.data.tags
   }
 }
 
@@ -93,6 +104,7 @@ const requestSearch = async (pageRequest: PageRequest, search: SearchBookQuery):
 export const BookApi = {
   create,
   addCategory,
+  addTags,
   search,
   getAll,
   get,

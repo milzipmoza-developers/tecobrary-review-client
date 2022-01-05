@@ -11,7 +11,6 @@ export interface CreateTag {
 }
 
 export interface SearchTag {
-  bookNo?: string
   tagName?: string
 }
 

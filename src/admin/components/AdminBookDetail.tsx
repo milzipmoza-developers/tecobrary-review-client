@@ -2,6 +2,8 @@ import {TextField} from "@mui/material";
 import React from "react";
 import {Book} from "../api/book/book.model";
 import styled from "styled-components";
+import AdminBookCategoryCard from "./AdminBookCategoryCard";
+import AdminTagChip from "./AdminTagChip";
 
 interface Props {
   book?: Book | null
@@ -85,12 +87,20 @@ const AdminBookDetail = ({book, readOnly}: Props) => {
         </BookImageWrapper>
       </BookDetailWrapper>
       <BookAdditionalWrapper>
-        {book.category ? <CategoryCard>
-          <CategoryImage src={book.category.imageUrl}/>
-          <div>
-            <div>{book.category.name}</div>
-          </div>
-        </CategoryCard> : null}
+        <BookAdditionalBox>
+          <BookAdditionalTitle>카테고리</BookAdditionalTitle>
+          {book.category ? <AdminBookCategoryCard category={book.category}/> : '카테고리 없음'}
+        </BookAdditionalBox>
+        <BookAdditionalBox>
+          <BookAdditionalTitle>태그</BookAdditionalTitle>
+          <BookAdditionalChip>
+            {book.tags.length != 0 ? book.tags.map((element, index) => (
+              <AdminTagChip color={element.colorCode} key={index}>
+                {element.name}
+              </AdminTagChip>
+            )) : '태그 없음'}
+          </BookAdditionalChip>
+        </BookAdditionalBox>
       </BookAdditionalWrapper>
     </div>
   )
@@ -130,21 +140,23 @@ const Image = styled.img`
 const BookAdditionalWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   margin-top: 16px;
 `
 
-const CategoryCard = styled.div`
+const BookAdditionalBox = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-  border-radius: 16px;
-  padding: 16px;
+  margin: 0 8px;
+`
+const BookAdditionalTitle = styled.div`
+  font-size: large;
+  font-weight: bold;
+  margin-bottom: 4px;
 `
 
-const CategoryImage = styled.img`
-  object-fit: contain;
-  width: 100px;
-  margin-right: 16px;
+const BookAdditionalChip = styled.div`
+  display: flex;
+  flex-direction: row;
 `
