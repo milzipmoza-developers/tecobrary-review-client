@@ -95,7 +95,7 @@ const AdminBookDetail = ({book, readOnly}: Props) => {
           <BookAdditionalTitle>태그</BookAdditionalTitle>
           <BookAdditionalChip>
             {book.tags.length != 0 ? book.tags.map((element, index) => (
-              <AdminTagChip color={element.colorCode} key={index}>
+              <AdminTagChip backgroundColor={element.colorCode} key={index}>
                 {element.name}
               </AdminTagChip>
             )) : '태그 없음'}
