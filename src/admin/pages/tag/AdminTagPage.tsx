@@ -1,4 +1,4 @@
-import {ChangeEvent, ReactElement, useEffect, useState} from "react";
+import React, {ChangeEvent, ReactElement, useEffect, useState} from "react";
 import {AdminFrame} from "../../components/AdminFrame";
 import {AdminList} from "../../components/AdminList";
 import {ListHeaderProps} from "../../components/ListProps";
@@ -11,6 +11,7 @@ import {Tag, TagInput} from "../../api/tag/tag.model";
 import {TagApi} from "../../api/tag/tag.service";
 import {PageData, PageRequest} from "../../api/interfaces";
 import {TagMapper} from "../../api/tag/tag.mapper";
+import {HexColorPicker} from "react-colorful";
 
 const headers: ListHeaderProps[] = [
   {
@@ -51,7 +52,7 @@ function AdminMarkPage(): ReactElement {
     items: []
   })
   const [inputs, setInputs] = useState<TagInput>({
-    colorCode: '',
+    colorCode: '#000000',
     name: '',
     description: '',
   })
@@ -218,6 +219,10 @@ function AdminMarkPage(): ReactElement {
             value={inputs.colorCode}
             onChange={InputAction.onColorCodeChange}
           />
+          <HexColorPicker color={inputs.colorCode} onChange={(newColor) => setInputs({
+            ...inputs,
+            colorCode: newColor.toUpperCase()
+          })}/>
         </DialogContent>
         <DialogActions>
           <Button variant="contained" color="error" onClick={DialogAction.hide}>취소하기</Button>
