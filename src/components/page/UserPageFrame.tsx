@@ -3,23 +3,25 @@ import {PageFrame} from "./PageFrame";
 import ScrollToTop from "../../routes/ScrollToTop";
 import Navigation from "../navigation/Navigation";
 import styled from "styled-components";
+import UnderPopModal from "../modal/UnderPopModal";
 
 interface Props {
-    top?: string
-    header?: boolean
-    children: ReactNode
+  top?: string
+  header?: boolean
+  children: ReactNode
 }
 
 export const UserPageFrame = ({top, header, children}: Props): ReactElement => {
-    return (
-        <Background className='background'>
-            <Wrapper>
-                <ScrollToTop/>
-                <PageFrame top={top} header={header}>{children}</PageFrame>
-                <Navigation/>
-            </Wrapper>
-        </Background>
-    )
+  return (
+    <Background className='background'>
+      <Wrapper id='user-page-frame'>
+        <ScrollToTop/>
+        <PageFrame top={top} header={header}>{children}</PageFrame>
+        <Navigation/>
+        <UnderPopModal/>
+      </Wrapper>
+    </Background>
+  )
 }
 
 const Background = styled.div`
