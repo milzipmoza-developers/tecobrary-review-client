@@ -2,6 +2,9 @@ import React, {ReactElement} from "react";
 import styled from "styled-components";
 import {AddReviewIcon} from "../icons/AddReviewIcon";
 import {NavigationIcon} from "./NavigationIcon";
+import {useRecoilValue, useSetRecoilState} from "recoil";
+import {userState} from "../../states/User";
+import {loginModalState} from "../../states/LoginModal";
 
 const NavigationWrapper = styled.div`
   height: 4rem;
@@ -25,12 +28,22 @@ const NavigationContent = styled.div`
 `
 
 function Navigation(): ReactElement {
+
+  const setLoginModal = useSetRecoilState(loginModalState)
+  const user = useRecoilValue(userState)
+
+  const openModal = () => {
+    setLoginModal({open: true})
+  }
+
   return (
     <NavigationWrapper>
       <NavigationContent>
         <NavigationIcon index={1} name='home' width={'1.5rem'} height={'1.5rem'} to='/'/>
         {/*<NavigationIcon index={2} name='reader' width={'1.5rem'} height={'1.5rem'} to='/timeline'/>*/}
-        <NavigationIcon index={3} name='person' width={'1.5rem'} height={'1.5rem'} to='/my-page'/>
+        {user.loggedIn
+          ? <NavigationIcon index={3} name='person' width={'1.5rem'} height={'1.5rem'} to='/my-page'/>
+          : <NavigationIcon index={3} name='not-logged-in' width={'2rem'} height={'2rem'} onClick={openModal}/>}
         <AddReviewIcon to='/review'/>
       </NavigationContent>
     </NavigationWrapper>

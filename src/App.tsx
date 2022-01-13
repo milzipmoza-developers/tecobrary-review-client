@@ -17,7 +17,9 @@ import AdminNewArrivalPage from "./admin/pages/arrival/AdminNewArrivalPage";
 import AdminTagPage from "./admin/pages/tag/AdminTagPage";
 import AdminBookDetailPage from "./admin/pages/book/AdminBookDetailPage";
 
+
 function App(): ReactElement {
+
     return (
       <Switch>
           <Route exact path={'/'} component={HomePage}/>
@@ -42,3 +44,4 @@ function App(): ReactElement {
 }
 
 export default App;
+

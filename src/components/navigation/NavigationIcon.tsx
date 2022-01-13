@@ -1,18 +1,19 @@
 import React, {ReactElement} from "react";
-import {Home, Person, Reader} from "react-ionicons";
+import {Home, Person, PersonCircle, Reader} from "react-ionicons";
 import styled from "styled-components";
 import {useRecoilState} from "recoil";
 import {navigationState} from "../../states/Navigation";
 import {useHistory} from "react-router-dom";
 
-export type iconType = "home" | "reader" | "person"
+export type iconType = "home" | "reader" | "person" | "not-logged-in"
 
 interface Props {
   index: number
   name: iconType
   height: string
   width: string
-  to: string
+  to?: string,
+  onClick?: () => void
 }
 
 const iconColor = {
@@ -29,13 +30,16 @@ const NavElement = styled.div`
   height: 4rem;
 `
 
-export const NavigationIcon = ({index, name, height, width, to}: Props): ReactElement => {
+export const NavigationIcon = ({index, name, height, width, to, onClick}: Props): ReactElement => {
   const [navigation, setNavigationState] = useRecoilState(navigationState);
   const history = useHistory();
 
   const color: string = navigation.selected == index ? iconColor.selected : iconColor.unselected
 
-  const onClick = () => {
+  const _onClick = () => {
+    if (!to) {
+      return
+    }
     if (navigation.selected == index) {
       return
     }
@@ -51,6 +55,9 @@ export const NavigationIcon = ({index, name, height, width, to}: Props): ReactEl
     if (name === "reader") {
       return <Reader width={width} height={height} color={color}/>
     }
+    if (name === "not-logged-in") {
+      return <PersonCircle width={width} height={height} color={color}/>
+    }
     if (name === "person") {
       return <Person width={width} height={height} color={color}/>
     }
@@ -58,8 +65,8 @@ export const NavigationIcon = ({index, name, height, width, to}: Props): ReactEl
   }
 
   return (
-    <NavElement onClick={onClick}>
-        <CustomIonicon/>
+    <NavElement onClick={onClick ? onClick : _onClick}>
+      <CustomIonicon/>
     </NavElement>
   )
 }
