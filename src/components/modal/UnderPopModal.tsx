@@ -4,6 +4,7 @@ import {ReactComponent as GithubLogo} from '../../assets/github_logo.svg';
 import {MemberApi} from "../../api/member/member.service";
 import {useRecoilState} from "recoil";
 import {loginModalState} from "../../states/LoginModal";
+import {userState} from "../../states/User";
 
 const box_active = {
   transition: "opacity 300ms",
@@ -17,12 +18,12 @@ const box_hidden = {
 
 const UnderPopModal = (): ReactElement | null => {
 
+  const [user, setUser] = useRecoilState(userState)
   const [loginModal, setLoginModal] = useRecoilState(loginModalState)
 
   const onClick = async () => {
     try {
-      const deviceId = await MemberApi.getDeviceId()
-      const url = await MemberApi.getLoginUrl(deviceId)
+      const url = await MemberApi.getLoginUrl(user.deviceId)
       window.location.href = url
     } catch (e) {
 

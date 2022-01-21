@@ -1,4 +1,4 @@
-import {ReactElement, useEffect, useState} from "react";
+import {ReactElement, useState} from "react";
 import {Category, NewBook} from "../../interfaces";
 import {getBookCategories, getNewArrivalBooks} from "../../api/home";
 import SpannedCard from "../../components/card/SpannedCard";
@@ -8,31 +8,8 @@ import InterestCard from "./interest/InterestCard";
 import {PageContent} from "../../components/page/PageContent";
 import BookCategories from "./category/BookCategories";
 import {UserPageFrame} from "../../components/page/UserPageFrame";
-import {useQueryString} from "../../hooks";
-import {useRecoilState} from "recoil";
-import {userState} from "../../states/User";
-
-interface Params {
-  code?: string
-  status?: string
-  action?: string
-}
 
 function HomePage(): ReactElement {
-
-  const {code, status, action} = useQueryString()
-  const [user, setUser] = useRecoilState(userState)
-
-  useEffect(() => {
-    if (code) {
-      // set local jwt
-      // load user info
-      setUser({
-        ...user,
-        loggedIn: true
-      })
-    }
-  }, [])
 
   const [newArrivalBooks] = useState<NewBook[]>(getNewArrivalBooks)
   const [categories] = useState<Category[]>(getBookCategories)

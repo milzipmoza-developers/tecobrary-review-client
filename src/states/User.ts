@@ -6,11 +6,15 @@ interface UserInfo {
 
 interface UserState {
   loggedIn: boolean
+  deviceId: string
+  token: string
   userInfo: UserInfo | null
 }
 
-const defaultUserState = (): UserState => ({
+export const defaultUserState = (): UserState => ({
   loggedIn: false,
+  deviceId: '',
+  token: '',
   userInfo: null
 })
 
