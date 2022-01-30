@@ -133,7 +133,6 @@ function App(): ReactElement {
 
   return (
     <>
-      <div>{JSON.stringify(user)}</div>
       <Switch>
         <Route exact path={'/'} component={HomePage}/>
         <Route exact path={'/timeline'} component={TimelinePage}/>

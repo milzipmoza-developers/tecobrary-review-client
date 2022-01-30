@@ -1,19 +1,34 @@
-import React, {ReactElement} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import {UserPageFrame} from "../components/page/UserPageFrame";
 import styled from "styled-components";
 import {useRecoilState} from "recoil";
-import {loginModalState} from "../states/LoginModal";
 import {userState} from "../states/User";
 import {useHistory} from "react-router-dom";
+import {PageContent} from "../components/page/PageContent";
+import Card from "../components/card/Card";
+import {MemberMyInfo} from "../api/member/member.model";
+import {MemberApi} from "../api/member/member.service";
 
 function MyPage(): ReactElement {
 
-  const [loginModal, setLoginModal] = useRecoilState(loginModalState)
   const [user, setUser] = useRecoilState(userState)
   const history = useHistory()
+  const [myInfo, setMyInfo] = useState<MemberMyInfo>()
 
-  const onClick = () => {
-    setLoginModal({open: true})
+  useEffect(() => {
+    _init()
+  }, [])
+
+  const _init = async () => {
+    try {
+      const memberMyInfo = await MemberApi.getMyInfo(user.token, user.deviceId);
+      setMyInfo(memberMyInfo)
+    } catch (e) {
+      if (e.response && (400 <= e.response.status && e.response.status < 500)) {
+        console.error(e)
+      }
+      console.error(e)
+    }
   }
 
   const onClickLogout = () => {
@@ -31,26 +46,43 @@ function MyPage(): ReactElement {
   }
 
   return (
-    <UserPageFrame>
-      {JSON.stringify(user)}
-      <LoginButton onClick={onClick}>로그인</LoginButton>
-      <LoginOutButton onClick={onClickLogout}>로그아웃</LoginOutButton>
+    <UserPageFrame top='8rem'>
+      <PageContent style={{margin: '3rem 1rem 3rem 1rem'}}>
+        <Card backgroundColor='white'
+              boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
+          <ProfileImage src={myInfo?.member.profileImageUrl}/>
+          {JSON.stringify(myInfo)}
+        </Card>
+
+        <LogoutWrapper>
+          <LogoutText onClick={onClickLogout}>로그아웃</LogoutText>
+        </LogoutWrapper>
+      </PageContent>
     </UserPageFrame>
   )
 }
 
 export default MyPage
 
-const LoginButton = styled.div`
-  background: pink;
-  color: black;
-  width: 50px;
-  height: 50px;
+const LogoutWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
 `
 
-const LoginOutButton = styled.div`
-  background: cyan;
-  color: black;
-  width: 50px;
-  height: 50px;
+const ProfileImage = styled.img`
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+`
+
+const LogoutText = styled.div`
+  color: rgb(60, 63, 65);
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 16px;
+  margin-right: 8px;
+  margin-left: auto;
+  align-self: flex-end;
+  font-size: small;
 `
