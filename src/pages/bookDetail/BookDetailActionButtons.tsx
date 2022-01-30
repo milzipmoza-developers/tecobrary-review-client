@@ -5,7 +5,7 @@ import React, {ReactElement} from "react";
 import {CountActionButton} from "../../components/buttons/CountActionButton";
 
 interface Props {
-  id: number
+  isbn: string
   like: boolean
   likeCounts?: number
   marked: boolean

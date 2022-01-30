@@ -1,5 +1,5 @@
 import {ReactElement} from "react";
-import {CategoryBadges} from "../badges/CategoryBadges";
+import {TagBadges} from "../badges/TagBadges";
 import styled from "styled-components";
 import {Tag} from "../../interfaces";
 import {useHistory} from "react-router-dom";
@@ -36,7 +36,7 @@ export const CardBookListElement = ({
         <ElementTitle>{title}</ElementTitle>
         <ElementLine>
           {categories
-            ? <CategoryBadges categories={categories} size='small' maxLength={3}/>
+            ? <TagBadges tags={categories} size='small' maxLength={3}/>
             : null}
           <ElementAuthor>{author}</ElementAuthor>
         </ElementLine>

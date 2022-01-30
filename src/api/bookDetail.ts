@@ -3,7 +3,7 @@ import {getRandomColor} from "./home";
 
 export const getBookDetail: Map<number, BookDetail> = new Map([
   [1, {
-    id: 1,
+    isbn: "1",
     imageUrl: "http://image.kyobobook.co.kr/images/book/xlarge/727/x9788960883727.jpg",
     title: "오늘도 개발자가 안 된다고 말했다",
     author: "김중철, 김수지",
@@ -32,7 +32,7 @@ export const getBookDetail: Map<number, BookDetail> = new Map([
     }
   }],
   [2, {
-    id: 2,
+    isbn: "2",
     imageUrl: "http://image.kyobobook.co.kr/images/book/xlarge/670/x9788966262670.jpg",
     title: "실전 리액트 프로그래밍 리액트 훅부터 Next.js까지 개정판",
     author: "이재승",

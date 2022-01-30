@@ -1,22 +1,21 @@
 import React, {ReactElement} from "react";
-import {CategoryBadges} from "../../components/badges/CategoryBadges";
+import {TagBadges} from "../../components/badges/TagBadges";
 import {parseDate} from "../../utils/date";
 import {BookDetailActionButtons} from "./BookDetailActionButtons";
 import styled from "styled-components";
-import {BookLike, BookMarked, BookTechDetail, Tag} from "../../interfaces";
+import {BookMarks, BookTechDetail, Tag} from "../../interfaces";
 import Plain from "../../components/plain/Plain";
 
 interface Props {
-  id: number
+  isbn: string
   imageUrl: string
   title: string
   author: string
   publisher: string
   description: string
   publishDate: string
-  categories: Tag[]
-  like: BookLike
-  bookMark: BookMarked
+  tags?: Tag[]
+  marks?: BookMarks
   techDetail?: BookTechDetail
 }
 
@@ -32,11 +31,11 @@ function BookDetailCard(props: Props): ReactElement {
   const BookSubInfo = () => (
     <BookSubInfoWrapper>
       <BookPublishDateWrapper>출판일 {parseDate(props.publishDate)}</BookPublishDateWrapper>
-      <BookDetailActionButtons id={props.id}
-                               like={props.like.liked}
-                               likeCounts={props.like.counts}
-                               marked={props.bookMark.marked}
-                               bookMarkedCounts={props.bookMark.counts}/>
+      <BookDetailActionButtons isbn={props.isbn}
+                               like={props.marks ? props.marks.like.liked : false}
+                               likeCounts={props.marks ? props.marks.like.counts : 0}
+                               marked={props.marks ? props.marks.favorite.marked : false}
+                               bookMarkedCounts={props.marks ? props.marks.favorite.counts : 0}/>
     </BookSubInfoWrapper>
   )
 
@@ -64,7 +63,7 @@ function BookDetailCard(props: Props): ReactElement {
         <Image src={props.imageUrl}/>
       </ImageWrapper>
       <BookDetailWrapper>
-        <CategoryBadges categories={props.categories}/>
+        <TagBadges tags={props.tags ? props.tags : []}/>
         <BookTitleWrapper>{props.title}</BookTitleWrapper>
         <BookPublishInfo/>
         <BookSubInfo/>

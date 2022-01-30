@@ -6,21 +6,21 @@ import styled from "styled-components";
 import {BookReview} from "../../interfaces";
 
 interface Props {
-  bookId?: string
+  isbn?: string
   slice?: number
   button?: boolean
   counts?: number
   reviews: BookReview[]
 }
 
-function BookReviewCard({bookId, slice, counts, button, reviews}: Props): ReactElement {
+function BookReviewCard({isbn, slice, counts, button, reviews}: Props): ReactElement {
 
   const reviews2 = slice ? reviews.slice(0, 3) : reviews
 
   return (
     <Card backgroundColor='white'
           buttonText={counts && counts > 3 ? '더보기' : undefined}
-          buttonTo={button ? `/books/${bookId}/reviews` : undefined}
+          buttonTo={button ? `/books/${isbn}/reviews` : undefined}
           boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
       {reviews2.map((bookReview: BookReview, index: number) => (
         <Wrapper key={index}>

@@ -68,12 +68,17 @@ export interface BookInterestCount {
   bookMarked: number
 }
 
+export interface BookMarks {
+  like: BookLike,
+  favorite: BookFavorite
+}
+
 export interface BookLike {
   liked: boolean,
   counts: number
 }
 
-export interface BookMarked {
+export interface BookFavorite {
   marked: boolean,
   counts: number
 }
@@ -86,7 +91,7 @@ export interface BookTechDetail {
 }
 
 export interface BookDetail {
-  id: number
+  isbn: string
   imageUrl: string
   title: string
   author: string
@@ -95,7 +100,7 @@ export interface BookDetail {
   publishDate: string
   categories: Tag[]
   like: BookLike
-  bookMark: BookMarked
+  bookMark: BookFavorite
   techDetail?: BookTechDetail
 }
 

@@ -7,12 +7,12 @@ interface Props {
   size?: 'small' | 'medium'
   maxLength?: number
   bold?: boolean
-  categories: Tag[]
+  tags: Tag[]
 }
 
-export const CategoryBadges = ({size, maxLength, bold, categories}: Props): ReactElement => (
+export const TagBadges = ({size, maxLength, bold, tags}: Props): ReactElement => (
   <Wrapper>
-    {categories.map((it: Tag, index: number) => {
+    {tags.map((it: Tag, index: number) => {
       if (maxLength && index > maxLength - 1) return null
       return (<CategoryBadge key={index}
                              backgroundColor={it.color}

@@ -1,36 +1,70 @@
-import React, {ReactElement, useState} from "react";
-import {useParams} from "react-router-dom";
-import {BookDetail, BookDetailReview} from "../../interfaces";
-import {getBookDetail, getBookDetailReview} from "../../api/bookDetail";
+import React, {ReactElement, useEffect, useState} from "react";
+import {useHistory, useParams} from "react-router-dom";
+import {BookDetail} from "../../interfaces";
+import {getBookDetail} from "../../api/bookDetail";
 import BookDetailCard from "./BookDetailCard";
 import Plain from "../../components/plain/Plain";
 import {PageContent} from "../../components/page/PageContent";
 import BookReviewCard from "./BookReviewCard";
 import {UserPageFrame} from "../../components/page/UserPageFrame";
+import {DisplayApi} from "../../api/display/display.service";
+import {DisplayBookDetail, DisplayBookMark, DisplayBookTag} from "../../api/display/display.model";
 
 interface Params {
-  bookId?: string
+  isbn?: string
 }
 
 function BookDetailPage(): ReactElement {
-  const {bookId} = useParams<Params>()
+  const {isbn} = useParams<Params>()
+  const history = useHistory()
+  const [book, setBook] = useState<DisplayBookDetail>()
+  const [mark, setMark] = useState<DisplayBookMark>()
+  const [tags, setTags] = useState<DisplayBookTag[]>()
+
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const [bookDetail] = useState<BookDetail>(getBookDetail.get(Number.parseInt(bookId!)) ? getBookDetail.get(Number.parseInt(bookId!))! : getBookDetail.get(1)!)
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const [bookDetailReview] = useState<BookDetailReview>(getBookDetailReview(Number.parseInt(bookId!) % 2 === 0 ? 3 : 6))
+  const [bookDetail] = useState<BookDetail>(getBookDetail.get(1)!)
+
+  useEffect(() => {
+    _init()
+  }, [])
+
+  const _init = async () => {
+    if (!isbn) {
+      history.goBack()
+      return
+    }
+    try {
+      const foundBook = await DisplayApi.getBook(isbn)
+      setBook(foundBook.book)
+      setMark(foundBook.mark)
+      setTags(foundBook.tags)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const bookCard = book ? {
+    ...book,
+  } : {...bookDetail}
 
   return (
     <UserPageFrame header={{useProfileButton: true, useBackButton: true}}>
       <PageContent style={{marginBottom: '2rem'}}>
-        <BookDetailCard {...bookDetail}/>
+        <BookDetailCard
+          {...bookCard}
+          {...mark}
+          tags={tags?.map(it => ({
+            name: it.name,
+            color: it.colorCode
+          }))}/>
       </PageContent>
       <PageContent style={{marginBottom: '2rem', marginTop: '15rem'}}>
         <Plain title='리뷰를 확인해보세요' margin='0 1rem 0 1rem'>
-          <BookReviewCard bookId={bookId}
+          <BookReviewCard isbn={isbn}
                           slice={3}
                           button={true}
-                          reviews={bookDetailReview.reviews}
-                          counts={bookDetailReview.counts}/>
+                          reviews={[]}
+                          counts={1}/>
         </Plain>
       </PageContent>
     </UserPageFrame>
