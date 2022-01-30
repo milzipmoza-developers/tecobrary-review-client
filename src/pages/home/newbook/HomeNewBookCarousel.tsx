@@ -11,7 +11,7 @@ interface Props {
 export const HomeNewBookCarousel = ({books}: Props): ReactElement => {
   const history = useHistory()
 
-  const onClick = (id: number) => () => {
+  const onClick = (id: string) => () => {
     history.push(`/books/${id}`)
   }
 
@@ -19,7 +19,7 @@ export const HomeNewBookCarousel = ({books}: Props): ReactElement => {
     <Wrapper>
       <BookElements className='scroll-hidden'>
         {books.map((it: NewBook, index: number) => (
-          <BookElement key={index} onClick={onClick(it.id)}>
+          <BookElement key={index} onClick={onClick(it.isbn)}>
             <ImageWrapper>
               <Image src={it.imageUrl}/>
             </ImageWrapper>

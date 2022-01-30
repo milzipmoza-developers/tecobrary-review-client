@@ -2,25 +2,25 @@ import {Category, InterestedBooks, NewBook} from "../interfaces";
 
 export const getNewArrivalBooks: NewBook[] = [
   {
-    id: 1,
+    isbn: "1",
     imageUrl: "http://image.kyobobook.co.kr/images/book/large/758/l9791158392758.jpg",
     title: "만들면서 배우는 클린 아키텍처",
     author: "톰 홈버그, 박소은(옮긴이)",
   },
   {
-    id: 2,
+    isbn: "2",
     imageUrl: "http://image.kyobobook.co.kr/images/book/large/864/l9791158392864.jpg",
     title: "따라하며 배우는 도커와 CI 환경",
     author: "안재원",
   },
   {
-    id: 3,
+    isbn: "3",
     imageUrl: "http://image.kyobobook.co.kr/images/book/large/172/l9788966263172.jpg",
     title: "밑바닥부터 만드는 컴파일러 IN GO",
     author: "토르슈텐 발",
   },
   {
-    id: 4,
+    isbn: "4",
     imageUrl: "http://image.kyobobook.co.kr/images/book/xlarge/670/x9788966262670.jpg",
     title: "실전 리액트 프로그래밍 리액트 훅부터 Next.js까지 개정판",
     author: "이재승",
@@ -157,34 +157,29 @@ export const getInterestedBooks: InterestedBooks[] = [
 
 export const getBookCategories: Category[] = [
   {
-    id: 1,
-    name: 'react',
-    displayName: '리액트',
-    logoUrl: 'https://tecobrary-pivot.s3.ap-northeast-2.amazonaws.com/logos/react_logo.png'
+    no: "1",
+    name: '리액트',
+    imageUrl: 'https://tecobrary-pivot.s3.ap-northeast-2.amazonaws.com/logos/react_logo.png'
   },
   {
-    id: 2,
-    name: 'spring-boot',
-    displayName: '스프링부트',
-    logoUrl: 'https://tecobrary-pivot.s3.ap-northeast-2.amazonaws.com/logos/springboot_logo.png'
+    no: "2",
+    name: '스프링부트',
+    imageUrl: 'https://tecobrary-pivot.s3.ap-northeast-2.amazonaws.com/logos/springboot_logo.png'
   },
   {
-    id: 3,
-    name: 'kotlin',
-    displayName: '코틀린',
-    logoUrl: 'https://tecobrary-pivot.s3.ap-northeast-2.amazonaws.com/logos/kotlin_logo.png'
+    no: "3",
+    name: '코틀린',
+    imageUrl: 'https://tecobrary-pivot.s3.ap-northeast-2.amazonaws.com/logos/kotlin_logo.png'
   },
   {
-    id: 4,
-    name: 'java',
-    displayName: '자바',
-    logoUrl: 'https://tecobrary-pivot.s3.ap-northeast-2.amazonaws.com/logos/java_logo.png'
+    no: "4",
+    name: '자바',
+    imageUrl: 'https://tecobrary-pivot.s3.ap-northeast-2.amazonaws.com/logos/java_logo.png'
   },
   {
-    id: 5,
-    name: 'mysql',
-    displayName: 'MySQL',
-    logoUrl: 'https://tecobrary-pivot.s3.ap-northeast-2.amazonaws.com/logos/mysql_logo.png'
+    no: "5",
+    name: 'MySQL',
+    imageUrl: 'https://tecobrary-pivot.s3.ap-northeast-2.amazonaws.com/logos/mysql_logo.png'
   },
 ]
 

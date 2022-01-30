@@ -4,14 +4,13 @@ export interface Tag {
 }
 
 export interface Category {
-  id: number
+  no: string
   name: string
-  displayName: string
-  logoUrl: string
+  imageUrl: string
 }
 
 export interface NewBook {
-  id: number
+  isbn: string
   imageUrl: string
   title: string
   author: string

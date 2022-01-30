@@ -24,7 +24,8 @@ function BookCategories({categories}: Props): ReactElement {
     <Wrapper>
       <CategoryElements className='scroll-hidden'>
         {categories.map((category: Category, index: number) => (
-          <BookCategoryButton key={index} name={category.displayName} imgSrc={category.logoUrl} onClick={onClick(category.name)}/>
+          <BookCategoryButton key={index} name={category.name} imgSrc={category.imageUrl}
+                              onClick={onClick(category.name)}/>
         ))}
         <BookCategoryButton name='더보기'
                             imgSrc='https://tecobrary-pivot.s3.ap-northeast-2.amazonaws.com/logos/more.png'
