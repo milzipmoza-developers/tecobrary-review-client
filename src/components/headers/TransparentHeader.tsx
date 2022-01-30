@@ -8,10 +8,11 @@ import {PersonCircle} from "react-ionicons";
 import {useHistory} from "react-router-dom";
 
 interface Props {
-  useHeaderBackButton?: boolean
+  useBackButton?: boolean
+  useProfileButton?: boolean
 }
 
-export const TransparentHeader = ({useHeaderBackButton}: Props): ReactElement => {
+export const TransparentHeader = ({useBackButton, useProfileButton}: Props): ReactElement => {
 
   const history = useHistory()
   const user = useRecoilValue(userState)
@@ -24,15 +25,14 @@ export const TransparentHeader = ({useHeaderBackButton}: Props): ReactElement =>
   return (
     <HeaderWrapper>
       <Header>
-        {useHeaderBackButton ? <ArrowBackButton/> : null}
-        <AvatarWrapper>
+        {useBackButton ? <ArrowBackButton/> : null}
+        {useProfileButton ? <AvatarWrapper>
           {user.loggedIn ?
             <AvatarImageButton src={user.userInfo?.profileImageUrl} onClick={() => history.push("/my-page")}/>
             : <AvatarLoginButton onClick={openModal}>
               <PersonCircle width={'2rem'} height={'2rem'} color={'#7f8c8d'}/>
             </AvatarLoginButton>}
-
-        </AvatarWrapper>
+        </AvatarWrapper> : null}
       </Header>
     </HeaderWrapper>
   )

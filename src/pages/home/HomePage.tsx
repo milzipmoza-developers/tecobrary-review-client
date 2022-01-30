@@ -15,7 +15,7 @@ function HomePage(): ReactElement {
   const [categories] = useState<Category[]>(getBookCategories)
 
   return (
-    <UserPageFrame top='8rem'>
+    <UserPageFrame top='8rem' header={{useProfileButton: true, useBackButton: false}}>
       <SpannedCard title='새로운 도서를 살펴보세요'>
         <HomeNewBookCarousel books={newArrivalBooks}/>
       </SpannedCard>

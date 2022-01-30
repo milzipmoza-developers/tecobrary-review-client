@@ -7,17 +7,23 @@ import UnderPopModal from "../modal/UnderPopModal";
 
 interface Props {
   top?: string
-  userHeaderBackButton?: boolean
+  header?: HeaderProps
   children: ReactNode
 }
 
-export const UserPageFrame = ({top, userHeaderBackButton, children}: Props): ReactElement => {
+interface HeaderProps {
+  useBackButton: boolean
+  useProfileButton: boolean
+}
+
+export const UserPageFrame = ({top, header, children}: Props): ReactElement => {
 
   return (
     <Background className='background'>
       <Wrapper id='user-page-frame'>
         <ScrollToTop/>
-        <PageFrame top={top} useHeaderBackButton={userHeaderBackButton}>{children}</PageFrame>
+        <PageFrame top={top}
+                   header={header ? {...header} : {useBackButton: true, useProfileButton: false}}>{children}</PageFrame>
         <Navigation/>
         <UnderPopModal/>
       </Wrapper>

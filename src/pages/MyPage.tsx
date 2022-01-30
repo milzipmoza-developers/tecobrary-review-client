@@ -31,7 +31,7 @@ function MyPage(): ReactElement {
   }
 
   return (
-    <UserPageFrame userHeaderBackButton={true}>
+    <UserPageFrame>
       {JSON.stringify(user)}
       <LoginButton onClick={onClick}>로그인</LoginButton>
       <LoginOutButton onClick={onClickLogout}>로그아웃</LoginOutButton>

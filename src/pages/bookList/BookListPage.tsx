@@ -44,7 +44,7 @@ function BookListPage(): ReactElement {
   }
 
   return (
-    <UserPageFrame top='8rem' userHeaderBackButton={true}>
+    <UserPageFrame top='8rem'>
       <PageContent>
         <Plain title='리뷰를 확인해보세요'
                subTitle={generateTitle()}
