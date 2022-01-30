@@ -1,14 +1,11 @@
 import React, {ReactElement} from "react";
 import {Home, Person, PersonCircle, Reader} from "react-ionicons";
 import styled from "styled-components";
-import {useRecoilState} from "recoil";
-import {navigationState} from "../../states/Navigation";
-import {useHistory} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 
 export type iconType = "home" | "reader" | "person" | "not-logged-in"
 
 interface Props {
-  index: number
   name: iconType
   height: string
   width: string
@@ -30,21 +27,19 @@ const NavElement = styled.div`
   height: 4rem;
 `
 
-export const NavigationIcon = ({index, name, height, width, to, onClick}: Props): ReactElement => {
-  const [navigation, setNavigationState] = useRecoilState(navigationState);
+export const NavigationIcon = ({name, height, width, to, onClick}: Props): ReactElement => {
   const history = useHistory();
+  const location = useLocation();
 
-  const color: string = navigation.selected == index ? iconColor.selected : iconColor.unselected
+  const color: string = location.pathname == to ? iconColor.selected : iconColor.unselected
 
   const _onClick = () => {
     if (!to) {
       return
     }
-    if (navigation.selected == index) {
+    if (location.pathname == to) {
       return
     }
-    console.log('navigation selected', index) // todo: remove
-    setNavigationState({selected: index})
     history.push(to)
   }
 

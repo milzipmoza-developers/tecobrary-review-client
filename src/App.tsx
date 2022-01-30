@@ -25,8 +25,8 @@ import {useQueryString} from "./hooks";
 function App(): ReactElement {
 
   const {code, status, action} = useQueryString()
-  const [storageDeviceId, setStorageDeviceId] = useState(localStorage.getItem("X-TECOBRARY-DEVICE-ID") || "")
-  const [storageToken, setStorageToken] = useState(localStorage.getItem("X-TECOBRARY-AUTH-TOKEN") || "")
+  const [storageDeviceId] = useState(localStorage.getItem("X-TECOBRARY-DEVICE-ID") || "")
+  const [storageToken] = useState(localStorage.getItem("X-TECOBRARY-AUTH-TOKEN") || "")
   const [user, setUser] = useRecoilState(userState)
 
   const history = useHistory()
@@ -42,7 +42,6 @@ function App(): ReactElement {
     if (!storageDeviceId) {
       try {
         const deviceId = await MemberApi.getDeviceId()
-        setStorageDeviceId(deviceId)
         localStorage.setItem("X-TECOBRARY-DEVICE-ID", deviceId)
         setUser({...user, deviceId, loggedIn: false, token: ''})
       } catch (e) {
@@ -66,6 +65,7 @@ function App(): ReactElement {
         token: storageToken,
         loggedIn: true
       }))
+      _loadLoggedInMemberInfo()
     }
   }
 
@@ -77,12 +77,19 @@ function App(): ReactElement {
       try {
         const memberAuth = await MemberApi.getAuthenticationToken(storageDeviceId, code)
         localStorage.setItem("X-TECOBRARY-AUTH-TOKEN", memberAuth.token)
+        const memberInfo = await MemberApi.getMemberInfo(storageDeviceId, memberAuth.token)
         // load user info
-        setUser({
-          ...user,
+        setUser((oldUser) => ({
+          ...oldUser,
+          userInfo: {
+            no: memberInfo.memberNo,
+            name: memberInfo.memberName,
+            profileImageUrl: memberInfo.profileImageUrl
+          },
           token: memberAuth.token,
           loggedIn: true
-        })
+        }))
+
       } catch (e) {
         if (e.response && e.response.status == 401) {
           localStorage.removeItem("X-TECOBRARY-AUTH-TOKEN")
@@ -92,6 +99,30 @@ function App(): ReactElement {
             loggedIn: false
           })
         }
+      }
+    }
+  }
+
+  const _loadLoggedInMemberInfo = async () => {
+    try {
+      const memberInfo = await MemberApi.getMemberInfo(storageDeviceId, storageToken)
+      setUser((oldUser) => ({
+        ...oldUser,
+        userInfo: {
+          no: memberInfo.memberNo,
+          name: memberInfo.memberName,
+          profileImageUrl: memberInfo.profileImageUrl
+        }
+      }))
+
+    } catch (e) {
+      if (e.response && e.response.status == 401) {
+        localStorage.removeItem("X-TECOBRARY-AUTH-TOKEN")
+        setUser({
+          ...user,
+          token: "",
+          loggedIn: false
+        })
       }
     }
   }

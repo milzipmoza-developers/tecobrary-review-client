@@ -173,7 +173,7 @@ function ReviewAddPage(): ReactElement {
   }
 
   return (
-    <UserPageFrame top='8rem' header={true}>
+    <UserPageFrame top='8rem' userHeaderBackButton={true}>
       <Plain title='도서를 선택해보세요'
              subTitle={selectedBook?.book ? undefined : '다 읽지 않아도 리뷰를 남길 수 있어요'}
              subTitleMargin='0 1rem 6px 1rem'

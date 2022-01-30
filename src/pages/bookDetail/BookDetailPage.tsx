@@ -20,7 +20,7 @@ function BookDetailPage(): ReactElement {
   const [bookDetailReview] = useState<BookDetailReview>(getBookDetailReview(Number.parseInt(bookId!) % 2 === 0 ? 3 : 6))
 
   return (
-    <UserPageFrame header={true}>
+    <UserPageFrame userHeaderBackButton={true}>
       <PageContent style={{marginBottom: '2rem'}}>
         <BookDetailCard {...bookDetail}/>
       </PageContent>

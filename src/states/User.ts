@@ -1,7 +1,9 @@
 import {atom} from "recoil";
 
 interface UserInfo {
+  no: string
   name: string
+  profileImageUrl: string
 }
 
 interface UserState {

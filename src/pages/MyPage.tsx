@@ -4,27 +4,34 @@ import styled from "styled-components";
 import {useRecoilState} from "recoil";
 import {loginModalState} from "../states/LoginModal";
 import {userState} from "../states/User";
+import {useHistory} from "react-router-dom";
 
 function MyPage(): ReactElement {
 
   const [loginModal, setLoginModal] = useRecoilState(loginModalState)
   const [user, setUser] = useRecoilState(userState)
+  const history = useHistory()
 
   const onClick = () => {
     setLoginModal({open: true})
   }
 
   const onClickLogout = () => {
-    setUser({
+    localStorage.removeItem("X-TECOBRARY-AUTH-TOKEN")
+    setUser((oldUser) => ({
+      ...oldUser,
       loggedIn: false,
-      deviceId: '',
       token: '',
       userInfo: null
-    })
+    }));
+  }
+
+  if (!user.loggedIn) {
+    history.push("/")
   }
 
   return (
-    <UserPageFrame>
+    <UserPageFrame userHeaderBackButton={true}>
       {JSON.stringify(user)}
       <LoginButton onClick={onClick}>로그인</LoginButton>
       <LoginOutButton onClick={onClickLogout}>로그아웃</LoginOutButton>

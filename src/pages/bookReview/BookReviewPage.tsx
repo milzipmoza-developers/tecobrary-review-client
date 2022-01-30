@@ -25,7 +25,7 @@ function BookReviewPage(): ReactElement {
   }
 
   return (
-    <UserPageFrame header={true}>
+    <UserPageFrame userHeaderBackButton={true}>
       <PageContent style={{marginTop: '8rem'}}>
         <Plain title='리뷰를 확인해보세요'
                margin='0 1rem 0 1rem'>

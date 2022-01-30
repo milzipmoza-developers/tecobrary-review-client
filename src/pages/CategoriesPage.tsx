@@ -51,7 +51,7 @@ function CategoriesPage(): ReactElement {
   }
 
   return (
-    <UserPageFrame top='4rem' header={true}>
+    <UserPageFrame top='4rem' userHeaderBackButton={true}>
       <PageContent style={{margin: '3rem 1rem 0rem 1rem'}}>
         <Plain title='어떤 카테고리의 도서를 살펴볼까요'>
           <Card backgroundColor='white'

@@ -4,14 +4,14 @@ import styled from "styled-components";
 
 interface Props {
   top?: string
-  header?: boolean
+  useHeaderBackButton?: boolean
   children: ReactNode
 }
 
-export const PageFrame = ({top, header, children}: Props): ReactElement => {
+export const PageFrame = ({top, useHeaderBackButton, children}: Props): ReactElement => {
   return (
     <Wrapper>
-      {header ? <TransparentHeader/> : null}
+      <TransparentHeader useHeaderBackButton={useHeaderBackButton}/>
       <ChildrenWrapper style={{top}}>
         {children}
       </ChildrenWrapper>

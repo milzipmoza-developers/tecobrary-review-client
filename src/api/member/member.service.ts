@@ -1,6 +1,6 @@
 import {AxiosResponse} from "axios";
 import * as Api from "../../admin/api/axios.config";
-import {MemberAuth} from "./member.model";
+import {AuthenticatedMemberInfo, MemberAuth} from "./member.model";
 
 const getLoginUrl = async (uuid: string): Promise<string> => {
   const response = await requestGetLoginUrl(uuid)
@@ -46,8 +46,30 @@ const requestAuthenticationToken = async (deviceId: string, code: string): Promi
     })
 }
 
+const getMemberInfo = async (deviceId: string, token: string): Promise<AuthenticatedMemberInfo> => {
+  const response = await requestAuthenticationMemberInfo(deviceId, token)
+  return {
+    memberNo: response.data.data.memberNo,
+    memberName: response.data.data.memberName,
+    profileImageUrl: response.data.data.profileImageUrl
+  }
+}
+
+const requestAuthenticationMemberInfo = async (deviceId: string, token: string): Promise<AxiosResponse> => {
+  console.log(token)
+  console.log(deviceId)
+  return await Api.server()
+    .get("/api/authentications/user-infos", {
+      headers: {
+        "Authorization": `token ${token}`,
+        "X-TECOBRARY-DEVICE-ID": deviceId
+      }
+    })
+}
+
 export const MemberApi = {
   getLoginUrl,
   getDeviceId,
-  getAuthenticationToken
+  getAuthenticationToken,
+  getMemberInfo
 }
