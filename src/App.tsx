@@ -18,7 +18,7 @@ import AdminTagPage from "./admin/pages/tag/AdminTagPage";
 import AdminBookDetailPage from "./admin/pages/book/AdminBookDetailPage";
 import {useRecoilState} from "recoil";
 import {userState} from "./states/User";
-import {MemberApi} from "./api/member/member.service";
+import {AuthenticationApi} from "./api/authentication/authentication.service";
 import {useQueryString} from "./hooks";
 
 
@@ -41,7 +41,7 @@ function App(): ReactElement {
   const _setDeviceId = async () => {
     if (!storageDeviceId) {
       try {
-        const deviceId = await MemberApi.getDeviceId()
+        const deviceId = await AuthenticationApi.getDeviceId()
         localStorage.setItem("X-TECOBRARY-DEVICE-ID", deviceId)
         setUser({...user, deviceId, loggedIn: false, token: ''})
       } catch (e) {
@@ -75,9 +75,9 @@ function App(): ReactElement {
     }
     if (code && !Array.isArray(code)) {
       try {
-        const memberAuth = await MemberApi.getAuthenticationToken(storageDeviceId, code)
+        const memberAuth = await AuthenticationApi.getToken(storageDeviceId, code)
         localStorage.setItem("X-TECOBRARY-AUTH-TOKEN", memberAuth.token)
-        const memberInfo = await MemberApi.getMemberInfo(storageDeviceId, memberAuth.token)
+        const memberInfo = await AuthenticationApi.getMemberInfo(storageDeviceId, memberAuth.token)
         // load user info
         setUser((oldUser) => ({
           ...oldUser,
@@ -105,7 +105,7 @@ function App(): ReactElement {
 
   const _loadLoggedInMemberInfo = async () => {
     try {
-      const memberInfo = await MemberApi.getMemberInfo(storageDeviceId, storageToken)
+      const memberInfo = await AuthenticationApi.getMemberInfo(storageDeviceId, storageToken)
       setUser((oldUser) => ({
         ...oldUser,
         userInfo: {

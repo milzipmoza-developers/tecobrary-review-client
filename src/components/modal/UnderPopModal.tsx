@@ -1,7 +1,7 @@
 import {ReactElement} from "react";
 import styled from "styled-components";
 import {ReactComponent as GithubLogo} from '../../assets/github_logo.svg';
-import {MemberApi} from "../../api/member/member.service";
+import {AuthenticationApi} from "../../api/authentication/authentication.service";
 import {useRecoilState} from "recoil";
 import {loginModalState} from "../../states/LoginModal";
 import {userState} from "../../states/User";
@@ -23,7 +23,7 @@ const UnderPopModal = (): ReactElement | null => {
 
   const onClick = async () => {
     try {
-      const url = await MemberApi.getLoginUrl(user.deviceId)
+      const url = await AuthenticationApi.getLoginUrl(user.deviceId)
       window.location.href = url
     } catch (e) {
 

@@ -1,4 +1,4 @@
-export interface MemberAuth {
+export interface AuthenticationToken {
   issuedDate: string,
   token: string
 }

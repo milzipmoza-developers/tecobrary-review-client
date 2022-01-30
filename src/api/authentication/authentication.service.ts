@@ -1,6 +1,6 @@
 import {AxiosResponse} from "axios";
 import * as Api from "../../admin/api/axios.config";
-import {AuthenticatedMemberInfo, MemberAuth} from "./member.model";
+import {AuthenticatedMemberInfo, AuthenticationToken} from "./authentication.model";
 
 const getLoginUrl = async (uuid: string): Promise<string> => {
   const response = await requestGetLoginUrl(uuid)
@@ -26,15 +26,15 @@ const requestDeviceId = async (): Promise<AxiosResponse> => {
     .get("/api/device-ids")
 }
 
-const getAuthenticationToken = async (deviceId: string, code: string): Promise<MemberAuth> => {
-  const response = await requestAuthenticationToken(deviceId, code)
+const getToken = async (deviceId: string, code: string): Promise<AuthenticationToken> => {
+  const response = await requestToken(deviceId, code)
   return {
     issuedDate: response.data.data.issuedDate,
     token: response.data.data.token
   }
 }
 
-const requestAuthenticationToken = async (deviceId: string, code: string): Promise<AxiosResponse> => {
+const requestToken = async (deviceId: string, code: string): Promise<AxiosResponse> => {
   return await Api.server()
     .get("/api/authenticates", {
       headers: {
@@ -67,9 +67,9 @@ const requestAuthenticationMemberInfo = async (deviceId: string, token: string):
     })
 }
 
-export const MemberApi = {
+export const AuthenticationApi = {
   getLoginUrl,
   getDeviceId,
-  getAuthenticationToken,
+  getToken,
   getMemberInfo
 }
