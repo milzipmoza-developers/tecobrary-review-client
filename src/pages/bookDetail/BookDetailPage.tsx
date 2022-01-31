@@ -20,6 +20,7 @@ function BookDetailPage(): ReactElement {
   const [book, setBook] = useState<DisplayBookDetail>()
   const [mark, setMark] = useState<DisplayBookMark>()
   const [tags, setTags] = useState<DisplayBookTag[]>()
+  const [reviews, setReviews] = useState([])
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [bookDetail] = useState<BookDetail>(getBookDetail.get(1)!)
@@ -43,9 +44,14 @@ function BookDetailPage(): ReactElement {
     }
   }
 
-  const bookCard = book ? {
-    ...book,
-  } : {...bookDetail}
+  const bookCard = book ? {...book} : {...bookDetail}
+
+  const reviewContentTitle = () => {
+    if (reviews.length == 0) {
+      return "아직 등록된 리뷰가 없어요"
+    }
+    return "리뷰를 확인해보세요"
+  }
 
   return (
     <UserPageFrame header={{useProfileButton: true, useBackButton: true}}>
@@ -59,7 +65,7 @@ function BookDetailPage(): ReactElement {
           }))}/>
       </PageContent>
       <PageContent style={{marginBottom: '2rem', marginTop: '15rem'}}>
-        <Plain title='리뷰를 확인해보세요' margin='0 1rem 0 1rem'>
+        <Plain title={reviewContentTitle()} margin='0 1rem 0 1rem'>
           <BookReviewCard isbn={isbn}
                           slice={3}
                           button={true}

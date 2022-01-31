@@ -17,11 +17,17 @@ function BookReviewCard({isbn, slice, counts, button, reviews}: Props): ReactEle
 
   const reviews2 = slice ? reviews.slice(0, 3) : reviews
 
-  return (
-    <Card backgroundColor='white'
-          buttonText={counts && counts > 3 ? '더보기' : undefined}
-          buttonTo={button ? `/books/${isbn}/reviews` : undefined}
-          boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
+  const BookReviewList = () => {
+
+    if (reviews.length == 0) {
+      return (
+        <EmptyReviewWrapper>
+          <div>첫 번째 리뷰를 작성해보시겠어요 ?</div>
+        </EmptyReviewWrapper>
+      )
+    }
+
+    return (<>
       {reviews2.map((bookReview: BookReview, index: number) => (
         <Wrapper key={index}>
           <ProfileWrapper>
@@ -39,6 +45,15 @@ function BookReviewCard({isbn, slice, counts, button, reviews}: Props): ReactEle
           </ReviewWrapper>
         </Wrapper>
       ))}
+    </>)
+  }
+
+  return (
+    <Card backgroundColor='white'
+          buttonText={counts && counts > 3 ? '더보기' : undefined}
+          buttonTo={button ? `/books/${isbn}/reviews` : undefined}
+          boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
+      <BookReviewList/>
     </Card>
   )
 }
@@ -85,8 +100,11 @@ const SecondLine = styled.div`
   margin-bottom: 0.5rem;
 `
 
-const LoadMoreReviewButton = styled.div`
-  width: 100%;
-  height: 4rem;
-  background-color: black;
+const EmptyReviewWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 `
