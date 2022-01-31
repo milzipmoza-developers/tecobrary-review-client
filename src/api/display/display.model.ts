@@ -1,11 +1,4 @@
-export interface DisplayMain {
-  version: string
-  news: DisplayMainNewBookSection
-  interests: []
-  categories: DisplayMainCategory[]
-}
-
-interface DisplayMainNewBookSection {
+export interface DisplayMainNewBookSection {
   updateDate: string
   books: DisplayMainNewBook[]
 }

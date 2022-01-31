@@ -1,24 +1,29 @@
 import {AxiosResponse} from "axios";
 import * as Api from "../../admin/api/axios.config";
-import {DisplayBook, DisplayMain} from "./display.model";
+import {DisplayBook, DisplayMainCategory, DisplayMainNewBookSection} from "./display.model";
 
-const get = async (): Promise<DisplayMain> => {
-  const response = await requestMainDisplay()
-  const {version, news, interests, categories} = response.data.data
+const getNewBooks = async (): Promise<DisplayMainNewBookSection> => {
+  const response = await requestMainNewBooks()
+  const {updateDate, books} = response.data.data
   return {
-    version: version,
-    news: {
-      updateDate: news.updateDate,
-      books: news.books
-    },
-    interests: [],
-    categories: categories
+    updateDate,
+    books
   }
 }
 
-const requestMainDisplay = async (): Promise<AxiosResponse> => {
+const requestMainNewBooks = async (): Promise<AxiosResponse> => {
   return await Api.server()
-    .get("/api/main")
+    .get("/api/display/main/new-books")
+}
+
+const getRandomCategories = async (): Promise<DisplayMainCategory[]> => {
+  const response = await requestRandomCategories()
+  return response.data.data
+}
+
+const requestRandomCategories = async (): Promise<AxiosResponse> => {
+  return await Api.server()
+    .get("/api/display/main/categories")
 }
 
 const getBook = async (isbn: string, deviceId: string, token: string): Promise<DisplayBook> => {
@@ -48,6 +53,7 @@ const requestDisplayBook = async (isbn: string, deviceId: string, token: string)
 }
 
 export const DisplayApi = {
-  get,
+  getNewBooks,
+  getRandomCategories,
   getBook
 }

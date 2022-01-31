@@ -47,9 +47,11 @@ function HomePage(): ReactElement {
 
   const _init = async () => {
     try {
-      const display = await DisplayApi.get()
-      setCategories(display.categories)
-      setBooks(display.news.books)
+      const newBooks = await DisplayApi.getNewBooks()
+      setBooks(newBooks.books)
+
+      const displayCategories = await DisplayApi.getRandomCategories()
+      setCategories(displayCategories)
     } catch (e) {
       if (e.response) {
         setPop(SERVER_ERROR_DEFAULT)
