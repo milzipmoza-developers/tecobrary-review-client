@@ -2,10 +2,11 @@ import {ReactElement} from "react";
 import styled from "styled-components";
 import {ReactComponent as GithubLogo} from '../../assets/github_logo.svg';
 import {AuthenticationApi} from "../../api/authentication/authentication.service";
-import {useRecoilState, useRecoilValue} from "recoil";
+import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {loginModalState} from "../../states/LoginModal";
 import {userState} from "../../states/User";
 import {useLockBodyScroll} from "../../hooks";
+import {NETWORK_ERROR_DEFAULT, popState, SERVER_ERROR_DEFAULT} from "../../states/Pop";
 
 const box_active = {
   transition: "opacity 300ms",
@@ -21,14 +22,17 @@ const UnderPopModal = (): ReactElement | null => {
 
   const user = useRecoilValue(userState)
   const [loginModal, setLoginModal] = useRecoilState(loginModalState)
+  const setPop = useSetRecoilState(popState)
 
   const onClick = async () => {
     try {
-      const url = await AuthenticationApi.getLoginUrl(user.deviceId)
-      window.location.href = url
+      window.location.href = await AuthenticationApi.getLoginUrl(user.deviceId)
     } catch (e) {
-
-      console.error("error")
+      if (e.response) {
+        setPop(SERVER_ERROR_DEFAULT)
+        return
+      }
+      setPop(NETWORK_ERROR_DEFAULT)
     }
   }
 

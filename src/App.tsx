@@ -119,6 +119,7 @@ function App(): ReactElement {
           return
         }
 
+        _removeLoginInfo()
         _popAuthTokenExpired("인증 도중 문제가 발생했어요. 다시 로그인해주세요.", "ERROR")
       }
     }
@@ -145,6 +146,7 @@ function App(): ReactElement {
         return
       }
 
+      _removeLoginInfo()
       _popAuthTokenExpired("인증 도중 문제가 발생했어요. 다시 로그인해주세요.", "ERROR")
     }
   }

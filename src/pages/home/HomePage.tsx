@@ -9,6 +9,8 @@ import BookCategories from "./category/BookCategories";
 import {UserPageFrame} from "../../components/page/UserPageFrame";
 import {DisplayMainCategory, DisplayMainNewBook} from "../../api/display/display.model";
 import {DisplayApi} from "../../api/display/display.service";
+import {NETWORK_ERROR_DEFAULT, popState, SERVER_ERROR_DEFAULT} from "../../states/Pop";
+import {useSetRecoilState} from "recoil";
 
 function categoryMapper(displayCategories?: DisplayMainCategory[]): Category[] {
   if (!displayCategories) {
@@ -37,6 +39,7 @@ function HomePage(): ReactElement {
 
   const [books, setBooks] = useState<DisplayMainNewBook[]>()
   const [categories, setCategories] = useState<DisplayMainCategory[]>()
+  const setPop = useSetRecoilState(popState)
 
   useEffect(() => {
     _init()
@@ -48,7 +51,11 @@ function HomePage(): ReactElement {
       setCategories(display.categories)
       setBooks(display.news.books)
     } catch (e) {
-      console.log(e)
+      if (e.response) {
+        setPop(SERVER_ERROR_DEFAULT)
+        return
+      }
+      setPop(NETWORK_ERROR_DEFAULT)
     }
   }
 
