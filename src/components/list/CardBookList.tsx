@@ -7,7 +7,7 @@ import {CountedIconBadge} from "../badges/CountedIconBadge";
 interface Props {
   whenEmpty?: ReactElement
   iconBadge?: ReactElement[]
-  itemOnClick?: (id: number) => void
+  itemOnClick?: (id: string) => void
   books: Book[]
 }
 

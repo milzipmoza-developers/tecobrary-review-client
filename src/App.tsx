@@ -43,7 +43,7 @@ function App(): ReactElement {
     initUserState()
     initAuthentication()
     initDeviceId()
-    initQueryParams()
+    // initQueryParams()
   }, [])
 
   const initUserState = () => {
@@ -155,10 +155,6 @@ function App(): ReactElement {
         })
       }
     }
-  }
-
-  const initQueryParams = () => {
-    history.replace({search: undefined})
   }
 
   return (

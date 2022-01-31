@@ -53,7 +53,7 @@ function MyPage(): ReactElement {
   }
 
   return (
-    <UserPageFrame top='8rem'>
+    <UserPageFrame>
       <PageContent style={{margin: '3rem 1rem 3rem 1rem'}}>
         <Card backgroundColor='white'
               boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>

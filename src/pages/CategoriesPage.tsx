@@ -9,12 +9,14 @@ import {Category} from "../api/category/category.model";
 import {Divider} from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
 import CategoryListElement from "../components/list/CategoryListElement";
+import {useSetRecoilState} from "recoil";
+import {NETWORK_ERROR_DEFAULT, popState} from "../states/Pop";
+import {RequestAction, requestTemplate} from "../api";
 
 function CategoriesPage(): ReactElement {
 
   const size = 10
   const [page, setPage] = useState<number>(0)
-
   const [pageData, setPageData] = useState<PageData<Category>>({
     total: 0,
     size: 0,
@@ -23,35 +25,49 @@ function CategoriesPage(): ReactElement {
     items: []
   })
 
+  const setPop = useSetRecoilState(popState)
+
   useEffect(() => {
-    fetchCategories();
+    initPageData();
   }, [])
 
-  const fetchCategories = async () => {
-    try {
+  const initPageData = async () => requestTemplate(pageRequest)
+
+  const pageRequest: RequestAction = {
+    doOnSuccess: async () => {
       const pageData = await CategoryApi.get({page, size})
       setPageData({...pageData})
       setPage(page + 1)
-    } catch (e) {
-      // todo: error handle
+    },
+    doOn400Errors: (e) => {
+      setPop({message: e.response.data.message, open: true, duration: 3000, color: "WARN"})
+    },
+    doErrors: (e) => {
+      setPop(NETWORK_ERROR_DEFAULT)
     }
   }
 
-  const fetchMoreCategories = async () => {
-    try {
+  const loadMore = async () => requestTemplate(loadMorePageRequest)
+
+  const loadMorePageRequest: RequestAction = {
+    doOnSuccess: async () => {
       const newPageData = await CategoryApi.get({page, size})
       setPageData({
         ...newPageData,
         items: pageData.items.concat(newPageData.items)
       })
       setPage(page + 1)
-    } catch (e) {
-      // todo: error handle
+    },
+    doOn400Errors: (e) => {
+      setPop({message: e.response.data.message, open: true, duration: 3000, color: "WARN"})
+    },
+    doErrors: (e) => {
+      setPop(NETWORK_ERROR_DEFAULT)
     }
   }
 
   return (
-    <UserPageFrame top='4rem' header={{useProfileButton: true, useBackButton: true}}>
+    <UserPageFrame header={{useProfileButton: true, useBackButton: true}}>
       <PageContent style={{margin: '3rem 1rem 0rem 1rem'}}>
         <Plain title='어떤 카테고리의 도서를 살펴볼까요'>
           <Card backgroundColor='white'
@@ -59,7 +75,7 @@ function CategoriesPage(): ReactElement {
             <Divider/>
             <InfiniteScroll
               dataLength={pageData.items.length} //This is important field to render the next data
-              next={fetchMoreCategories}
+              next={loadMore}
               hasMore={!pageData.isLast}
               loader={<h4>Loading...</h4>}>
               {pageData.items.map((item, index) => (

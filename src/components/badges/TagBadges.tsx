@@ -15,7 +15,7 @@ export const TagBadges = ({size, maxLength, bold, tags}: Props): ReactElement =>
     {tags.map((it: Tag, index: number) => {
       if (maxLength && index > maxLength - 1) return null
       return (<CategoryBadge key={index}
-                             backgroundColor={it.color}
+                             backgroundColor={it.colorCode}
                              size={size}
                              fontWeight={bold ? 'bold' : undefined}>{it.name}</CategoryBadge>)
     })}

@@ -21,7 +21,7 @@ export const UserPageFrame = ({top, header, children}: Props): ReactElement => {
 
   return (
     <Background className='background'>
-      <Wrapper id='user-page-frame'>
+      <Wrapper id='user-page-frame-wrapper'>
         <ScrollToTop/>
         <PageFrame top={top}
                    header={header ? {...header} : {useBackButton: true, useProfileButton: false}}>{children}</PageFrame>

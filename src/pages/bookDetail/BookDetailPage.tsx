@@ -70,10 +70,7 @@ function BookDetailPage(): ReactElement {
         <BookDetailCard
           {...bookCard}
           marks={mark ? {...mark} : undefined}
-          tags={tags?.map(it => ({
-            name: it.name,
-            color: it.colorCode
-          }))}/>
+          tags={tags?.map(it => ({...it}))}/>
       </PageContent>
       <PageContent style={{marginBottom: '2rem', marginTop: '15rem'}}>
         <Plain title={reviewContentTitle()} margin='0 1rem 0 1rem'>

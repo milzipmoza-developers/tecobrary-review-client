@@ -68,7 +68,7 @@ function HomePage(): ReactElement {
   }
 
   return (
-    <UserPageFrame top='8rem' header={{useProfileButton: true, useBackButton: false}}>
+    <UserPageFrame header={{useProfileButton: true, useBackButton: false}}>
       <SpannedCard title='새로운 도서를 살펴보세요'>
         <HomeNewBookCarousel books={bookMapper(books)}/>
       </SpannedCard>

@@ -34,8 +34,8 @@ export function requestTemplate(request: RequestAction): void {
 
 export interface RequestAction {
   doOnSuccess: () => void,
-  doOnAuthError?: (e: Error) => void,
-  doOn400Errors?: (e: Error) => void,
-  doOn500Errors?: (e: Error) => void,
-  doErrors?: (e: Error) => void
+  doOnAuthError?: (e: any) => void,
+  doOn400Errors?: (e: any) => void,
+  doOn500Errors?: (e: any) => void,
+  doErrors?: (e: any) => void
 }

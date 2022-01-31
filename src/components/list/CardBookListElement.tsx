@@ -5,38 +5,40 @@ import {Tag} from "../../interfaces";
 import {useHistory} from "react-router-dom";
 
 interface Props {
-  id: number
+  isbn: string
   imageUrl: string
   title: string
   author: string
-  categories?: Tag[]
+  tags?: Tag[]
   iconBadge?: ReactElement
-  itemOnClick?: (id: number) => void
+  itemOnClick?: (id: string) => void
 }
 
-export const CardBookListElement = ({
-                                      id,
-                                      imageUrl,
-                                      title,
-                                      author,
-                                      categories,
-                                      iconBadge,
-                                      itemOnClick
-                                    }: Props): ReactElement => {
+export const CardBookListElement = (props: Props): ReactElement => {
+  const {
+    isbn,
+    imageUrl,
+    title,
+    author,
+    tags,
+    iconBadge,
+    itemOnClick
+  } = props
+
   const history = useHistory()
 
   const onClick = () => {
-    history.push(`/books/${id}`)
+    history.push(`/books/${isbn}`)
   }
 
   return (
-    <Element onClick={itemOnClick ? () => itemOnClick(id) : onClick}>
+    <Element onClick={itemOnClick ? () => itemOnClick(isbn) : onClick}>
       <ElementImage src={imageUrl}/>
       <ElementContent>
         <ElementTitle>{title}</ElementTitle>
         <ElementLine>
-          {categories
-            ? <TagBadges tags={categories} size='small' maxLength={3}/>
+          {tags
+            ? <TagBadges tags={tags} size='small' maxLength={3}/>
             : null}
           <ElementAuthor>{author}</ElementAuthor>
         </ElementLine>

@@ -22,7 +22,7 @@ function BookReviewCard({isbn, slice, counts, button, reviews}: Props): ReactEle
     if (reviews.length == 0) {
       return (
         <EmptyReviewWrapper>
-          <div>첫 번째 리뷰를 작성해보시겠어요 ?</div>
+          <div>첫 번째 리뷰를 작성해보아요</div>
         </EmptyReviewWrapper>
       )
     }

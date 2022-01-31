@@ -17,9 +17,9 @@ export const PageFrame = ({top, header, children}: Props): ReactElement => {
   const {useBackButton, useProfileButton} = header
 
   return (
-    <Wrapper>
+    <Wrapper id="page-frame">
       <TransparentHeader useBackButton={useBackButton} useProfileButton={useProfileButton}/>
-      <ChildrenWrapper style={{top}}>
+      <ChildrenWrapper>
         {children}
       </ChildrenWrapper>
     </Wrapper>
@@ -32,11 +32,12 @@ const Wrapper = styled.div`
   min-height: 85vh;
   background-color: #ecf0f1;
   position: relative;
-  padding-bottom: 10rem;
+  padding-top: 14vh;
+  padding-bottom: 5rem;
   display: flex;
   flex-direction: column;
 `
 
 const ChildrenWrapper = styled.div`
-  position: relative;
+  //position: fixed;
 `

@@ -1,6 +1,6 @@
 export interface Tag {
   name: string
-  color: string
+  colorCode: string
 }
 
 export interface Category {
@@ -22,11 +22,11 @@ export interface InterestedBooks {
 }
 
 export interface InternalSearchBook extends Book {
-  id: number
+  isbn: string
   imageUrl: string
   title: string
   author: string
-  categories: Tag[]
+  tags: Tag[]
 }
 
 export interface NaverSearchBook {
@@ -37,28 +37,28 @@ export interface NaverSearchBook {
 }
 
 export interface Book {
-  id: number
+  isbn: string
   imageUrl: string
   title: string
   author: string
-  categories?: Tag[]
+  tags?: Tag[]
 }
 
 export interface InterestedBook extends Book {
-  id: number
+  isbn: string
   imageUrl: string
   title: string
   author: string
-  categories: Tag[]
+  tags: Tag[]
   counts: number
 }
 
 export interface ListBook extends Book {
-  id: number
+  isbn: string
   imageUrl: string
   title: string
   author: string
-  categories: Tag[]
+  tags: Tag[]
   countDetail: BookInterestCount
 }
 

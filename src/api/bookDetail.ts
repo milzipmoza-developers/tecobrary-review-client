@@ -15,11 +15,11 @@ export const getBookDetail: Map<number, BookDetail> = new Map([
     categories: [
       {
         name: 'IT',
-        color: getRandomColor()
+        colorCode: getRandomColor()
       },
       {
         name: '쉬움',
-        color: getRandomColor()
+        colorCode: getRandomColor()
       }
     ],
     like: {
@@ -46,19 +46,19 @@ export const getBookDetail: Map<number, BookDetail> = new Map([
     categories: [
       {
         name: 'IT',
-        color: getRandomColor()
+        colorCode: getRandomColor()
       },
       {
         name: '입문서',
-        color: getRandomColor()
+        colorCode: getRandomColor()
       },
       {
         name: 'React',
-        color: getRandomColor()
+        colorCode: getRandomColor()
       },
       {
         name: 'javascript',
-        color: getRandomColor()
+        colorCode: getRandomColor()
       }
     ],
     like: {

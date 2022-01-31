@@ -106,7 +106,7 @@ function ReviewAddPage(): ReactElement {
     })
   }
 
-  const onItemClick = (id: number) => {
+  const onItemClick = (id: string) => {
     const searchBook = getSearchBook(id);
     if (!searchBook) {
       throw Error('선택한 책이 존재하지 않습니다.')
@@ -173,18 +173,18 @@ function ReviewAddPage(): ReactElement {
   }
 
   return (
-    <UserPageFrame top='8rem' header={{useProfileButton: true, useBackButton: true}}>
+    <UserPageFrame header={{useProfileButton: true, useBackButton: true}}>
       <Plain title='도서를 선택해보세요'
              subTitle={selectedBook?.book ? undefined : '다 읽지 않아도 리뷰를 남길 수 있어요'}
              subTitleMargin='0 1rem 6px 1rem'
              margin='0 1rem 2rem 1rem'>
         {selectedBook?.book
           ? <Card backgroundColor='white'>
-            <CardBookListElement id={selectedBook.book.id}
+            <CardBookListElement isbn={selectedBook.book.isbn}
                                  imageUrl={selectedBook.book.imageUrl}
                                  title={selectedBook.book.title}
                                  author={selectedBook.book.author}
-                                 categories={selectedBook.book.categories}/>
+                                 tags={selectedBook.book.tags}/>
             <SelectInitButton onClick={onInitSelectBook}>다시 고르기</SelectInitButton>
           </Card>
           : <ExpandableCard backgroundColor='white'
