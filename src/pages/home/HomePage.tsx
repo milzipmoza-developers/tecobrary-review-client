@@ -11,6 +11,7 @@ import {DisplayMainCategory, DisplayMainNewBook} from "../../api/display/display
 import {DisplayApi} from "../../api/display/display.service";
 import {NETWORK_ERROR_DEFAULT, popState, SERVER_ERROR_DEFAULT} from "../../states/Pop";
 import {useSetRecoilState} from "recoil";
+import {RequestAction, requestTemplate} from "../../api";
 
 function categoryMapper(displayCategories?: DisplayMainCategory[]): Category[] {
   if (!displayCategories) {
@@ -42,25 +43,29 @@ function HomePage(): ReactElement {
   const setPop = useSetRecoilState(popState)
 
   useEffect(() => {
-    _init()
+    _initPageData()
   }, [])
 
-  const _init = async () => {
-    try {
+  const _initPageData = async () => requestTemplate(displayMainRequest)
+
+  const displayMainRequest: RequestAction = {
+    doOnSuccess: async () => {
       const newBooks = await DisplayApi.getNewBooks()
       setBooks(newBooks.books)
 
       const displayCategories = await DisplayApi.getRandomCategories()
       setCategories(displayCategories)
-    } catch (e) {
-      if (e.response) {
-        setPop(SERVER_ERROR_DEFAULT)
-        return
-      }
+    },
+    doOn400Errors: (e) => {
+      setPop(SERVER_ERROR_DEFAULT)
+    },
+    doOn500Errors: (e) => {
+      setPop(SERVER_ERROR_DEFAULT)
+    },
+    doErrors: (e) => {
       setPop(NETWORK_ERROR_DEFAULT)
     }
   }
-
 
   return (
     <UserPageFrame top='8rem' header={{useProfileButton: true, useBackButton: false}}>

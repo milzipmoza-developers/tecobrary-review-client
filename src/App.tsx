@@ -21,11 +21,17 @@ import {userState} from "./states/User";
 import {AuthenticationApi} from "./api/authentication/authentication.service";
 import {useQueryString} from "./hooks";
 import {PopColor, popState} from "./states/Pop";
+import {RequestAction, requestTemplate} from "./api";
 
+interface QueryString {
+  code?: string
+  status?: string
+  action?: string
+}
 
 function App(): ReactElement {
 
-  const {code, status, action} = useQueryString()
+  const {code, status, action}: QueryString = useQueryString()
   const [storageDeviceId] = useState(localStorage.getItem("X-TECOBRARY-DEVICE-ID") || "")
   const [storageToken] = useState(localStorage.getItem("X-TECOBRARY-AUTH-TOKEN") || "")
   const [user, setUser] = useRecoilState(userState)
@@ -34,11 +40,56 @@ function App(): ReactElement {
   const history = useHistory()
 
   useEffect(() => {
-    _initUserState()
-    _processAuthentication()
-    _setDeviceId()
-    _removeQueryParams()
+    initUserState()
+    initAuthentication()
+    initDeviceId()
+    initQueryParams()
   }, [])
+
+  const initUserState = () => {
+    if (storageDeviceId) {
+      setUser((oldUser) => ({
+        ...oldUser,
+        deviceId: storageDeviceId,
+      }))
+    }
+
+    if (storageToken) {
+      setUser((oldUser) => ({
+        ...oldUser,
+        token: storageToken,
+        loggedIn: true
+      }))
+      _requestMemberInfo()
+    }
+  }
+
+  const _requestMemberInfo = async () => {
+    requestTemplate(loginMemberInfoRequestAction)
+  }
+
+  const loginMemberInfoRequestAction: RequestAction = {
+    doOnSuccess: async () => {
+      const memberInfo = await AuthenticationApi.getMemberInfo(storageDeviceId, storageToken)
+      setUser((oldUser) => ({
+        ...oldUser,
+        userInfo: {
+          no: memberInfo.memberNo,
+          name: memberInfo.memberName,
+          profileImageUrl: memberInfo.profileImageUrl
+        }
+      }))
+      setPop({message: `${memberInfo.memberName} 님 반갑습니다 😀`, open: true, duration: 3000, color: "INFO"})
+    },
+    doOnAuthError: (e) => {
+      _removeLoginInfo()
+      _removeExpiredToken("인증 정보가 만료되었어요. 다시 로그인해주세요.", "WARN")
+    },
+    doErrors: (e) => {
+      _removeLoginInfo()
+      _removeExpiredToken("인증 도중 문제가 발생했어요. 다시 로그인해주세요.", "ERROR")
+    }
+  }
 
   const _removeLoginInfo = () => {
     setUser((oldValue) => ({
@@ -48,16 +99,47 @@ function App(): ReactElement {
     }))
   }
 
-  const _popAuthTokenExpired = (message: string, color: PopColor) => {
+  const _removeExpiredToken = (message: string, color: PopColor) => {
     localStorage.removeItem("X-TECOBRARY-AUTH-TOKEN")
     setPop({message: message, open: true, duration: 3000, color: color})
   }
 
-  const _removeQueryParams = () => {
-    history.replace({search: undefined})
+  const initAuthentication = async () => {
+    if (storageToken || storageToken.length != 0) {
+      return
+    }
+    if (code && !Array.isArray(code)) {
+      requestTemplate(authenticationRequest)
+    }
   }
 
-  const _setDeviceId = async () => {
+  const authenticationRequest: RequestAction = {
+    doOnSuccess: async () => {
+      const memberAuth = await AuthenticationApi.getToken(storageDeviceId, code!)
+      const memberInfo = await AuthenticationApi.getMemberInfo(storageDeviceId, memberAuth.token)
+      localStorage.setItem("X-TECOBRARY-AUTH-TOKEN", memberAuth.token)
+      setUser((oldUser) => ({
+        ...oldUser,
+        userInfo: {
+          no: memberInfo.memberNo,
+          name: memberInfo.memberName,
+          profileImageUrl: memberInfo.profileImageUrl
+        },
+        token: memberAuth.token,
+        loggedIn: true
+      }))
+    },
+    doOnAuthError: (e) => {
+      _removeLoginInfo()
+      _removeExpiredToken("인증 정보가 만료되었어요. 다시 로그인해주세요.", "WARN")
+    },
+    doErrors: (e) => {
+      _removeLoginInfo()
+      _removeExpiredToken("인증 도중 문제가 발생했어요. 다시 로그인해주세요.", "ERROR")
+    }
+  }
+
+  const initDeviceId = async () => {
     if (!storageDeviceId) {
       try {
         const deviceId = await AuthenticationApi.getDeviceId()
@@ -75,80 +157,8 @@ function App(): ReactElement {
     }
   }
 
-  const _initUserState = () => {
-    if (storageDeviceId) {
-      setUser((oldUser) => ({
-        ...oldUser,
-        deviceId: storageDeviceId,
-      }))
-    }
-
-    if (storageToken) {
-      setUser((oldUser) => ({
-        ...oldUser,
-        token: storageToken,
-        loggedIn: true
-      }))
-      _loadLoggedInMemberInfo()
-    }
-  }
-
-  const _processAuthentication = async () => {
-    if (storageToken || storageToken.length != 0) {
-      return
-    }
-    if (code && !Array.isArray(code)) {
-      try {
-        const memberAuth = await AuthenticationApi.getToken(storageDeviceId, code)
-        const memberInfo = await AuthenticationApi.getMemberInfo(storageDeviceId, memberAuth.token)
-        localStorage.setItem("X-TECOBRARY-AUTH-TOKEN", memberAuth.token)
-        setUser((oldUser) => ({
-          ...oldUser,
-          userInfo: {
-            no: memberInfo.memberNo,
-            name: memberInfo.memberName,
-            profileImageUrl: memberInfo.profileImageUrl
-          },
-          token: memberAuth.token,
-          loggedIn: true
-        }))
-      } catch (e) {
-        if (e.response && e.response.status == 401) {
-          _removeLoginInfo()
-          _popAuthTokenExpired("인증 정보가 만료되었어요. 다시 로그인해주세요.", "WARN")
-          return
-        }
-
-        _removeLoginInfo()
-        _popAuthTokenExpired("인증 도중 문제가 발생했어요. 다시 로그인해주세요.", "ERROR")
-      }
-    }
-  }
-
-  const _loadLoggedInMemberInfo = async () => {
-    try {
-      const memberInfo = await AuthenticationApi.getMemberInfo(storageDeviceId, storageToken)
-      setUser((oldUser) => ({
-        ...oldUser,
-        userInfo: {
-          no: memberInfo.memberNo,
-          name: memberInfo.memberName,
-          profileImageUrl: memberInfo.profileImageUrl
-        }
-      }))
-      setPop({message: `${memberInfo.memberName} 님 반갑습니다 😀`, open: true, duration: 3000, color: "INFO"})
-      return
-
-    } catch (e) {
-      if (e.response && e.response.status == 401) {
-        _removeLoginInfo()
-        _popAuthTokenExpired("인증 정보가 만료되었어요. 다시 로그인해주세요.", "WARN")
-        return
-      }
-
-      _removeLoginInfo()
-      _popAuthTokenExpired("인증 도중 문제가 발생했어요. 다시 로그인해주세요.", "ERROR")
-    }
+  const initQueryParams = () => {
+    history.replace({search: undefined})
   }
 
   return (

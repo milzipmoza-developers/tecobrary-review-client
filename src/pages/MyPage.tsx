@@ -8,6 +8,7 @@ import {PageContent} from "../components/page/PageContent";
 import Card from "../components/card/Card";
 import {MemberMyInfo} from "../api/member/member.model";
 import {MemberApi} from "../api/member/member.service";
+import {RequestAction, requestTemplate} from "../api";
 
 function MyPage(): ReactElement {
 
@@ -16,17 +17,23 @@ function MyPage(): ReactElement {
   const [myInfo, setMyInfo] = useState<MemberMyInfo>()
 
   useEffect(() => {
-    _init()
+    _initPageData()
   }, [])
 
-  const _init = async () => {
-    try {
+  const _initPageData = async () => requestTemplate(myPageRequest)
+
+  const myPageRequest: RequestAction = {
+    doOnSuccess: async () => {
       const memberMyInfo = await MemberApi.getMyInfo(user.token, user.deviceId);
       setMyInfo(memberMyInfo)
-    } catch (e) {
-      if (e.response && (400 <= e.response.status && e.response.status < 500)) {
-        console.error(e)
-      }
+    },
+    doOn400Errors: (e) => {
+      console.error(e)
+    },
+    doOn500Errors: (e) => {
+      console.error(e)
+    },
+    doErrors: (e) => {
       console.error(e)
     }
   }
