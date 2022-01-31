@@ -56,8 +56,6 @@ const getMemberInfo = async (deviceId: string, token: string): Promise<Authentic
 }
 
 const requestAuthenticationMemberInfo = async (deviceId: string, token: string): Promise<AxiosResponse> => {
-  console.log(token)
-  console.log(deviceId)
   return await Api.server()
     .get("/api/authentications/user-infos", {
       headers: {

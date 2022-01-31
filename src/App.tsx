@@ -16,10 +16,11 @@ import AdminBookPage from "./admin/pages/book/AdminBookPage";
 import AdminNewArrivalPage from "./admin/pages/arrival/AdminNewArrivalPage";
 import AdminTagPage from "./admin/pages/tag/AdminTagPage";
 import AdminBookDetailPage from "./admin/pages/book/AdminBookDetailPage";
-import {useRecoilState} from "recoil";
+import {useRecoilState, useSetRecoilState} from "recoil";
 import {userState} from "./states/User";
 import {AuthenticationApi} from "./api/authentication/authentication.service";
 import {useQueryString} from "./hooks";
+import {PopColor, popState} from "./states/Pop";
 
 
 function App(): ReactElement {
@@ -28,6 +29,7 @@ function App(): ReactElement {
   const [storageDeviceId] = useState(localStorage.getItem("X-TECOBRARY-DEVICE-ID") || "")
   const [storageToken] = useState(localStorage.getItem("X-TECOBRARY-AUTH-TOKEN") || "")
   const [user, setUser] = useRecoilState(userState)
+  const setPop = useSetRecoilState(popState)
 
   const history = useHistory()
 
@@ -38,6 +40,23 @@ function App(): ReactElement {
     _removeQueryParams()
   }, [])
 
+  const _removeLoginInfo = () => {
+    setUser((oldValue) => ({
+      ...oldValue,
+      token: "",
+      loggedIn: false
+    }))
+  }
+
+  const _popAuthTokenExpired = (message: string, color: PopColor) => {
+    localStorage.removeItem("X-TECOBRARY-AUTH-TOKEN")
+    setPop({message: message, open: true, duration: 3000, color: color})
+  }
+
+  const _removeQueryParams = () => {
+    history.replace({search: undefined})
+  }
+
   const _setDeviceId = async () => {
     if (!storageDeviceId) {
       try {
@@ -45,8 +64,13 @@ function App(): ReactElement {
         localStorage.setItem("X-TECOBRARY-DEVICE-ID", deviceId)
         setUser({...user, deviceId, loggedIn: false, token: ''})
       } catch (e) {
-        // todo: error handling
-        console.log('error')
+        setPop({
+          message: `새로고침이 필요해요`,
+          open: true,
+          duration: 0,
+          color: "WARN",
+          actionButton: {name: "새로고침", onClick: () => history.go(0)}
+        })
       }
     }
   }
@@ -76,9 +100,8 @@ function App(): ReactElement {
     if (code && !Array.isArray(code)) {
       try {
         const memberAuth = await AuthenticationApi.getToken(storageDeviceId, code)
-        localStorage.setItem("X-TECOBRARY-AUTH-TOKEN", memberAuth.token)
         const memberInfo = await AuthenticationApi.getMemberInfo(storageDeviceId, memberAuth.token)
-        // load user info
+        localStorage.setItem("X-TECOBRARY-AUTH-TOKEN", memberAuth.token)
         setUser((oldUser) => ({
           ...oldUser,
           userInfo: {
@@ -89,16 +112,14 @@ function App(): ReactElement {
           token: memberAuth.token,
           loggedIn: true
         }))
-
       } catch (e) {
         if (e.response && e.response.status == 401) {
-          localStorage.removeItem("X-TECOBRARY-AUTH-TOKEN")
-          setUser({
-            ...user,
-            token: "",
-            loggedIn: false
-          })
+          _removeLoginInfo()
+          _popAuthTokenExpired("인증 정보가 만료되었어요. 다시 로그인해주세요.", "WARN")
+          return
         }
+
+        _popAuthTokenExpired("인증 도중 문제가 발생했어요. 다시 로그인해주세요.", "ERROR")
       }
     }
   }
@@ -114,21 +135,18 @@ function App(): ReactElement {
           profileImageUrl: memberInfo.profileImageUrl
         }
       }))
+      setPop({message: `${memberInfo.memberName} 님 반갑습니다 😀`, open: true, duration: 3000, color: "INFO"})
+      return
 
     } catch (e) {
       if (e.response && e.response.status == 401) {
-        localStorage.removeItem("X-TECOBRARY-AUTH-TOKEN")
-        setUser({
-          ...user,
-          token: "",
-          loggedIn: false
-        })
+        _removeLoginInfo()
+        _popAuthTokenExpired("인증 정보가 만료되었어요. 다시 로그인해주세요.", "WARN")
+        return
       }
-    }
-  }
 
-  const _removeQueryParams = () => {
-    history.replace({search: undefined})
+      _popAuthTokenExpired("인증 도중 문제가 발생했어요. 다시 로그인해주세요.", "ERROR")
+    }
   }
 
   return (

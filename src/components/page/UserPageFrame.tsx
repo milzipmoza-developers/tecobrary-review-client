@@ -4,6 +4,7 @@ import ScrollToTop from "../../routes/ScrollToTop";
 import Navigation from "../navigation/Navigation";
 import styled from "styled-components";
 import UnderPopModal from "../modal/UnderPopModal";
+import Pop from "../pop/Pop";
 
 interface Props {
   top?: string
@@ -26,6 +27,7 @@ export const UserPageFrame = ({top, header, children}: Props): ReactElement => {
                    header={header ? {...header} : {useBackButton: true, useProfileButton: false}}>{children}</PageFrame>
         <Navigation/>
         <UnderPopModal/>
+        <Pop/>
       </Wrapper>
     </Background>
   )
