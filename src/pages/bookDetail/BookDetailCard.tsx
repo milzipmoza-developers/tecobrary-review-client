@@ -34,8 +34,8 @@ function BookDetailCard(props: Props): ReactElement {
       <BookDetailActionButtons isbn={props.isbn}
                                like={props.marks ? props.marks.like.liked : false}
                                likeCounts={props.marks ? props.marks.like.counts : 0}
-                               marked={props.marks ? props.marks.favorite.marked : false}
-                               bookMarkedCounts={props.marks ? props.marks.favorite.counts : 0}/>
+                               favorite={props.marks ? props.marks.favorite.marked : false}
+                               favoriteCounts={props.marks ? props.marks.favorite.counts : 0}/>
     </BookSubInfoWrapper>
   )
 

@@ -9,12 +9,18 @@ import BookReviewCard from "./BookReviewCard";
 import {UserPageFrame} from "../../components/page/UserPageFrame";
 import {DisplayApi} from "../../api/display/display.service";
 import {DisplayBookDetail, DisplayBookMark, DisplayBookTag} from "../../api/display/display.model";
+import {useRecoilValue, useSetRecoilState} from "recoil";
+import {userState} from "../../states/User";
+import {NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
 
 interface Params {
   isbn?: string
 }
 
 function BookDetailPage(): ReactElement {
+  const user = useRecoilValue(userState)
+  const setPop = useSetRecoilState(popState)
+
   const {isbn} = useParams<Params>()
   const history = useHistory()
   const [book, setBook] = useState<DisplayBookDetail>()
@@ -35,12 +41,17 @@ function BookDetailPage(): ReactElement {
       return
     }
     try {
-      const foundBook = await DisplayApi.getBook(isbn)
+      const foundBook = await DisplayApi.getBook(isbn, user.deviceId, user.token)
       setBook(foundBook.book)
       setMark(foundBook.mark)
       setTags(foundBook.tags)
     } catch (e) {
-      console.log(e)
+      if (e.response) {
+
+        return
+      }
+
+      setPop(NETWORK_ERROR_DEFAULT)
     }
   }
 
@@ -58,7 +69,7 @@ function BookDetailPage(): ReactElement {
       <PageContent style={{marginBottom: '2rem'}}>
         <BookDetailCard
           {...bookCard}
-          {...mark}
+          marks={mark ? {...mark} : undefined}
           tags={tags?.map(it => ({
             name: it.name,
             color: it.colorCode

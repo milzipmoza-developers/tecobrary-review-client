@@ -21,8 +21,8 @@ const requestMainDisplay = async (): Promise<AxiosResponse> => {
     .get("/api/main")
 }
 
-const getBook = async (isbn: string): Promise<DisplayBook> => {
-  const response = await requestDisplayBook(isbn)
+const getBook = async (isbn: string, deviceId: string, token: string): Promise<DisplayBook> => {
+  const response = await requestDisplayBook(isbn, deviceId, token)
   const {book, mark, category, tags,} = response.data.data
 
   return {
@@ -33,7 +33,16 @@ const getBook = async (isbn: string): Promise<DisplayBook> => {
   }
 }
 
-const requestDisplayBook = async (isbn: string): Promise<AxiosResponse> => {
+const requestDisplayBook = async (isbn: string, deviceId: string, token: string): Promise<AxiosResponse> => {
+  if (deviceId.length != 0 && token.length != 0) {
+    return await Api.server()
+      .get(`/api/displays/books/${isbn}`, {
+        headers: {
+          "Authorization": `token ${token}`,
+          "X-TECOBRARY-DEVICE-ID": deviceId
+        }
+      })
+  }
   return await Api.server()
     .get(`/api/displays/books/${isbn}`)
 }

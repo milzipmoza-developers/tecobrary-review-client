@@ -10,7 +10,7 @@ export const popColors = {
     box: "#FDFFAB",
   },
   SUCCESS: {
-    box: "#C1FFD7",
+    box: "#C6EBC9",
   },
   INFO: {
     box: "#D6E5FA",
