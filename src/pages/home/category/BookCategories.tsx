@@ -4,6 +4,7 @@ import styled from "styled-components";
 import "./book-categories.css";
 import {BookCategoryButton} from "./BookCategoryButton";
 import {useHistory} from "react-router-dom";
+import {ReactComponent as More} from '../../../assets/more.svg';
 
 interface Props {
   categories: Category[]
@@ -25,11 +26,11 @@ function BookCategories({categories}: Props): ReactElement {
       <CategoryElements className='scroll-hidden'>
         {categories.map((category: Category, index: number) => (
           <BookCategoryButton key={index} name={category.name} imgSrc={category.imageUrl}
-                              onClick={onClick(category.name)}/>
+                              onClick={onClick(category.no)}/>
         ))}
-        <BookCategoryButton name='더보기'
-                            imgSrc='https://tecobrary-pivot.s3.ap-northeast-2.amazonaws.com/logos/more.png'
-                            onClick={moreCategoriesOnClick}/>
+        <BookCategoryButton name='더보기' onClick={moreCategoriesOnClick}>
+          <More style={{width: "2rem", height: "2rem"}}/>
+        </BookCategoryButton>
       </CategoryElements>
     </Wrapper>
   )
@@ -51,36 +52,4 @@ const CategoryElements = styled.div`
   flex-direction: row;
   width: fit-content;
   padding: 1rem 1rem 1rem 1rem;
-`
-
-const CategoryElement = styled.div`
-  width: 8rem;
-  height: 8rem;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  background-color: white;
-  border-radius: 1.5rem;
-  margin-right: 1rem;
-`
-
-const CategoryContent = styled.div`
-  width: 8rem;
-  height: 8rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`
-
-const LogoWrapper = styled.div`
-  display: flex;
-  width: 4rem;
-  height: 4rem;
-  margin-bottom: 1rem;
-  justify-content: center;
-  align-items: center;
-`
-
-const NameWrapper = styled.div`
-  font-weight: bold;
-  font-size: small;
 `

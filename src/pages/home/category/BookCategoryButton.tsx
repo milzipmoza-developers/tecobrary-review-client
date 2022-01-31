@@ -2,17 +2,18 @@ import {ReactElement} from "react";
 import styled from "styled-components";
 
 interface Props {
-  imgSrc: string
+  imgSrc?: string
   name: string
   onClick: () => void
+  children?: ReactElement
 }
 
-export const BookCategoryButton = ({imgSrc, name, onClick}: Props): ReactElement => {
+export const BookCategoryButton = ({imgSrc, name, onClick, children}: Props): ReactElement => {
   return (
     <CategoryElement onClick={onClick}>
       <CategoryContent>
         <LogoWrapper>
-          <img src={imgSrc} width='100%'/>
+          {children ? children : <img src={imgSrc} width='100%'/>}
         </LogoWrapper>
         <NameWrapper>
           <div>{name}</div>
