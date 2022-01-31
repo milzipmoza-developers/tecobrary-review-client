@@ -24,6 +24,7 @@ const Wrapper = styled.div`
 
 const ChildrenWrapper = styled.div`
   margin-right: 0.3rem;
+  cursor: pointer;
 `
 
 const CountWrapper = styled.div`

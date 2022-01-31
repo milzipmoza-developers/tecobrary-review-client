@@ -30,4 +30,5 @@ const NavElement = styled.div`
   height: 4rem;
   border-radius: 50%;
   background-color: #2c3e50;
+  cursor: pointer;
 `

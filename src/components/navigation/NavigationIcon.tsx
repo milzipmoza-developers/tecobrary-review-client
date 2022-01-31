@@ -1,5 +1,5 @@
 import React, {ReactElement} from "react";
-import {Home, Person, PersonCircle, Reader} from "react-ionicons";
+import {Home, Reader} from "react-ionicons";
 import styled from "styled-components";
 import {useHistory, useLocation} from "react-router-dom";
 
@@ -25,6 +25,7 @@ const NavElement = styled.div`
   align-items: center;
   width: 4rem;
   height: 4rem;
+  cursor: pointer;
 `
 
 export const NavigationIcon = ({name, height, width, to, onClick}: Props): ReactElement => {
@@ -49,12 +50,6 @@ export const NavigationIcon = ({name, height, width, to, onClick}: Props): React
     }
     if (name === "reader") {
       return <Reader width={width} height={height} color={color}/>
-    }
-    if (name === "not-logged-in") {
-      return <PersonCircle width={width} height={height} color={color}/>
-    }
-    if (name === "person") {
-      return <Person width={width} height={height} color={color}/>
     }
     return null
   }
