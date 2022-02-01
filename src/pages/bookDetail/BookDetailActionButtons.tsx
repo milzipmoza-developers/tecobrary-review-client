@@ -4,8 +4,9 @@ import styled from "styled-components";
 import React, {ReactElement, useState} from "react";
 import {CountActionButton} from "../../components/buttons/CountActionButton";
 import {MarkApi} from "../../api/mark/mark.service";
-import {useRecoilValue} from "recoil";
+import {useRecoilValue, useSetRecoilState} from "recoil";
 import {userState} from "../../states/User";
+import {NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
 
 interface Props {
   isbn: string
@@ -19,6 +20,7 @@ interface Props {
 export const BookDetailActionButtons = (props: Props): ReactElement => {
 
   const user = useRecoilValue(userState)
+  const setPop = useSetRecoilState(popState)
 
   const [likeMark, setLikeMark] = useState({
     marked: props.like,
@@ -31,8 +33,8 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
   })
 
   const onClickLike = async () => {
-    if (likeMark.marked) {
-      try {
+    try {
+      if (likeMark.marked) {
         const result = await MarkApi.unmark(user.deviceId, user.token, props.isbn, "like")
         if (result) {
           setLikeMark({
@@ -40,11 +42,7 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
             marked: false,
           })
         }
-      } catch (e) {
-        console.log(e)
-      }
-    } else {
-      try {
+      } else {
         const result = await MarkApi.mark(user.deviceId, user.token, props.isbn, "like")
         if (result) {
           setLikeMark({
@@ -52,15 +50,24 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
             marked: true,
           })
         }
-      } catch (e) {
-        console.log(e)
       }
+    } catch (e) {
+      if (e.response && (400 <= e.response.status && e.response.status < 500)) {
+        setPop({message: "로그인하고 좋아요 목록에 추가하실래요?", open: true, duration: 3000, color: "WARN"})
+        return
+      }
+
+      if (e.response && (500 <= e.response.status && e.response.status < 600)) {
+        setPop({message: e.response.data.message, open: true, duration: 3000, color: "WARN"})
+        return
+      }
+      setPop(NETWORK_ERROR_DEFAULT)
     }
   }
 
   const onClickFavorite = async () => {
-    if (favoriteMark.marked) {
-      try {
+    try {
+      if (favoriteMark.marked) {
         const result = await MarkApi.unmark(user.deviceId, user.token, props.isbn, "favorite")
         if (result) {
           setFavoriteMark({
@@ -68,11 +75,7 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
             marked: false,
           })
         }
-      } catch (e) {
-        console.log(e)
-      }
-    } else {
-      try {
+      } else {
         const result = await MarkApi.mark(user.deviceId, user.token, props.isbn, "favorite")
         if (result) {
           setFavoriteMark({
@@ -80,9 +83,18 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
             marked: true,
           })
         }
-      } catch (e) {
-        console.log(e)
       }
+    } catch (e) {
+      if (e.response && (400 <= e.response.status && e.response.status < 500)) {
+        setPop({message: "로그인하고 북마크 목록에 추가하실래요?", open: true, duration: 3000, color: "WARN"})
+        return
+      }
+
+      if (e.response && (500 <= e.response.status && e.response.status < 600)) {
+        setPop({message: e.response.data.message, open: true, duration: 3000, color: "WARN"})
+        return
+      }
+      setPop(NETWORK_ERROR_DEFAULT)
     }
   }
 

@@ -10,7 +10,10 @@ const mark = async (deviceId: string, token: string, isbn: string, type: MarkTyp
 
 const requestMark = async (deviceId: string, token: string, isbn: string, type: MarkType): Promise<AxiosResponse> => {
   if (deviceId.length == 0 || token.length == 0) {
-    throw Error("로그인하기")
+    return await Api.server()
+      .post(`/api/marks/${type}/mark`, {
+        isbn: isbn
+      })
   }
   return await Api.server()
     .post(`/api/marks/${type}/mark`, {
@@ -28,8 +31,11 @@ const unmark = async (deviceId: string, token: string, isbn: string, type: MarkT
 }
 
 const requestUnmark = async (deviceId: string, token: string, isbn: string, type: MarkType): Promise<AxiosResponse> => {
-  if (deviceId.length != 0 && token.length != 0) {
-
+  if (deviceId.length == 0 && token.length == 0) {
+    return await Api.server()
+      .post(`/api/marks/${type}/unmark`, {
+        isbn: isbn
+      })
   }
   return await Api.server()
     .post(`/api/marks/${type}/unmark`, {
