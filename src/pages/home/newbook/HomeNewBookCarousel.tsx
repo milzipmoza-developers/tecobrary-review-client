@@ -3,30 +3,36 @@ import {NewBook} from "../../../interfaces";
 import {useHistory} from "react-router-dom";
 import styled from "styled-components";
 import "./home.css"
+import {BookCarouselElement} from "../../../components/carousel/BookCarouselElement";
+import {BookCarouselElementSkeleton} from "../../../components/carousel/BookCarouselElementSkeleton";
 
 interface Props {
-  books: NewBook[]
+  books: NewBook[],
+  loading?: boolean
 }
 
-export const HomeNewBookCarousel = ({books}: Props): ReactElement => {
+export const HomeNewBookCarousel = ({books, loading}: Props): ReactElement => {
   const history = useHistory()
 
   const onClick = (id: string) => () => {
     history.push(`/books/${id}`)
   }
 
+  const LoadingElements = (): ReactElement => (<>
+    {[1, 2, 3, 4].map((index: number) => (
+      <BookCarouselElementSkeleton key={index}/>))}
+  </>)
+
+  const LoadedElements = (): ReactElement => (<>
+    {books.map((it: NewBook, index: number) => (
+      <BookCarouselElement  {...it} key={index} onClick={onClick(it.isbn)}/>
+    ))}
+  </>)
+
   return (
     <Wrapper>
       <BookElements className='scroll-hidden'>
-        {books.map((it: NewBook, index: number) => (
-          <BookElement key={index} onClick={onClick(it.isbn)}>
-            <ImageWrapper>
-              <Image src={it.imageUrl}/>
-            </ImageWrapper>
-            <BookAuthor>{it.author}</BookAuthor>
-            <BookTitle>{it.title}</BookTitle>
-          </BookElement>
-        ))}
+        {loading ? <LoadingElements/> : <LoadedElements/>}
       </BookElements>
     </Wrapper>
   )

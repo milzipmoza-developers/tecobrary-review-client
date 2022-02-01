@@ -40,7 +40,7 @@ function HomePage(): ReactElement {
 
   const [books, setBooks] = useState<DisplayMainNewBook[]>()
   const [categories, setCategories] = useState<DisplayMainCategory[]>()
-  const [categoryLoading, setCategoryLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const setPop = useSetRecoilState(popState)
 
   useEffect(() => {
@@ -51,13 +51,15 @@ function HomePage(): ReactElement {
 
   const displayMainRequest: RequestAction = {
     doOnSuccess: async () => {
+      setLoading(true)
+
       const newBooks = await DisplayApi.getNewBooks()
       setBooks(newBooks.books)
 
-      setCategoryLoading(true)
       const displayCategories = await DisplayApi.getRandomCategories()
       setCategories(displayCategories)
-      setCategoryLoading(false)
+
+      setLoading(false)
     },
     doOn400Errors: (e) => {
       setPop(SERVER_ERROR_DEFAULT)
@@ -73,7 +75,7 @@ function HomePage(): ReactElement {
   return (
     <UserPageFrame header={{useProfileButton: true, useBackButton: false}}>
       <SpannedCard title='새로운 도서를 살펴보세요'>
-        <HomeNewBookCarousel books={bookMapper(books)}/>
+        <HomeNewBookCarousel books={bookMapper(books)} loading={loading}/>
       </SpannedCard>
       <PageContent style={{margin: '3rem 1rem 3rem 1rem'}}>
         <Plain title='관심 받는 도서들이 있어요'>
@@ -83,7 +85,7 @@ function HomePage(): ReactElement {
       <PageContent style={{margin: '3rem 0 3rem 0'}}>
         <Plain title='카테고리로 찾아보세요'
                titleMargin='0 2rem 0 2rem'>
-          <BookCategories categories={categoryMapper(categories)} loading={categoryLoading}/>
+          <BookCategories categories={categoryMapper(categories)} loading={loading}/>
         </Plain>
       </PageContent>
     </UserPageFrame>
