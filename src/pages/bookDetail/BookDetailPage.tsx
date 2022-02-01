@@ -12,6 +12,7 @@ import {DisplayBookDetail, DisplayBookMark, DisplayBookTag} from "../../api/disp
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {userState} from "../../states/User";
 import {NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
+import {RequestAction, requestTemplate} from "../../api";
 
 interface Params {
   isbn?: string
@@ -32,25 +33,33 @@ function BookDetailPage(): ReactElement {
   const [bookDetail] = useState<BookDetail>(getBookDetail.get(1)!)
 
   useEffect(() => {
-    _init()
+    _initPageData()
   }, [])
 
-  const _init = async () => {
-    if (!isbn) {
-      history.goBack()
-      return
-    }
-    try {
+  const _initPageData = async () => {
+    await requestTemplate(bookDetailRequestAction)
+  }
+
+  const bookDetailRequestAction: RequestAction = {
+    doOnSuccess: async () => {
+      if (!isbn) {
+        history.goBack()
+        return
+      }
       const foundBook = await DisplayApi.getBook(isbn, user.deviceId, user.token)
       setBook(foundBook.book)
       setMark(foundBook.mark)
       setTags(foundBook.tags)
-    } catch (e) {
-      if (e.response) {
-
-        return
-      }
-
+    },
+    doOn400Errors: (e) => {
+      setPop({message: e.response.data.message, open: true, duration: 3000, color: "WARN"})
+      history.goBack()
+    },
+    doOn500Errors: (e) => {
+      setPop({message: e.response.data.message, open: true, duration: 3000, color: "ERROR"})
+      history.goBack()
+    },
+    doErrors: (e) => {
       setPop(NETWORK_ERROR_DEFAULT)
     }
   }

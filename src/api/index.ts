@@ -1,8 +1,8 @@
-export function requestTemplate(request: RequestAction): void {
+export async function requestTemplate(request: RequestAction): Promise<void> {
   const {doOnSuccess, doOnAuthError, doOn400Errors, doOn500Errors, doErrors} = request
 
   try {
-    doOnSuccess()
+    await doOnSuccess()
   } catch (e) {
     if (e.response && e.response.status == 401) {
       if (doOnAuthError) {
@@ -33,7 +33,7 @@ export function requestTemplate(request: RequestAction): void {
 }
 
 export interface RequestAction {
-  doOnSuccess: () => void,
+  doOnSuccess: () => Promise<void>,
   doOnAuthError?: (e: any) => void,
   doOn400Errors?: (e: any) => void,
   doOn500Errors?: (e: any) => void,

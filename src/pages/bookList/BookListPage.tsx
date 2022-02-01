@@ -49,7 +49,7 @@ function BookListPage(): ReactElement {
     initPageData();
   }, [])
 
-  const initPageData = async () => requestTemplate(pageRequest)
+  const initPageData = async () => await requestTemplate(pageRequest)
 
   const pageRequest: RequestAction = {
     doOnSuccess: async () => {
@@ -67,10 +67,7 @@ function BookListPage(): ReactElement {
     }
   }
 
-  const loadMore = async () => {
-    console.log('loadMore')
-    requestTemplate(loadMorePageRequest)
-  }
+  const loadMore = async () => await requestTemplate(loadMorePageRequest)
 
   const loadMorePageRequest: RequestAction = {
     doOnSuccess: async () => {

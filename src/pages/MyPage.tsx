@@ -20,7 +20,7 @@ function MyPage(): ReactElement {
     _initPageData()
   }, [])
 
-  const _initPageData = async () => requestTemplate(myPageRequest)
+  const _initPageData = async () => await requestTemplate(myPageRequest)
 
   const myPageRequest: RequestAction = {
     doOnSuccess: async () => {

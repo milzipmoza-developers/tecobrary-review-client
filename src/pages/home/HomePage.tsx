@@ -46,7 +46,7 @@ function HomePage(): ReactElement {
     _initPageData()
   }, [])
 
-  const _initPageData = async () => requestTemplate(displayMainRequest)
+  const _initPageData = async () => await requestTemplate(displayMainRequest)
 
   const displayMainRequest: RequestAction = {
     doOnSuccess: async () => {

@@ -65,7 +65,7 @@ function App(): ReactElement {
   }
 
   const _requestMemberInfo = async () => {
-    requestTemplate(loginMemberInfoRequestAction)
+    await requestTemplate(loginMemberInfoRequestAction)
   }
 
   const loginMemberInfoRequestAction: RequestAction = {
@@ -109,7 +109,7 @@ function App(): ReactElement {
       return
     }
     if (code && !Array.isArray(code)) {
-      requestTemplate(authenticationRequest)
+      await requestTemplate(authenticationRequest)
     }
   }
 
