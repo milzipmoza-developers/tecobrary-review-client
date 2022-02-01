@@ -40,6 +40,7 @@ function HomePage(): ReactElement {
 
   const [books, setBooks] = useState<DisplayMainNewBook[]>()
   const [categories, setCategories] = useState<DisplayMainCategory[]>()
+  const [categoryLoading, setCategoryLoading] = useState(false)
   const setPop = useSetRecoilState(popState)
 
   useEffect(() => {
@@ -53,8 +54,10 @@ function HomePage(): ReactElement {
       const newBooks = await DisplayApi.getNewBooks()
       setBooks(newBooks.books)
 
+      setCategoryLoading(true)
       const displayCategories = await DisplayApi.getRandomCategories()
       setCategories(displayCategories)
+      setCategoryLoading(false)
     },
     doOn400Errors: (e) => {
       setPop(SERVER_ERROR_DEFAULT)
@@ -80,7 +83,7 @@ function HomePage(): ReactElement {
       <PageContent style={{margin: '3rem 0 3rem 0'}}>
         <Plain title='카테고리로 찾아보세요'
                titleMargin='0 2rem 0 2rem'>
-          <BookCategories categories={categoryMapper(categories)}/>
+          <BookCategories categories={categoryMapper(categories)} loading={categoryLoading}/>
         </Plain>
       </PageContent>
     </UserPageFrame>

@@ -5,12 +5,14 @@ import "./book-categories.css";
 import {BookCategoryButton} from "./BookCategoryButton";
 import {useHistory} from "react-router-dom";
 import {ReactComponent as More} from '../../../assets/more.svg';
+import {BookCategoryButtonSkeleton} from "./BookCategoryButtonSkeleton";
 
 interface Props {
   categories: Category[]
+  loading?: boolean
 }
 
-function BookCategories({categories}: Props): ReactElement {
+function BookCategories({categories, loading}: Props): ReactElement {
   const history = useHistory()
 
   const onClick = (name: string) => () => {
@@ -21,16 +23,30 @@ function BookCategories({categories}: Props): ReactElement {
     history.push(`/categories`)
   }
 
+  const LoadingButtons = (): ReactElement => (
+    <>
+      {[1, 2, 3, 4, 5, 6].map((index: number) => (<BookCategoryButtonSkeleton key={index}/>))}
+    </>
+  )
+
+  const LoadedButtons = (): ReactElement => (
+    <>
+      {categories.map((category: Category, index: number) => (
+        <BookCategoryButton key={index} name={category.name} imgSrc={category.imageUrl}
+                            onClick={onClick(category.no)}/>
+      ))}
+      <BookCategoryButton name='더보기' onClick={moreCategoriesOnClick}>
+        <More style={{width: "2rem", height: "2rem"}}/>
+      </BookCategoryButton>
+    </>
+  )
+
   return (
     <Wrapper>
       <CategoryElements className='scroll-hidden'>
-        {categories.map((category: Category, index: number) => (
-          <BookCategoryButton key={index} name={category.name} imgSrc={category.imageUrl}
-                              onClick={onClick(category.no)}/>
-        ))}
-        <BookCategoryButton name='더보기' onClick={moreCategoriesOnClick}>
-          <More style={{width: "2rem", height: "2rem"}}/>
-        </BookCategoryButton>
+        {loading
+          ? <LoadingButtons/>
+          : <LoadedButtons/>}
       </CategoryElements>
     </Wrapper>
   )
