@@ -3,7 +3,7 @@ import {useRecoilValue} from "recoil";
 import {homeInterestState} from "../../../states/Home";
 import {InterestReviewContent} from "./InterestReviewContent";
 import {InterestLikeContent} from "./InterestLikeContent";
-import {InterestBookmarkContent} from "./InterestBookmarkContent";
+import {InterestFavoriteContent} from "./InterestFavoriteContent";
 
 export const InterestCardContent = (): ReactElement => {
 
@@ -17,7 +17,7 @@ export const InterestCardContent = (): ReactElement => {
       return <InterestLikeContent/>
     }
     if (home.selected === 2) {
-      return <InterestBookmarkContent/>
+      return <InterestFavoriteContent/>
     }
     return null
   }

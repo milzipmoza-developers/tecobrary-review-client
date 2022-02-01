@@ -1,6 +1,11 @@
 import {AxiosResponse} from "axios";
 import * as Api from "../../admin/api/axios.config";
-import {DisplayBook, DisplayMainCategory, DisplayMainNewBookSection} from "./display.model";
+import {
+  DisplayBook,
+  DisplayMainCategory,
+  DisplayMainInterestBookSection,
+  DisplayMainNewBookSection
+} from "./display.model";
 
 const getNewBooks = async (): Promise<DisplayMainNewBookSection> => {
   const response = await requestMainNewBooks()
@@ -52,8 +57,37 @@ const requestDisplayBook = async (isbn: string, deviceId: string, token: string)
     .get(`/api/displays/books/${isbn}`)
 }
 
+const getMostLikeBooks = async (): Promise<DisplayMainInterestBookSection> => {
+  const response = await requestDisplayInterestBook("MANY_LIKES")
+  const {type, books} = response.data.data
+  return {
+    type,
+    books
+  }
+}
+
+const getMostFavoriteBooks = async (): Promise<DisplayMainInterestBookSection> => {
+  const response = await requestDisplayInterestBook("MANY_FAVORITES")
+  const {type, books} = response.data.data
+  return {
+    type,
+    books
+  }
+}
+
+const requestDisplayInterestBook = async (type: string): Promise<AxiosResponse> => {
+  return await Api.server()
+    .get("/api/display/main/interest-books", {
+      params: {
+        type
+      }
+    })
+}
+
 export const DisplayApi = {
   getNewBooks,
   getRandomCategories,
+  getMostLikeBooks,
+  getMostFavoriteBooks,
   getBook
 }

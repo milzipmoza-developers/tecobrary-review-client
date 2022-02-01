@@ -1,12 +1,12 @@
 import {ReactElement, useEffect, useState} from "react";
 import styled from "styled-components";
 import {InterestedBook} from "../../../interfaces";
-import {LikedIcon} from "../../../components/icons/LikedIcon";
+import {BookmarkedIcon} from "../../../components/icons/BookmarkedIcon";
 import {CardBookList} from "../../../components/list/CardBookList";
 import {RequestAction, requestTemplate} from "../../../api";
 import {DisplayApi} from "../../../api/display/display.service";
 
-export const InterestLikeContent = (): ReactElement => {
+export const InterestFavoriteContent = (): ReactElement => {
 
   const [books, setBooks] = useState<InterestedBook[]>()
   const [loading, setLoading] = useState(false)
@@ -22,7 +22,7 @@ export const InterestLikeContent = (): ReactElement => {
   const requestMostLikeRequest: RequestAction = {
     doOnSuccess: async () => {
       setLoading(true)
-      const display = await DisplayApi.getMostLikeBooks()
+      const display = await DisplayApi.getMostFavoriteBooks()
       const _books = display.books.map(it => ({
         isbn: it.isbn,
         imageUrl: it.imageUrl,
@@ -44,14 +44,12 @@ export const InterestLikeContent = (): ReactElement => {
       console.error(e)
     }
   }
-
   return (
     <Wrapper>
-      <CardBookList iconBadge={[<LikedIcon/>]} books={books} loading={loading}/>
+      <CardBookList iconBadge={[<BookmarkedIcon/>]} books={books} loading={loading}/>
     </Wrapper>
   )
 }
-
 
 const Wrapper = styled.div`
   width: auto;

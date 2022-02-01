@@ -57,3 +57,17 @@ export interface DisplayBookTag {
   name: string,
   colorCode: string
 }
+
+export interface DisplayMainInterestBookSection {
+  type: string,
+  books: DisplayInterestBook[]
+}
+
+export interface DisplayInterestBook {
+  isbn: string
+  title: string
+  author: string
+  imageUrl: string
+  tags: DisplayBookTag[],
+  counts: number
+}
