@@ -35,14 +35,10 @@ export const UserPageFrame = ({top, header, children}: Props): ReactElement => {
 
 const Background = styled.div`
   width: 100vw;
-  height: fit-content;
-  min-height: 100vh;
   display: flex;
-  position: relative;
   flex-direction: row;
   justify-content: center;
   background-color: white;
-  overflow: hidden;
 `
 
 const Wrapper = styled.div`

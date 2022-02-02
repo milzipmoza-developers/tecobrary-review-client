@@ -5,18 +5,8 @@ import {AuthenticationApi} from "../../api/authentication/authentication.service
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {loginModalState} from "../../states/LoginModal";
 import {userState} from "../../states/User";
-import {useLockBodyScroll} from "../../hooks";
 import {NETWORK_ERROR_DEFAULT, popState, SERVER_ERROR_DEFAULT} from "../../states/Pop";
-
-const box_active = {
-  transition: "opacity 300ms",
-};
-
-const box_hidden = {
-  opacity: "0",
-  visibility: "hidden",
-  transition: "opacity 300ms, visibility 300ms",
-};
+import {PopupBackground} from "../background/PopupBackground";
 
 const UnderPopModal = (): ReactElement | null => {
 
@@ -40,10 +30,8 @@ const UnderPopModal = (): ReactElement | null => {
     setLoginModal({open: false})
   }
 
-  const OpenedModal = () => {
-    useLockBodyScroll()
-
-    return (
+  return (
+    <PopupBackground active={loginModal.open} onClose={onModalClose}>
       <Wrapper onClick={(e) => e.stopPropagation()}>
         <Card>
           <Title>로그인하고 더 많은 기능을 사용해보세요</Title>
@@ -52,26 +40,11 @@ const UnderPopModal = (): ReactElement | null => {
           </LoginButtons>
         </Card>
       </Wrapper>
-    )
-  }
-
-  return <>
-    <Background onClick={onModalClose} style={loginModal.open ? box_active : box_hidden}>
-      {loginModal.open ? <OpenedModal/> : null}
-    </Background>
-  </>
+    </PopupBackground>
+  )
 }
 
 export default UnderPopModal
-
-const Background = styled.div`
-  width: 100%;
-  max-width: 36rem;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
-  position: fixed;
-  top: 0;
-`
 
 const Wrapper = styled.div`
   width: 100%;
