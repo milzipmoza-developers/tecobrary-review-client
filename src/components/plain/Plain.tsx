@@ -7,7 +7,7 @@ interface Props {
   margin?: string
   subTitleMargin?: string
   titleMargin?: string
-  children: ReactNode
+  children?: ReactNode
 }
 
 function Plain({subTitle, margin, title, subTitleMargin, titleMargin, children}: Props): ReactElement {

@@ -74,7 +74,7 @@ function HomePage(): ReactElement {
 
   return (
     <UserPageFrame header={{useProfileButton: true, useBackButton: false}}>
-      <SpannedCard title='새로운 도서를 살펴보세요'>
+      <SpannedCard title='새로운 도서를 살펴보세요' padding={'2rem 0 2rem 2rem'}>
         <HomeNewBookCarousel books={bookMapper(books)} loading={loading}/>
       </SpannedCard>
       <PageContent style={{margin: '3rem 1rem 3rem 1rem'}}>
