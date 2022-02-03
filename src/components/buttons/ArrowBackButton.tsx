@@ -7,6 +7,10 @@ export const ArrowBackButton = (): ReactElement => {
   const history = useHistory();
 
   const onClick = () => {
+    if (history.length == 0) {
+      history.push("/")
+      return
+    }
     history.goBack()
   }
 
