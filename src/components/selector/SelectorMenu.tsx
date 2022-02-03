@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 import {SelectorElement} from "./SelectorElement";
 import styled from "styled-components";
 
-interface SelectorItem {
+export interface SelectorItem {
   value: string
   displayName: string
 }

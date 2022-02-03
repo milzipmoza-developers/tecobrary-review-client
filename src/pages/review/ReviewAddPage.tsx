@@ -4,7 +4,6 @@ import styled from "styled-components";
 import {getSearchBook, getSearchBooks} from "../../api/search";
 import {Book, InternalSearchBook} from "../../interfaces";
 import Card from "../../components/card/Card";
-import Selector from "../../components/selector/Selector";
 import {ReviewType} from "../../types";
 import {CustomRadioButton} from "../../components/buttons/CustomRadioButton";
 import {DisableableButton} from "../../components/buttons/DisableableButton";
@@ -14,6 +13,8 @@ import {BookSearchInput} from "../../components/input/BookSearchInput";
 import {BookSearchInputOpenButton} from "../../components/buttons/BookSearchInputOpenButton";
 import {BookSearchResult} from "../../components/list/BookSearchResult";
 import {SelectedReviewBook} from "./SelectedReviewBook";
+import {SelectorItem, SelectorMenu} from "../../components/selector/SelectorMenu";
+import {Selector} from "../../components/selector/Selector";
 
 interface Search {
   keyword: string
@@ -134,11 +135,16 @@ function ReviewAddPage(): ReactElement {
     setStage(SECOND_STEP)
   }
 
-  const onAmountChange = (it: SelectedAmount | null) => {
+  const onAmountChange = (it: SelectedAmount) => {
     if (it) {
       setSelectedAmount(it)
       setStage(THIRD_STEP)
     }
+  }
+
+  const onSelectorSelect = (item: SelectorItem) => () => {
+    onAmountChange(item)
+    setUseSelector(false)
   }
 
   const onReviewTypeChange = (it: ReviewType) => {
@@ -180,6 +186,7 @@ function ReviewAddPage(): ReactElement {
 
   return (
     <UserPageFrame header={{useProfileButton: true, useBackButton: true}}>
+      {/* first step components*/}
       <Plain title='도서를 검색해보세요'
              subTitle={selectedBook?.book ? undefined : '다 읽지 않아도 리뷰를 남길 수 있어요'}
              subTitleMargin='0 1rem 6px 1rem'
@@ -210,6 +217,7 @@ function ReviewAddPage(): ReactElement {
         </div>
       </PopupBackground>
 
+      {/* second step components*/}
       {selectedBook?.selected
         ? <Plain title='얼마나 읽으셨나요?'
                  subTitle={selectedAmount ? undefined : '지금 읽은 만큼의 리뷰도 도움이 될 수 있어요'}
@@ -217,23 +225,23 @@ function ReviewAddPage(): ReactElement {
                  margin='0 1rem 2rem 1rem'>
           <Card backgroundColor='white'
                 boxShadow={selectedAmount ? undefined : 'rgba(0, 0, 0, 0.24) 0px 3px 8px'}>
-            {selectedAmount ?
-              <ReadAmountWrapper>
-                <ReadAmountSelected>{selectedAmount.displayName}</ReadAmountSelected>
-                <SelectInitButton onClick={onInitSelectAmount}>다시 고르기</SelectInitButton>
-              </ReadAmountWrapper>
-              : <Selector placeholder='이만큼 읽었어요'
-                          items={[
-                            {value: 'ABSTRACT', displayName: '서론만 읽었어요'},
-                            {value: 'LITTLE', displayName: '조금 읽어봤어요'},
-                            {value: 'ONE_CHAPTER', displayName: '한 챕터 읽었어요'},
-                            {value: 'CHAPTERS', displayName: '여러 챕터 읽었어요'},
-                            {value: 'ALL', displayName: '전부 읽었어요'},
-                          ]}
-                          onChange={onAmountChange}/>}
+            <Selector selectedItem={selectedAmount}
+                      placeHolder={'이만큼 읽었어요'}
+                      initButtonName={'다시 고르기'}
+                      onOpen={() => setUseSelector(true)}
+                      onInit={onInitSelectAmount}/>
           </Card>
         </Plain>
         : null}
+      <PopupBackground active={useSelector} onClose={() => setUseSelector(false)}>
+        <SelectorMenu items={[
+          {value: 'ABSTRACT', displayName: '서론만 읽었어요'},
+          {value: 'LITTLE', displayName: '조금 읽어봤어요'},
+          {value: 'ONE_CHAPTER', displayName: '한 챕터 읽었어요'},
+          {value: 'CHAPTERS', displayName: '여러 챕터 읽었어요'},
+          {value: 'ALL', displayName: '전부 읽었어요'},
+        ]} itemOnClick={onSelectorSelect}/>
+      </PopupBackground>
 
       {selectedAmount
         ? <Plain title='어떤 책이었나요?'
@@ -274,29 +282,6 @@ export default ReviewAddPage
 
 const SubmitButtonWrapper = styled.div`
   margin: 0 1rem 4rem 1rem;
-`
-
-const SelectInitButton = styled.div`
-  background-color: black;
-  color: white;
-  width: fit-content;
-  font-size: x-small;
-  padding: 4px;
-  border-radius: 1rem;
-  margin-left: auto;
-`
-
-const ReadAmountWrapper = styled.div`
-  width: auto;
-  height: 3rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`
-
-const ReadAmountSelected = styled.div`
-  font-size: large;
 `
 
 const ReviewInputWrapper = styled.div`

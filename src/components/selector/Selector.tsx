@@ -1,55 +1,42 @@
-import {ReactElement, useState} from "react";
+import {TextButton} from "../buttons/TextButton";
+import React from "react";
 import styled from "styled-components";
-import {SelectedItem} from "./SelectedItem";
-import {SelectorMenu} from "./SelectorMenu";
 
-interface SelectorItem {
+
+interface SelectedAmount {
   value: string
   displayName: string
 }
 
 interface Props {
-  placeholder: string
-  items: SelectorItem[]
-  onChange?: (item: SelectorItem | null) => void
+  selectedItem?: SelectedAmount
+  placeHolder: string
+  initButtonName: string
+  onOpen: () => void
+  onInit: () => void
 }
 
-function Selector({placeholder, items, onChange}: Props): ReactElement {
-  const [selected, setSelected] = useState<SelectorItem | null>(null)
-  const [open, setOpen] = useState(false)
-
-  const onClick = () => {
-    setOpen(true)
-  }
-
-  const onItemClick = (item: SelectorItem) => () => {
-    setSelected(item)
-    setOpen(false)
-    if (onChange) {
-      onChange(item)
-    }
-  }
-
+export const Selector = ({selectedItem, placeHolder, initButtonName, onOpen, onInit}: Props) => {
   return (
     <>
-      <Wrapper>
-        <SelectedItem placeholder={placeholder}
-                      selected={selected?.displayName}
-                      onClick={onClick}/>
-      </Wrapper>
-      {open
-        ? <>
-          <FullScreen onClick={() => setOpen(false)}/>
-          <SelectorMenu items={items} itemOnClick={onItemClick}/>
-        </>
-        : null}
+      <SelectWrapper>
+        <SelectElement onClick={onOpen}>
+          {selectedItem
+            ? <SelectedItem>{selectedItem.displayName}</SelectedItem>
+            : <Placeholder>{placeHolder}</Placeholder>}
+        </SelectElement>
+      </SelectWrapper>
+      <TextButtonWrapper>
+        {selectedItem
+          ? <TextButton onClick={onInit}>{initButtonName}</TextButton>
+          : null}
+      </TextButtonWrapper>
     </>
   )
 }
 
-export default Selector
 
-const Wrapper = styled.div`
+const SelectWrapper = styled.div`
   width: auto;
   height: 3rem;
   border-radius: 4px;
@@ -57,18 +44,26 @@ const Wrapper = styled.div`
   cursor: pointer;
 `
 
-const FullScreen = styled.div`
+const TextButtonWrapper = styled.div`
+  margin-top: 1rem;
+`
+
+const SelectElement = styled.div`
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.2);
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 36rem;
-  z-index: 100;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  &:hover {
+    background-color: #ecf0f1;
+  }
+`
+
+const Placeholder = styled.div`
+  color: #7f8c8d;
+`
+
+const SelectedItem = styled.div`
+  font-size: large;
 `
