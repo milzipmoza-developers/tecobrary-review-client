@@ -13,7 +13,7 @@ export const TextButton = ({onClick, children}: Props) => {
 }
 
 const SelectInitButton = styled.div`
-  background-color: black;
+  background-color: rgb(39, 54, 60);
   color: white;
   width: fit-content;
   font-size: x-small;

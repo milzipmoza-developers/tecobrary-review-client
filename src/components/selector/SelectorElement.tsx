@@ -34,7 +34,7 @@ const DisabledWrapper = styled.div`
 
 const DisabledText = styled.div`
   font-size: large;
-  color: grey;
+  color: rgba(233, 238, 239);
 `
 
 const Wrapper = styled.div`
