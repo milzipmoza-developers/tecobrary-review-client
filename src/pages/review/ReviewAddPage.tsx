@@ -12,7 +12,7 @@ import {UserPageFrame} from "../../components/page/UserPageFrame";
 import {PopupBackground} from "../../components/background/PopupBackground";
 import {BookSearchInput} from "../../components/input/BookSearchInput";
 import {BookSearchInputOpenButton} from "../../components/buttons/BookSearchInputOpenButton";
-import {BookSearchResultList} from "../../components/list/BookSearchResultList";
+import {BookSearchResult} from "../../components/list/BookSearchResult";
 import {SelectedReviewBook} from "./SelectedReviewBook";
 
 interface Search {
@@ -193,15 +193,19 @@ function ReviewAddPage(): ReactElement {
             <BookSearchInputOpenButton onClick={() => setUseSearch(true)}/>
           </Card>}
       </Plain>
-      <PopupBackground active={useSearch} onClose={() => setUseSearch(false)}>
-        <div style={{margin: `8rem 1rem 2rem 1rem`}}>
+      <PopupBackground active={useSearch} onClose={() => {
+        setUseSearch(false)
+        search.keyword = ''
+        setSearchBooks([])
+      }}>
+        <div style={{margin: `8vh 1rem 0 1rem`}}>
           <Card backgroundColor='white'
                 boxShadow={'rgba(0, 0, 0, 0.24) 0px 3px 8px'}>
             <BookSearchInput placeholder='검색어를 입력해보세요'
                              value={search.keyword}
                              onChange={onChange}
                              autoFocus={true}/>
-            <BookSearchResultList books={searchBooks} itemOnClick={itemOnClick}/>
+            <BookSearchResult books={searchBooks} itemOnClick={itemOnClick}/>
           </Card>
         </div>
       </PopupBackground>
@@ -233,7 +237,7 @@ function ReviewAddPage(): ReactElement {
 
       {selectedAmount
         ? <Plain title='어떤 책이었나요?'
-                 subTitle='블로그에서 리뷰를 가져올 수 있어요'
+                 subTitle='책을 설명할 수 있는 키워드를 선택해주세요'
                  subTitleMargin='0 1rem 6px 1rem'
                  margin='0 1rem 2rem 1rem'>
           <Card backgroundColor='white'

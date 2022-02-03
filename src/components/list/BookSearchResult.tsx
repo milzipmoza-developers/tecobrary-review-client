@@ -1,20 +1,19 @@
-import {CardBookList} from "./CardBookList";
 import React from "react";
 import {Book} from "../../interfaces";
 import styled from "styled-components";
+import {BookSearchList} from "./BookSearchList";
 
 interface Props {
   books?: Book[]
   itemOnClick?: (id: string) => void
 }
 
-export const BookSearchResultList = ({books, itemOnClick}: Props) => {
+export const BookSearchResult = ({books, itemOnClick}: Props) => {
   return (
     <>
       {books && books.length != 0 ? <SearchDivider/> : null}
-      <CardBookList books={books}
-                    whenEmpty={<EmptyList/>}
-                    itemOnClick={itemOnClick}/>
+      <BookSearchList books={books}
+                      itemOnClick={itemOnClick}/>
     </>
   )
 }
@@ -25,5 +24,3 @@ const SearchDivider = styled.div`
   background-color: #ecf0f1;
   margin-bottom: 1rem;
 `
-
-const EmptyList = styled.div``
