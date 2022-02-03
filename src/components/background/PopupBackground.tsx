@@ -5,7 +5,7 @@ import {ReactElement, useEffect} from "react";
 interface Props {
   active: boolean
   onClose: () => void
-  children?: ReactElement
+  children?: ReactElement[] | ReactElement
 }
 
 export const PopupBackground = ({active, onClose, children}: Props) => {
@@ -40,7 +40,7 @@ export const PopupBackground = ({active, onClose, children}: Props) => {
   }
 
   return (
-    <Background display={active ? undefined : 'none'} onClick={onClose} id='under'>
+    <Background display={active ? undefined : 'none'} onClick={onClose}>
       <Children display={active ? undefined : 'none'} onClick={(e) => e.stopPropagation()}>{children}</Children>
     </Background>
   )

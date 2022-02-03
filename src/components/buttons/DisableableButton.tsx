@@ -42,7 +42,6 @@ const DisabledWrapper = styled.div`
   justify-content: center;
   align-items: center;
   background-color: #bdc3c7;
-  cursor: pointer;
 `
 
 const Text = styled.div`

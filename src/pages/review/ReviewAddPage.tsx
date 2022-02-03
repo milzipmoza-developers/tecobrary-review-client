@@ -1,18 +1,19 @@
 import React, {ReactElement, useEffect, useState} from "react";
 import Plain from "../../components/plain/Plain";
-import {CardBookList} from "../../components/list/CardBookList";
 import styled from "styled-components";
-import {SearchOutline} from "react-ionicons";
 import {getSearchBook, getSearchBooks} from "../../api/search";
 import {Book, InternalSearchBook} from "../../interfaces";
-import ExpandableCard from "../../components/card/ExpandableCard";
-import {CardBookListElement} from "../../components/list/CardBookListElement";
 import Card from "../../components/card/Card";
 import Selector from "../../components/selector/Selector";
 import {ReviewType} from "../../types";
 import {CustomRadioButton} from "../../components/buttons/CustomRadioButton";
 import {DisableableButton} from "../../components/buttons/DisableableButton";
 import {UserPageFrame} from "../../components/page/UserPageFrame";
+import {PopupBackground} from "../../components/background/PopupBackground";
+import {BookSearchInput} from "../../components/input/BookSearchInput";
+import {BookSearchInputOpenButton} from "../../components/buttons/BookSearchInputOpenButton";
+import {BookSearchResultList} from "../../components/list/BookSearchResultList";
+import {SelectedReviewBook} from "./SelectedReviewBook";
 
 interface Search {
   keyword: string
@@ -67,13 +68,16 @@ const selectBook = (book: Book): SelectedBook => ({
   book
 })
 
-// todo: refactor this component to multiple components divided by rendering unit
 function ReviewAddPage(): ReactElement {
+
+  const [useSearch, setUseSearch] = useState(false)
   const [search, setSearch] = useState<Search>({keyword: ''})
   const [stage, setStage] = useState<ReviewStage>(FIRST_STEP)
   const [searchBooks, setSearchBooks] = useState<InternalSearchBook[]>([])
   const [selectedBook, setSelectedBook] = useState<SelectedBook>()
-  const [selectedAmount, setSelectedAmount] = useState<SelectedAmount | null>()
+
+  const [useSelector, setUseSelector] = useState(false)
+  const [selectedAmount, setSelectedAmount] = useState<SelectedAmount>()
   const [selectedReview, setSelectedReview] = useState(initSelectedReview)
 
   useEffect(() => {
@@ -81,7 +85,6 @@ function ReviewAddPage(): ReactElement {
       setSearchBooks([])
     }
     if (search.keyword.length >= 2) {
-      console.log('search request', search.keyword) // todo: remove
       setSearchBooks(getSearchBooks)
     }
   }, [search])
@@ -106,11 +109,12 @@ function ReviewAddPage(): ReactElement {
     })
   }
 
-  const onItemClick = (id: string) => {
+  const itemOnClick = (id: string) => {
     const searchBook = getSearchBook(id);
     if (!searchBook) {
       throw Error('선택한 책이 존재하지 않습니다.')
     }
+    setUseSearch(false)
     setSelectedBook(selectBook(searchBook))
     setStage(SECOND_STEP)
   }
@@ -119,14 +123,14 @@ function ReviewAddPage(): ReactElement {
     setSearchBooks([])
     search.keyword = ''
     setSelectedReview(initSelectedReview)
-    setSelectedAmount(null)
+    setSelectedAmount(undefined)
     setSelectedBook(initSelectedBook)
     setStage(FIRST_STEP)
   }
 
   const onInitSelectAmount = () => {
     setSelectedReview(initSelectedReview)
-    setSelectedAmount(null)
+    setSelectedAmount(undefined)
     setStage(SECOND_STEP)
   }
 
@@ -151,8 +155,8 @@ function ReviewAddPage(): ReactElement {
     if (stage === SECOND_STEP) {
       return '리뷰 완료까지 한 단계 남았어요'
     }
-    if ((selectedReview.content !== undefined && selectedReview.content.length < 10)
-      || (selectedReview.url !== undefined && selectedReview.url.length < 10)) {
+    if ((selectedReview.content !== undefined && selectedReview.content.length > 10)
+      || (selectedReview.url !== undefined && selectedReview.url.length > 10)) {
       return '리뷰 등록하기'
     }
     if (stage === THIRD_STEP) {
@@ -162,48 +166,46 @@ function ReviewAddPage(): ReactElement {
   }
 
   const isConfirmButtonDisabled = () => {
-    if (stage !== THIRD_STEP) {
-      if ((selectedReview.content !== undefined && selectedReview.content.length < 10)
-        || (selectedReview.url !== undefined && selectedReview.url.length < 10)) {
-         return false
+    if (stage == THIRD_STEP) {
+      if ((selectedReview.content != undefined && selectedReview.content.length > 10)
+        || (selectedReview.url != undefined && selectedReview.url.length > 10)) {
+        return false
       }
+    }
+    if (stage != THIRD_STEP) {
       return true
     }
-    return false
+    return true
   }
 
   return (
     <UserPageFrame header={{useProfileButton: true, useBackButton: true}}>
-      <Plain title='도서를 선택해보세요'
+      <Plain title='도서를 검색해보세요'
              subTitle={selectedBook?.book ? undefined : '다 읽지 않아도 리뷰를 남길 수 있어요'}
              subTitleMargin='0 1rem 6px 1rem'
              margin='0 1rem 2rem 1rem'>
         {selectedBook?.book
           ? <Card backgroundColor='white'>
-            <CardBookListElement isbn={selectedBook.book.isbn}
-                                 imageUrl={selectedBook.book.imageUrl}
-                                 title={selectedBook.book.title}
-                                 author={selectedBook.book.author}
-                                 tags={selectedBook.book.tags}/>
-            <SelectInitButton onClick={onInitSelectBook}>다시 고르기</SelectInitButton>
+            <SelectedReviewBook book={selectedBook.book} onInitButtonClick={onInitSelectBook}/>
           </Card>
-          : <ExpandableCard backgroundColor='white'
-                            boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
-            <SearchWrapper>
-              <SearchIconWrapper>
-                <SearchOutline/>
-              </SearchIconWrapper>
-              <SearchInput placeholder='검색어로 도서를 찾아보세요'
-                           value={search.keyword}
-                           onChange={onChange}
-                           autoFocus={true}/>
-            </SearchWrapper>
-            <SearchDivider/>
-            <CardBookList books={searchBooks}
-                          whenEmpty={<EmptyList/>}
-                          itemOnClick={onItemClick}/>
-          </ExpandableCard>}
+          : <Card backgroundColor='white'
+                  boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
+            <BookSearchInputOpenButton onClick={() => setUseSearch(true)}/>
+          </Card>}
       </Plain>
+      <PopupBackground active={useSearch} onClose={() => setUseSearch(false)}>
+        <div style={{margin: `8rem 1rem 2rem 1rem`}}>
+          <Card backgroundColor='white'
+                boxShadow={'rgba(0, 0, 0, 0.24) 0px 3px 8px'}>
+            <BookSearchInput placeholder='검색어를 입력해보세요'
+                             value={search.keyword}
+                             onChange={onChange}
+                             autoFocus={true}/>
+            <BookSearchResultList books={searchBooks} itemOnClick={itemOnClick}/>
+          </Card>
+        </div>
+      </PopupBackground>
+
       {selectedBook?.selected
         ? <Plain title='얼마나 읽으셨나요?'
                  subTitle={selectedAmount ? undefined : '지금 읽은 만큼의 리뷰도 도움이 될 수 있어요'}
@@ -228,6 +230,7 @@ function ReviewAddPage(): ReactElement {
           </Card>
         </Plain>
         : null}
+
       {selectedAmount
         ? <Plain title='어떤 책이었나요?'
                  subTitle='블로그에서 리뷰를 가져올 수 있어요'
@@ -268,38 +271,6 @@ export default ReviewAddPage
 const SubmitButtonWrapper = styled.div`
   margin: 0 1rem 4rem 1rem;
 `
-
-const SearchWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 1rem;
-`
-
-const SearchIconWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 2px 0 2px;
-`
-
-const SearchDivider = styled.div`
-  width: auto;
-  height: 1px;
-  background-color: #ecf0f1;
-  margin-bottom: 1rem;
-`
-
-const SearchInput = styled.input`
-  border: none;
-  font-size: medium;
-  width: 100%;
-
-  &:focus {
-    outline: none;
-  }
-`
-
-const EmptyList = styled.div``
 
 const SelectInitButton = styled.div`
   background-color: black;
