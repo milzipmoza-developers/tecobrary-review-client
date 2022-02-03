@@ -5,7 +5,6 @@ import {getSearchBook, getSearchBooks} from "../../api/search";
 import {Book, InternalSearchBook} from "../../interfaces";
 import Card from "../../components/card/Card";
 import {ReviewType} from "../../types";
-import {CustomRadioButton} from "../../components/buttons/CustomRadioButton";
 import {DisableableButton} from "../../components/buttons/DisableableButton";
 import {UserPageFrame} from "../../components/page/UserPageFrame";
 import {PopupBackground} from "../../components/background/PopupBackground";
@@ -96,20 +95,6 @@ function ReviewAddPage(): ReactElement {
     })
   }
 
-  const onReviewUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedReview({
-      type: selectedReview.type,
-      url: e.target.value
-    })
-  }
-
-  const onReviewContentChange = (e: any) => {
-    setSelectedReview({
-      type: selectedReview.type,
-      content: e.target.value
-    })
-  }
-
   const itemOnClick = (id: string) => {
     const searchBook = getSearchBook(id);
     if (!searchBook) {
@@ -147,13 +132,6 @@ function ReviewAddPage(): ReactElement {
     setUseSelector(false)
   }
 
-  const onReviewTypeChange = (it: ReviewType) => {
-    setSelectedReview({
-      ...selectedReview,
-      type: it
-    })
-  }
-
   const confirmButtonName = () => {
     if (stage === FIRST_STEP) {
       return '리뷰 완료까지 두 단계 남았어요'
@@ -187,7 +165,7 @@ function ReviewAddPage(): ReactElement {
   return (
     <UserPageFrame header={{useProfileButton: true, useBackButton: true}}>
       {/* first step components*/}
-      <Plain title='도서를 검색해보세요'
+      <Plain title='어떤 책을 읽으셨나요?'
              subTitle={selectedBook?.book ? undefined : '다 읽지 않아도 리뷰를 남길 수 있어요'}
              subTitleMargin='0 1rem 6px 1rem'
              margin='0 1rem 2rem 1rem'>
@@ -197,7 +175,8 @@ function ReviewAddPage(): ReactElement {
           </Card>
           : <Card backgroundColor='white'
                   boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
-            <BookSearchInputOpenButton onClick={() => setUseSearch(true)}/>
+            <BookSearchInputOpenButton placeholder='리뷰 남길 책을 검색해보세요'
+                                       onClick={() => setUseSearch(true)}/>
           </Card>}
       </Plain>
       <PopupBackground active={useSearch} onClose={() => {
@@ -208,10 +187,10 @@ function ReviewAddPage(): ReactElement {
         <div style={{margin: `8vh 1rem 0 1rem`}}>
           <Card backgroundColor='white'
                 boxShadow={'rgba(0, 0, 0, 0.24) 0px 3px 8px'}>
-            <BookSearchInput placeholder='검색어를 입력해보세요'
+            <BookSearchInput placeholder='리뷰 남길 책을 검색해보세요'
                              value={search.keyword}
                              onChange={onChange}
-                             autoFocus={true}/>
+                             autoFocus={false}/>
             <BookSearchResult books={searchBooks} itemOnClick={itemOnClick}/>
           </Card>
         </div>
@@ -235,11 +214,11 @@ function ReviewAddPage(): ReactElement {
         : null}
       <PopupBackground active={useSelector} onClose={() => setUseSelector(false)}>
         <SelectorMenu items={[
-          {value: 'ABSTRACT', displayName: '서론만 읽었어요'},
-          {value: 'LITTLE', displayName: '조금 읽어봤어요'},
-          {value: 'ONE_CHAPTER', displayName: '한 챕터 읽었어요'},
-          {value: 'CHAPTERS', displayName: '여러 챕터 읽었어요'},
-          {value: 'ALL', displayName: '전부 읽었어요'},
+          {value: 'ABSTRACT', displayName: '서론만 읽었어요', disabled: true},
+          {value: 'LITTLE', displayName: '조금 읽어봤어요', disabled: false},
+          {value: 'ONE_CHAPTER', displayName: '한 챕터 읽었어요', disabled: true},
+          {value: 'CHAPTERS', displayName: '여러 챕터 읽었어요', disabled: false},
+          {value: 'ALL', displayName: '전부 읽었어요', disabled: true},
         ]} itemOnClick={onSelectorSelect}/>
       </PopupBackground>
 
@@ -250,23 +229,11 @@ function ReviewAddPage(): ReactElement {
                  margin='0 1rem 2rem 1rem'>
           <Card backgroundColor='white'
                 boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
-            <CustomRadioButton marginBottom='1rem'
-                               onChange={onReviewTypeChange}/>
-            {selectedReview.type === 'SHORT_REVIEW'
-              ? <ReviewInputWrapper>
-                <ReviewContentInput placeholder='리뷰를 10자 이상 입력해주세요'
-                                    rows={8}
-                                    value={selectedReview.content}
-                                    onChange={onReviewContentChange}/>
-              </ReviewInputWrapper>
-              : <ReviewInputWrapper>
-                <ReviewUrlInput placeholder='블로그 주소를 입력해주세요'
-                                value={selectedReview.content}
-                                onChange={onReviewUrlChange}/>
-              </ReviewInputWrapper>}
+            aa
           </Card>
         </Plain>
         : null}
+
       <SubmitButtonWrapper>
         <Plain>
           <DisableableButton name={confirmButtonName()}
@@ -282,36 +249,4 @@ export default ReviewAddPage
 
 const SubmitButtonWrapper = styled.div`
   margin: 0 1rem 4rem 1rem;
-`
-
-const ReviewInputWrapper = styled.div`
-  width: auto;
-  height: fit-content;
-  padding: 1rem;
-`
-
-const ReviewUrlInput = styled.input`
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  font-size: medium;
-  width: 100%;
-
-  &:focus {
-    outline: none;
-  }
-`
-const ReviewContentInput = styled.textarea`
-  border: none;
-  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-  font-size: medium;
-  width: 100%;
-  resize: none;
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', sans-serif;
-
-  &:focus {
-    outline: none;
-    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-  }
 `

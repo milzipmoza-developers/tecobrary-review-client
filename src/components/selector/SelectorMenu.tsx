@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 export interface SelectorItem {
   value: string
+  disabled: boolean
   displayName: string
 }
 
@@ -17,7 +18,7 @@ export const SelectorMenu = ({items, itemOnClick}: Props): ReactElement => {
     <Wrapper>
       <Menu>
         {items.map((it: SelectorItem, index: number) => (
-          <SelectorElement key={index} itemName={it.displayName} onClick={itemOnClick(it)}/>
+          <SelectorElement key={index} itemName={it.displayName} onClick={itemOnClick(it)} disabled={it.disabled}/>
         ))}
       </Menu>
     </Wrapper>

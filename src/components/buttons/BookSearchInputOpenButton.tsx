@@ -3,16 +3,17 @@ import React from "react";
 import styled from "styled-components";
 
 interface Props {
+  placeholder: string
   onClick: () => void
 }
 
-export const BookSearchInputOpenButton = ({onClick}: Props) => {
+export const BookSearchInputOpenButton = ({placeholder, onClick}: Props) => {
   return (
     <SearchWrapper onClick={onClick}>
       <SearchIconWrapper>
         <SearchOutline/>
       </SearchIconWrapper>
-      <SearchInput>검색어를 입력해보세요</SearchInput>
+      <SearchInput>{placeholder}</SearchInput>
     </SearchWrapper>
   )
 }
