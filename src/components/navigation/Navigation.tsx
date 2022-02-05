@@ -31,7 +31,7 @@ function Navigation(): ReactElement {
       <NavigationContent>
         <NavigationIcon name='home' width={'1.5rem'} height={'1.5rem'} to='/'/>
         <NavigationIcon name='reader' width={'1.5rem'} height={'1.5rem'} to='/timeline'/>
-        <AddReviewIcon to='/review'/>
+        <AddReviewIcon to='/reviews'/>
       </NavigationContent>
     </NavigationWrapper>
   );

@@ -177,7 +177,7 @@ function App(): ReactElement {
         <Route exact path={'/'} component={HomePage}/>
         <Route exact path={'/timeline'} component={TimelinePage}/>
         <Route exact path={'/my-page'} component={MyPage}/>
-        <Route exact path={'/review'} component={ReviewAddPage}/>
+        <Route exact path={'/reviews'} component={ReviewAddPage}/>
         <Route exact path={'/books/:isbn'} component={BookDetailPage}/>
         <Route exact path={'/books/:bookId/reviews'} component={BookReviewPage}/>
         <Route exact path={'/books'} component={BookListPage}/>
