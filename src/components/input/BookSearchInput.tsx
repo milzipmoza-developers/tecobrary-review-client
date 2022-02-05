@@ -4,23 +4,26 @@ import styled from "styled-components";
 
 interface Props {
   value: string
+  focused: boolean
   placeholder: string
   autoFocus?: boolean
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onFocus?: () => void
+  onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void
 }
 
 export const BookSearchInput = (props: Props): ReactElement => {
 
-  const {value, placeholder, autoFocus, onChange, onFocus} = props
+  const {value, focused, placeholder, autoFocus, onChange, onFocus, onKeyPress} = props
   const searchElement = useRef<HTMLInputElement>() as React.MutableRefObject<HTMLInputElement>;
 
   useEffect(() => {
-    if (searchElement.current) {
+    if (focused) {
+      console.log('focused')
       searchElement.current.focus()
+      searchElement.current.select()
     }
-  }, []);
-
+  }, [focused]);
 
   return (
     <SearchWrapper>
@@ -32,6 +35,7 @@ export const BookSearchInput = (props: Props): ReactElement => {
                    value={value}
                    onChange={onChange}
                    onFocus={onFocus}
+                   onKeyPress={onKeyPress}
                    autoFocus={autoFocus}/>
     </SearchWrapper>
   )

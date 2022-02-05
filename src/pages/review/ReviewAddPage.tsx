@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useState} from "react";
+import React, {ReactElement, useState} from "react";
 import Plain from "../../components/plain/Plain";
 import styled from "styled-components";
 import {getSearchBook, getSearchBooks} from "../../api/search";
@@ -16,6 +16,8 @@ import {Selector} from "../../components/selector/Selector";
 import SpannedCard from "../../components/card/SpannedCard";
 import {SelectableRadioTextButtons} from "../../components/buttons/SelectableRadioTextButtons";
 import {SelectableCheckboxTextButtons} from "../../components/buttons/SelectableCheckboxTextButtons";
+import {SearchDivider} from "../../components/divider";
+import {TextButton} from "../../components/buttons/TextButton";
 
 interface Search {
   keyword: string
@@ -76,16 +78,16 @@ function ReviewAddPage(): ReactElement {
   const [selectedLeft, setSelectedLeft] = useState(-1)
   const [selectedSpec, setSelectedSpec] = useState<number[]>([])
 
-  useEffect(() => {
-    if (search.keyword.length < 2) {
-      setSearchBooks([])
-    }
+  const fetchSearchBooks = () => {
     if (search.keyword.length >= 2) {
       setSearchBooks(getSearchBooks)
     }
-  }, [search])
+  }
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (searchBooks.length != 0) {
+      setSearchBooks([])
+    }
     setSearch({
       keyword: e.target.value
     })
@@ -176,6 +178,16 @@ function ReviewAddPage(): ReactElement {
     }
   }
 
+  const onSearchPopClosed = () => {
+    setUseSearch(false)
+    search.keyword = ''
+    setSearchBooks([])
+  }
+
+  const onSearchPopOpened = () => {
+    setUseSearch(true)
+  }
+
   return (
     <UserPageFrame header={{useProfileButton: true, useBackButton: true}}>
       {/* first step components*/}
@@ -190,21 +202,33 @@ function ReviewAddPage(): ReactElement {
           : <Card backgroundColor='white'
                   boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
             <BookSearchInputOpenButton placeholder='리뷰 남길 책을 검색해보세요'
-                                       onClick={() => setUseSearch(true)}/>
+                                       onClick={onSearchPopOpened}/>
           </Card>}
       </Plain>
-      <PopupBackground active={useSearch} onClose={() => {
-        setUseSearch(false)
-        search.keyword = ''
-        setSearchBooks([])
-      }}>
+      <PopupBackground active={useSearch} onClose={onSearchPopClosed}>
         <div style={{margin: `8vh 1rem 0 1rem`}}>
           <Card backgroundColor='white'
                 boxShadow={'rgba(0, 0, 0, 0.24) 0px 3px 8px'}>
             <BookSearchInput placeholder='리뷰 남길 책을 검색해보세요'
+                             focused={useSearch}
                              value={search.keyword}
+                             onKeyPress={(e) => {
+                               if (e.key == 'Enter') {
+                                 fetchSearchBooks()
+                               }
+                             }}
                              onChange={onChange}
-                             autoFocus={false}/>
+                             autoFocus={true}/>
+            {search.keyword.length != 0 && searchBooks.length == 0 ?
+              <>
+                <SearchDivider/>
+                {search.keyword.length < 2 ?
+                  <SearchGuideInfo>두 글자 이상부터 검색이 가능해요</SearchGuideInfo>
+                  : <SearchGuide>
+                    <TextButton onClick={fetchSearchBooks}>{`'${search.keyword}' 로 검색하기`}</TextButton>
+                  </SearchGuide>}
+              </>
+              : null}
             <BookSearchResult books={searchBooks} itemOnClick={itemOnClick}/>
           </Card>
         </div>
@@ -355,4 +379,16 @@ const Title = styled.div`
   margin-bottom: 4px;
   justify-content: flex-start;
   align-items: center;
+`
+
+const SearchGuide = styled.div`
+  width: auto;
+  justify-content: center;
+  align-items: center;
+`
+
+const SearchGuideInfo = styled.div`
+  text-align: right;
+  font-size: small;
+  color: grey;
 `

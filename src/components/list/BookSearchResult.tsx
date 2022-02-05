@@ -1,7 +1,7 @@
 import React, {ReactElement} from "react";
 import {Book} from "../../interfaces";
-import styled from "styled-components";
 import {BookSearchList} from "./BookSearchList";
+import {SearchDivider} from "../divider";
 
 interface Props {
   books?: Book[]
@@ -17,10 +17,3 @@ export const BookSearchResult = ({books, itemOnClick}: Props): ReactElement => {
     </>
   )
 }
-
-const SearchDivider = styled.div`
-  width: auto;
-  height: 1px;
-  background-color: #ecf0f1;
-  margin-bottom: 1rem;
-`
