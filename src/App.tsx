@@ -43,6 +43,7 @@ function App(): ReactElement {
     initUserState()
     initAuthentication()
     initDeviceId()
+    reroute()
     // initQueryParams()
   }, [])
 
@@ -159,6 +160,14 @@ function App(): ReactElement {
           actionButton: {name: "새로고침", onClick: () => history.go(0)}
         })
       }
+    }
+  }
+
+  const reroute = () => {
+    const referer = localStorage.getItem("X-TECOBRARY-REFERER")
+    if (referer) {
+      localStorage.removeItem("X-TECOBRARY-REFERER")
+      history.push(referer)
     }
   }
 

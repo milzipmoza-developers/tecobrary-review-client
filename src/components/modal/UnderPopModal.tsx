@@ -7,9 +7,11 @@ import {loginModalState} from "../../states/LoginModal";
 import {userState} from "../../states/User";
 import {NETWORK_ERROR_DEFAULT, popState, SERVER_ERROR_DEFAULT} from "../../states/Pop";
 import {PopupBackground} from "../background/PopupBackground";
+import {useHistory} from "react-router-dom";
 
 const UnderPopModal = (): ReactElement | null => {
 
+  const history = useHistory()
   const user = useRecoilValue(userState)
   const [loginModal, setLoginModal] = useRecoilState(loginModalState)
   const setPop = useSetRecoilState(popState)
@@ -17,6 +19,7 @@ const UnderPopModal = (): ReactElement | null => {
   const onClick = async () => {
     try {
       window.location.href = await AuthenticationApi.getLoginUrl(user.deviceId)
+      localStorage.setItem("X-TECOBRARY-REFERER", history.location.pathname)
     } catch (e) {
       if (e.response) {
         setPop(SERVER_ERROR_DEFAULT)
