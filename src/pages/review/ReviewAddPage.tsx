@@ -1,8 +1,7 @@
 import React, {ReactElement, useState} from "react";
 import Plain from "../../components/plain/Plain";
 import styled from "styled-components";
-import {getSearchBook, getSearchBooks} from "../../api/search";
-import {Book, InternalSearchBook} from "../../interfaces";
+import {Book} from "../../interfaces";
 import Card from "../../components/card/Card";
 import {DisableableButton} from "../../components/buttons/DisableableButton";
 import {UserPageFrame} from "../../components/page/UserPageFrame";
@@ -18,6 +17,10 @@ import {SelectableRadioTextButtons} from "../../components/buttons/SelectableRad
 import {SelectableCheckboxTextButtons} from "../../components/buttons/SelectableCheckboxTextButtons";
 import {SearchDivider} from "../../components/divider";
 import {TextButton} from "../../components/buttons/TextButton";
+import {ReviewApi} from "../../api/review/review.service";
+import {ReviewSearchBook} from "../../api/review/review.model";
+import {useRecoilValue} from "recoil";
+import {userState} from "../../states/User";
 
 interface Search {
   keyword: string
@@ -57,17 +60,19 @@ const initSelectedBook = (): SelectedBook => ({
   selected: false
 })
 
-const selectBook = (book: Book): SelectedBook => ({
+const selectBook = (book: ReviewSearchBook): SelectedBook => ({
   selected: true,
   book
 })
 
 function ReviewAddPage(): ReactElement {
 
+  const user = useRecoilValue(userState)
+
   const [useSearch, setUseSearch] = useState(false)
   const [search, setSearch] = useState<Search>({keyword: ''})
   const [stage, setStage] = useState<ReviewStage>(FIRST_STEP)
-  const [searchBooks, setSearchBooks] = useState<InternalSearchBook[]>([])
+  const [searchBooks, setSearchBooks] = useState<ReviewSearchBook[]>([])
   const [selectedBook, setSelectedBook] = useState<SelectedBook>()
 
   const [useSelector, setUseSelector] = useState(false)
@@ -78,9 +83,10 @@ function ReviewAddPage(): ReactElement {
   const [selectedLeft, setSelectedLeft] = useState(-1)
   const [selectedSpec, setSelectedSpec] = useState<number[]>([])
 
-  const fetchSearchBooks = () => {
+  const fetchSearchBooks = async () => {
     if (search.keyword.length >= 2) {
-      setSearchBooks(getSearchBooks)
+      const searchBooks = await ReviewApi.searchBooks(search.keyword, user.token, user.deviceId);
+      setSearchBooks(searchBooks.items)
     }
   }
 
@@ -93,14 +99,18 @@ function ReviewAddPage(): ReactElement {
     })
   }
 
-  const itemOnClick = (id: string) => {
-    const searchBook = getSearchBook(id);
-    if (!searchBook) {
-      throw Error('선택한 책이 존재하지 않습니다.')
+  const itemOnClick = async (id: string) => {
+    const selectedBook = searchBooks.find(it => it.isbn == id)
+    console.log(selectedBook)
+    if (selectedBook) {
+      const searchBook = await ReviewApi.selectBook(selectedBook, user.token, user.deviceId)
+      if (!searchBook) {
+        throw Error('선택한 책이 존재하지 않습니다.')
+      }
+      setUseSearch(false)
+      setSelectedBook(selectBook(selectedBook))
+      setStage(SECOND_STEP)
     }
-    setUseSearch(false)
-    setSelectedBook(selectBook(searchBook))
-    setStage(SECOND_STEP)
   }
 
   const onInitSelectBook = () => {
