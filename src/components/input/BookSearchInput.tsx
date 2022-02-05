@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from "react";
+import React, {ReactElement, useEffect, useRef} from "react";
 import {SearchOutline} from "react-ionicons";
 import styled from "styled-components";
 
@@ -10,7 +10,7 @@ interface Props {
   onFocus?: () => void
 }
 
-export const BookSearchInput = (props: Props) => {
+export const BookSearchInput = (props: Props): ReactElement => {
 
   const {value, placeholder, autoFocus, onChange, onFocus} = props
   const searchElement = useRef<HTMLInputElement>() as React.MutableRefObject<HTMLInputElement>;

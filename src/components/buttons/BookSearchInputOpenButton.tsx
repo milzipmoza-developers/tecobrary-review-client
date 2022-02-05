@@ -1,5 +1,5 @@
 import {SearchOutline} from "react-ionicons";
-import React from "react";
+import React, {ReactElement} from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
   onClick: () => void
 }
 
-export const BookSearchInputOpenButton = ({placeholder, onClick}: Props) => {
+export const BookSearchInputOpenButton = ({placeholder, onClick}: Props): ReactElement => {
   return (
     <SearchWrapper onClick={onClick}>
       <SearchIconWrapper>

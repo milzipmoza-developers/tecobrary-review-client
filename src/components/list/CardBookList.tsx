@@ -6,7 +6,6 @@ import {CountedIconBadge} from "../badges/CountedIconBadge";
 import {CardBookElementSkeleton} from "./CardBookElementSkeleton";
 
 interface Props {
-  whenEmpty?: ReactElement
   iconBadge?: ReactElement[]
   itemOnClick?: (id: string) => void
   loading?: boolean
@@ -14,7 +13,7 @@ interface Props {
 }
 
 export const CardBookList = (props: Props): ReactElement => {
-  const {iconBadge, whenEmpty, itemOnClick, loading, books} = props
+  const {iconBadge, itemOnClick, loading, books} = props
 
   const conditionalCountedIconBadge = (book: Book): ReactElement => {
     if (!iconBadge) {

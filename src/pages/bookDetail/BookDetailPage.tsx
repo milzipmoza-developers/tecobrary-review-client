@@ -27,7 +27,7 @@ function BookDetailPage(): ReactElement {
   const [book, setBook] = useState<DisplayBookDetail>()
   const [mark, setMark] = useState<DisplayBookMark>()
   const [tags, setTags] = useState<DisplayBookTag[]>()
-  const [reviews, setReviews] = useState([])
+  const [reviews] = useState([])
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [bookDetail] = useState<BookDetail>(getBookDetail.get(1)!)
@@ -59,7 +59,7 @@ function BookDetailPage(): ReactElement {
       setPop({message: e.response.data.message, open: true, duration: 3000, color: "ERROR"})
       history.goBack()
     },
-    doErrors: (e) => {
+    doErrors: () => {
       setPop(NETWORK_ERROR_DEFAULT)
     }
   }

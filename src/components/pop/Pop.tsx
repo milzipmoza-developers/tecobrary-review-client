@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {ReactElement, useEffect} from "react";
 import styled from "styled-components";
 import {useRecoilState} from "recoil";
 import {parse, popState} from "../../states/Pop";
@@ -14,7 +14,7 @@ const box_hidden = {
   transition: "opacity 300ms, visibility 300ms",
 };
 
-const Pop = () => {
+const Pop = (): ReactElement => {
 
   const [pop, setPop] = useRecoilState(popState)
 

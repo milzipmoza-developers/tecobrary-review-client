@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import {Skeleton} from "@mui/material";
+import {ReactElement} from "react";
 
-export const BookCarouselElementSkeleton = () => {
+export const BookCarouselElementSkeleton = (): ReactElement => {
   return (
     <BookElement>
       <ImageWrapper>

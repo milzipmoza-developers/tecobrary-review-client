@@ -34,8 +34,8 @@ export async function requestTemplate(request: RequestAction): Promise<void> {
 
 export interface RequestAction {
   doOnSuccess: () => Promise<void>,
-  doOnAuthError?: (e: any) => void,
-  doOn400Errors?: (e: any) => void,
-  doOn500Errors?: (e: any) => void,
-  doErrors?: (e: any) => void
+  doOnAuthError?: (e?: any) => void,
+  doOn400Errors?: (e?: any) => void,
+  doOn500Errors?: (e?: any) => void,
+  doErrors?: (e?: any) => void
 }

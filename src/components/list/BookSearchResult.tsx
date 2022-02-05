@@ -1,4 +1,4 @@
-import React from "react";
+import React, {ReactElement} from "react";
 import {Book} from "../../interfaces";
 import styled from "styled-components";
 import {BookSearchList} from "./BookSearchList";
@@ -8,7 +8,7 @@ interface Props {
   itemOnClick?: (id: string) => void
 }
 
-export const BookSearchResult = ({books, itemOnClick}: Props) => {
+export const BookSearchResult = ({books, itemOnClick}: Props): ReactElement => {
   return (
     <>
       {books && books.length != 0 ? <SearchDivider/> : null}

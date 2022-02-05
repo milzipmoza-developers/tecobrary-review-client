@@ -1,7 +1,7 @@
 import {useLayoutEffect} from "react";
 
 import {useLocation} from "react-router-dom";
-import queryString from "query-string";
+import queryString, {ParsedQuery} from "query-string";
 
 export function useLockBodyScroll(): void {
   // useLaoutEffect callback return type is "() => void" type
@@ -15,7 +15,7 @@ export function useLockBodyScroll(): void {
   }, []); // Empty array ensures effect is only run on mount and unmount
 }
 
-export function useQueryString() {
+export function useQueryString(): ParsedQuery {
   const {search} = useLocation();
   return queryString.parse(search);
 }

@@ -1,5 +1,5 @@
 import {TextField} from "@mui/material";
-import React from "react";
+import React, {ReactElement} from "react";
 import {Book} from "../api/book/book.model";
 import styled from "styled-components";
 import AdminBookCategoryCard from "./AdminBookCategoryCard";
@@ -10,9 +10,9 @@ interface Props {
   readOnly: boolean
 }
 
-const AdminBookDetail = ({book, readOnly}: Props) => {
+const AdminBookDetail = ({book, readOnly}: Props): ReactElement => {
   if (!book) {
-    return null
+    return <></>
   }
 
   return (

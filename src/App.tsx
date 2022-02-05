@@ -31,7 +31,7 @@ interface QueryString {
 
 function App(): ReactElement {
 
-  const {code, status, action}: QueryString = useQueryString()
+  const {code}: QueryString = useQueryString()
   const [storageDeviceId] = useState(localStorage.getItem("X-TECOBRARY-DEVICE-ID") || "")
   const [storageToken] = useState(localStorage.getItem("X-TECOBRARY-AUTH-TOKEN") || "")
   const [user, setUser] = useRecoilState(userState)
@@ -81,11 +81,11 @@ function App(): ReactElement {
       }))
       setPop({message: `${memberInfo.memberName} 님 반갑습니다 😀`, open: true, duration: 3000, color: "INFO"})
     },
-    doOnAuthError: (e) => {
+    doOnAuthError: () => {
       _removeLoginInfo()
       _removeExpiredToken("인증 정보가 만료되었어요. 다시 로그인해주세요.", "WARN")
     },
-    doErrors: (e) => {
+    doErrors: () => {
       _removeLoginInfo()
       _removeExpiredToken("인증 도중 문제가 발생했어요. 다시 로그인해주세요.", "ERROR")
     }
@@ -115,9 +115,14 @@ function App(): ReactElement {
 
   const authenticationRequest: RequestAction = {
     doOnSuccess: async () => {
-      const memberAuth = await AuthenticationApi.getToken(storageDeviceId, code!)
-      const memberInfo = await AuthenticationApi.getMemberInfo(storageDeviceId, memberAuth.token)
+      if (!code) {
+        _removeExpiredToken("인증 도중 문제가 발생했어요. 다시 로그인해주세요.", "ERROR")
+        return
+      }
+      const memberAuth = await AuthenticationApi.getToken(storageDeviceId, code)
       localStorage.setItem("X-TECOBRARY-AUTH-TOKEN", memberAuth.token)
+
+      const memberInfo = await AuthenticationApi.getMemberInfo(storageDeviceId, memberAuth.token)
       setUser((oldUser) => ({
         ...oldUser,
         userInfo: {
@@ -129,11 +134,11 @@ function App(): ReactElement {
         loggedIn: true
       }))
     },
-    doOnAuthError: (e) => {
+    doOnAuthError: () => {
       _removeLoginInfo()
       _removeExpiredToken("인증 정보가 만료되었어요. 다시 로그인해주세요.", "WARN")
     },
-    doErrors: (e) => {
+    doErrors: () => {
       _removeLoginInfo()
       _removeExpiredToken("인증 도중 문제가 발생했어요. 다시 로그인해주세요.", "ERROR")
     }

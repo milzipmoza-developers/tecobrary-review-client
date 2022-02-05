@@ -1,5 +1,10 @@
-export const CategoryImageContainer = (imageUrl: string) => {
+import {ReactElement} from "react";
+import styled from "styled-components";
+
+export const CategoryImageContainer = (imageUrl: string): ReactElement => {
   return (
-    <img src={imageUrl}/>
+    <Image src={imageUrl}/>
   )
 }
+
+const Image = styled.img``

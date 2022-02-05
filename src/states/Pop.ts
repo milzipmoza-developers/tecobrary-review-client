@@ -56,6 +56,7 @@ export const popState = atom({
   default: defaultState()
 })
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const parse = (popColor: PopColor) => {
   return popColors[popColor]
 }

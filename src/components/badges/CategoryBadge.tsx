@@ -18,14 +18,14 @@ const selectableSize = {
   }
 }
 
-function getSize(size: string): any {
+function getSize(size: string) {
   if (size === 'small') {
     return selectableSize.small
   }
   if (size === 'medium') {
     return selectableSize.medium
   }
-  return null
+  return undefined
 }
 
 export const CategoryBadge = ({size, fontWeight, backgroundColor, children}: Props): ReactElement => {

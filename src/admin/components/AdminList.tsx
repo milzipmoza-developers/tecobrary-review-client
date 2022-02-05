@@ -18,7 +18,7 @@ interface Props {
 
 export const AdminList = (props: Props): ReactElement => {
 
-  const {title, headers, elements, page, isFirst, isLast, pageUp, pageDown, onElementClick, children} = props
+  const {title, headers, elements, page, isFirst, isLast, pageUp, pageDown, onElementClick} = props
 
   const propNames: string[] = headers.map((header: ListPropNameProps) => header.propName)
 

@@ -61,13 +61,13 @@ function HomePage(): ReactElement {
 
       setLoading(false)
     },
-    doOn400Errors: (e) => {
+    doOn400Errors: () => {
       setPop(SERVER_ERROR_DEFAULT)
     },
-    doOn500Errors: (e) => {
+    doOn500Errors: () => {
       setPop(SERVER_ERROR_DEFAULT)
     },
-    doErrors: (e) => {
+    doErrors: () => {
       setPop(NETWORK_ERROR_DEFAULT)
     }
   }

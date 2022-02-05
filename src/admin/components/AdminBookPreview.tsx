@@ -1,5 +1,5 @@
 import {TextField} from "@mui/material";
-import React from "react";
+import React, {ReactElement} from "react";
 import {OptionBook} from "../pages/book/AdminBookPage";
 import styled from "styled-components";
 
@@ -8,11 +8,11 @@ interface Props {
   readonly: boolean
 }
 
-export const BookPreview = (props: Props) => {
+export const BookPreview = (props: Props): ReactElement => {
   const {selectedBook, readonly} = props
 
   if (!selectedBook) {
-    return null
+    return <></>
   }
 
   return (

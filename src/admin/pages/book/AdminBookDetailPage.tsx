@@ -40,7 +40,7 @@ function AdminBookDetailPage(): ReactElement {
 
   const [alertStatus, setAlertStatus] = useRecoilState(adminAlertStatus)
 
-  const [readOnly, setReadOnly] = useState(true)
+  const [readOnly] = useState(true)
   const [book, setBook] = useState<Book>()
 
   const [open, setOpen] = useState(false)
@@ -112,7 +112,7 @@ function AdminBookDetailPage(): ReactElement {
         if (result) {
           _showAlert('도서 카테고리 해제에 성공하였습니다.', 'success')
           _init()
-          Query.get()
+          await Query.get()
           return
         }
 
@@ -126,12 +126,6 @@ function AdminBookDetailPage(): ReactElement {
 
         _showAlert(`도서 카테고리 해제에 실패하였습니다. 사유 : ${e.message}`, 'error', 5000)
       }
-    }
-  }
-
-  const PageAction = {
-    editable: () => {
-      console.log('editable')
     }
   }
 
@@ -165,7 +159,7 @@ function AdminBookDetailPage(): ReactElement {
           setShowDialog(false)
           _showAlert('등록에 성공하였습니다.', 'success')
           _init()
-          Query.get()
+          await Query.get()
           return
         }
 
@@ -212,7 +206,7 @@ function AdminBookDetailPage(): ReactElement {
           setShowTagDialog(false)
           _showAlert('등록에 성공하였습니다.', 'success')
           _init()
-          Query.get()
+          await Query.get()
           return
         }
 
@@ -367,6 +361,7 @@ function AdminBookDetailPage(): ReactElement {
               filterOptions={(x) => x}
               options={options}
               renderInput={(params) => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const {InputLabelProps, InputProps, ...rest} = params
                 return <>
                   <InputBase
@@ -424,6 +419,7 @@ function AdminBookDetailPage(): ReactElement {
               filterOptions={(x) => x}
               options={tagOptions}
               renderInput={(params) => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const {InputLabelProps, InputProps, ...rest} = params
                 return <>
                   <InputBase

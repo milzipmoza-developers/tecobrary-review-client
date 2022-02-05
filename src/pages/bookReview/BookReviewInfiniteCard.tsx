@@ -80,9 +80,3 @@ const SecondLine = styled.div`
   justify-content: flex-end;
   margin-bottom: 0.5rem;
 `
-
-const LoadMoreReviewButton = styled.div`
-  width: 100%;
-  height: 4rem;
-  background-color: black;
-`

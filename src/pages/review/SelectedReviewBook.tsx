@@ -1,5 +1,5 @@
 import {CardBookListElement} from "../../components/list/CardBookListElement";
-import React from "react";
+import React, {ReactElement} from "react";
 import {TextButton} from "../../components/buttons/TextButton";
 import {Book} from "../../interfaces";
 
@@ -8,7 +8,7 @@ interface Props {
   onInitButtonClick?: () => void
 }
 
-export const SelectedReviewBook = ({book, onInitButtonClick}: Props) => {
+export const SelectedReviewBook = ({book, onInitButtonClick}: Props): ReactElement => {
   return (
     <>
       <CardBookListElement isbn={book.isbn}

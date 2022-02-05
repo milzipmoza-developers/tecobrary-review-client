@@ -1,4 +1,5 @@
 import {SelectableTextButton} from "./SelectableTextButton";
+import {ReactElement} from "react";
 
 interface Props {
   items: string[]
@@ -6,7 +7,7 @@ interface Props {
   onItemClick: (index: number) => () => void
 }
 
-export const SelectableCheckboxTextButtons = (props: Props) => {
+export const SelectableCheckboxTextButtons = (props: Props): ReactElement => {
   const {items, selects, onItemClick} = props
 
   return (

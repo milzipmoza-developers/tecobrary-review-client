@@ -303,6 +303,7 @@ function AdminBookPage(): ReactElement {
               options={options}
               loading={loading}
               renderInput={(params) => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const {InputLabelProps, InputProps, ...rest} = params
                 return <>
                   <InputBase

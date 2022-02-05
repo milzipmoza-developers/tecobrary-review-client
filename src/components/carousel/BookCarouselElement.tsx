@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import {ReactElement} from "react";
 
 interface Props {
   onClick: () => void
@@ -7,7 +8,7 @@ interface Props {
   title: string
 }
 
-export const BookCarouselElement = (props: Props) => {
+export const BookCarouselElement = (props: Props): ReactElement => {
   const {onClick, imageUrl, author, title} = props
 
   return (

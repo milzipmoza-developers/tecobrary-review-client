@@ -1,5 +1,5 @@
 import {TextButton} from "../buttons/TextButton";
-import React from "react";
+import React, {ReactElement} from "react";
 import styled from "styled-components";
 
 
@@ -16,7 +16,9 @@ interface Props {
   onInit: () => void
 }
 
-export const Selector = ({selectedItem, placeHolder, initButtonName, onOpen, onInit}: Props) => {
+export const Selector = (props: Props): ReactElement => {
+  const {selectedItem, placeHolder, initButtonName, onOpen, onInit} = props
+
   return (
     <>
       <SelectWrapper>

@@ -62,7 +62,7 @@ function BookListPage(): ReactElement {
     doOn400Errors: (e) => {
       setPop({message: e.response.data.message, open: true, duration: 3000, color: "WARN"})
     },
-    doErrors: (e) => {
+    doErrors: () => {
       setPop(NETWORK_ERROR_DEFAULT)
     }
   }
@@ -82,7 +82,7 @@ function BookListPage(): ReactElement {
     doOn400Errors: (e) => {
       setPop({message: e.response.data.message, open: true, duration: 3000, color: "WARN"})
     },
-    doErrors: (e) => {
+    doErrors: () => {
       setPop(NETWORK_ERROR_DEFAULT)
     }
   }

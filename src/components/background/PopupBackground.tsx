@@ -8,7 +8,7 @@ interface Props {
   children?: ReactElement[] | ReactElement
 }
 
-export const PopupBackground = ({active, onClose, children}: Props) => {
+export const PopupBackground = ({active, onClose, children}: Props): ReactElement => {
 
   useEffect(() => {
     if (active) {
@@ -34,7 +34,7 @@ export const PopupBackground = ({active, onClose, children}: Props) => {
     document.body.style.removeProperty('overflow')
     document.body.style.removeProperty('position')
     window.scrollTo({top: offsetY || 0})
-    document.ontouchmove = function (e) {
+    document.ontouchmove = function () {
       return true;
     }
   }

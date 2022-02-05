@@ -1,13 +1,13 @@
-import React from "react";
+import React, {ReactElement} from "react";
 import styled from "styled-components";
 
-interface IconProps {
+interface Props {
   selected: boolean
   onClick: () => void
   children: string
 }
 
-export const SelectableTextButton = ({selected, onClick, children}: IconProps) => {
+export const SelectableTextButton = ({selected, onClick, children}: Props): ReactElement => {
   if (!selected) {
     return (
       <UnSelectedTextIcon onClick={onClick}>

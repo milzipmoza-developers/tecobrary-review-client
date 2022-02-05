@@ -95,10 +95,3 @@ const ElementAuthor = styled.div`
   font-weight: lighter;
   margin-left: auto;
 `
-
-const ElementLastLine = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin-top: auto;
-  justify-content: flex-end;
-`

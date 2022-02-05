@@ -3,7 +3,6 @@ import {TransparentHeader} from "../headers/TransparentHeader";
 import styled from "styled-components";
 
 interface Props {
-  top?: string
   header: HeaderProps
   children: ReactNode
 }
@@ -13,7 +12,7 @@ interface HeaderProps {
   useProfileButton: boolean
 }
 
-export const PageFrame = ({top, header, children}: Props): ReactElement => {
+export const PageFrame = ({header, children}: Props): ReactElement => {
   const {useBackButton, useProfileButton} = header
 
   return (
