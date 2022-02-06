@@ -75,6 +75,15 @@ const getMostFavoriteBooks = async (): Promise<DisplayMainInterestBookSection> =
   }
 }
 
+const getMostReviewedBooks = async (): Promise<DisplayMainInterestBookSection> => {
+  const response = await requestDisplayInterestBook("MANY_REVIEWS")
+  const {type, books} = response.data.data
+  return {
+    type,
+    books
+  }
+}
+
 const requestDisplayInterestBook = async (type: string): Promise<AxiosResponse> => {
   return await Api.server()
     .get("/api/display/main/interest-books", {
@@ -89,5 +98,6 @@ export const DisplayApi = {
   getRandomCategories,
   getMostLikeBooks,
   getMostFavoriteBooks,
+  getMostReviewedBooks,
   getBook
 }
