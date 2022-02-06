@@ -31,6 +31,13 @@ export const SERVER_ERROR_DEFAULT: Pop = {
   color: "ERROR"
 }
 
+export const CLOSE: Pop = {
+  message: "",
+  open: false,
+  duration: 0,
+  color: "INFO"
+}
+
 interface Pop {
   message: string
   open: boolean

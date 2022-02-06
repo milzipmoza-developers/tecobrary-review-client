@@ -55,7 +55,7 @@ const PopArea = styled.div`
 `
 
 interface PopWrapperProps {
-  background: string
+  background?: string
 }
 
 const PopWrapper = styled.div<PopWrapperProps>`
@@ -71,12 +71,13 @@ const PopWrapper = styled.div<PopWrapperProps>`
 `
 
 const PopMessage = styled.div`
-  flex: 9;
+  width: auto;
   margin-right: 1rem;
 `
 
 const PopAction = styled.div`
-  flex: 1;
+  width: fit-content;
+  padding: 2px;
   margin-left: auto;
   justify-self: baseline;
   border-radius: 4px;

@@ -1,5 +1,50 @@
 import {ReviewKeyword, ReviewSearchBook, SelectedReviewRange} from "./review.model";
 
+export const DraftReviewLoader = {
+  loadBook: (): ReviewSearchBook | null => {
+    const string = localStorage.getItem(DraftReview.keys.DRAFT_REVIEW_BOOK)
+    if (!string) {
+      return null
+    }
+    return JSON.parse(string)
+  },
+  loadRange: (): SelectedReviewRange | null => {
+    const string = localStorage.getItem(DraftReview.keys.DRAFT_REVIEW_RANGE)
+    if (!string) {
+      return null
+    }
+    return JSON.parse(string)
+  },
+  loadKeywordContent: (): ReviewKeyword | null => {
+    const string = localStorage.getItem(DraftReview.keys.DRAFT_REVIEW_KEYWORD_CONTENT)
+    if (!string) {
+      return null
+    }
+    return JSON.parse(string)
+  },
+  loadKeywordInformative: (): ReviewKeyword | null => {
+    const string = localStorage.getItem(DraftReview.keys.DRAFT_REVIEW_KEYWORD_INFORMATIVE)
+    if (!string) {
+      return null
+    }
+    return JSON.parse(string)
+  },
+  loadKeywordReadMore: (): ReviewKeyword | null => {
+    const string = localStorage.getItem(DraftReview.keys.DRAFT_REVIEW_KEYWORD_READ_MORE)
+    if (!string) {
+      return null
+    }
+    return JSON.parse(string)
+  },
+  loadKeywordSelectables: (): ReviewKeyword[] => {
+    const string = localStorage.getItem(DraftReview.keys.DRAFT_REVIEW_KEYWORD_SELECTABLES)
+    if (!string) {
+      return []
+    }
+    return JSON.parse(string)
+  }
+}
+
 export class DraftReview {
 
   static keys = {
@@ -9,6 +54,11 @@ export class DraftReview {
     DRAFT_REVIEW_KEYWORD_READ_MORE: "selected_review_read_more",
     DRAFT_REVIEW_KEYWORD_CONTENT: "selected_review_content",
     DRAFT_REVIEW_KEYWORD_INFORMATIVE: "selected_review_informative",
+  }
+
+  static hasAny(): boolean {
+    const draftReviewBook = localStorage.getItem(DraftReview.keys.DRAFT_REVIEW_BOOK);
+    return draftReviewBook != null
   }
 
   static setBook(book: ReviewSearchBook): void {

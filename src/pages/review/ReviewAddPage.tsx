@@ -28,8 +28,8 @@ import {
 } from "../../api/review/review.model";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {userState} from "../../states/User";
-import {NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
-import {DraftReview} from "../../api/review/draftReview.utils";
+import {CLOSE, NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
+import {DraftReview, DraftReviewLoader} from "../../api/review/draftReview.utils";
 import {loginModalState} from "../../states/LoginModal";
 import {useHistory} from "react-router-dom";
 
@@ -86,7 +86,7 @@ function ReviewAddPage(): ReactElement {
   const [selectedBook, setSelectedBook] = useState<SelectedBook>()
 
   const [useSelector, setUseSelector] = useState(false)
-  const [selectedAmount, setSelectedAmount] = useState<SelectedReviewRange>()
+  const [selectedRange, setSelectedRange] = useState<SelectedReviewRange>()
   const [selectableRanges, setSelectableRanges] = useState<ReviewSelectableRanges>()
 
   const [selectedContent, setSelectedContent] = useState<ReviewKeyword>()
@@ -95,14 +95,75 @@ function ReviewAddPage(): ReactElement {
   const [selectedSelectables, setSelectedSelectables] = useState<ReviewKeyword[]>([])
 
   useEffect(() => {
-    const find = selectableRanges?.ranges.find(it => it.disabled == false)
+    if (DraftReview.hasAny() && stage == FIRST_STEP) {
+      setPop({
+        open: true,
+        message: "작성중인 리뷰가 있어요.",
+        color: "INFO",
+        duration: 5000,
+        actionButton: {
+          name: "불러오기",
+          onClick: async () => {
+            await loadDraftReview()
+            setPop(CLOSE)
+          }
+        }
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!selectableRanges || selectableRanges?.ranges.length == 0) {
+      return
+    }
+    const find = selectableRanges.ranges.find(it => !it.disabled)
     if (selectedBook && selectedBook.book && !find) {
-      setPop({open: true, message: `이미 리뷰를 남겨주셨어요. 다른 책도 리뷰를 기다리고 있어요.`, color: "WARN", duration: 3000})
+      setPop({open: true, message: `선택하신 책에 이미 충분한 리뷰를 남겨주셨어요.`, color: "WARN", duration: 3000})
       setSelectedBook(initSelectedBook)
       setSearchBooks([])
       search.keyword = ''
     }
   }, [selectableRanges])
+
+  const loadDraftReview = async () => {
+    const loadedBook = DraftReviewLoader.loadBook()
+    if (!loadedBook) {
+      return
+    }
+    setSelectedBook(selectBook(loadedBook))
+    setStage(SECOND_STEP)
+
+    const reviewSelectableRanges = await ReviewApi.getAvailableRanges(loadedBook.isbn, user.token, user.deviceId);
+    setSelectableRanges(reviewSelectableRanges)
+
+    const loadedRange = DraftReviewLoader.loadRange()
+    if (!loadedRange) {
+      return
+    }
+    const reviewRange = reviewSelectableRanges.ranges.find(it => it.key == loadedRange.key);
+    if (reviewRange && reviewRange.disabled) {
+      return
+    }
+    setSelectedRange(loadedRange)
+    setStage(THIRD_STEP)
+
+    const loadKeywordContent = DraftReviewLoader.loadKeywordContent()
+    if (loadKeywordContent) {
+      setSelectedContent(loadKeywordContent)
+    }
+    const loadKeywordInformative = DraftReviewLoader.loadKeywordInformative()
+    if (loadKeywordInformative) {
+      setSelectedInformative(loadKeywordInformative)
+    }
+    const loadKeywordReadMore = DraftReviewLoader.loadKeywordReadMore()
+    if (loadKeywordReadMore) {
+      setSelectedReadMore(loadKeywordReadMore)
+    }
+    const reviewKeywords = DraftReviewLoader.loadKeywordSelectables()
+    if (reviewKeywords) {
+      setSelectedSelectables(reviewKeywords)
+    }
+  }
 
   const fetchSearchBooks = async () => {
     if (search.keyword.length >= 2) {
@@ -144,7 +205,7 @@ function ReviewAddPage(): ReactElement {
     DraftReview.removeBook()
     setSearchBooks([])
     search.keyword = ''
-    setSelectedAmount(undefined)
+    setSelectedRange(undefined)
     setSelectedBook(initSelectedBook)
     setStage(FIRST_STEP)
   }
@@ -156,14 +217,14 @@ function ReviewAddPage(): ReactElement {
 
   const doSecondStep = (it: SelectedReviewRange) => {
     if (it) {
-      setSelectedAmount(it)
+      setSelectedRange(it)
       setStage(THIRD_STEP)
       DraftReview.setRange(it)
     }
   }
 
   const initSecondStep = () => {
-    setSelectedAmount(undefined)
+    setSelectedRange(undefined)
     setStage(SECOND_STEP)
     DraftReview.removeRange()
   }
@@ -175,7 +236,7 @@ function ReviewAddPage(): ReactElement {
     if (stage == SECOND_STEP) {
       return '리뷰 완료까지 한 단계 남았어요'
     }
-    if (selectedAmount?.key == "READ_ALL" && selectedContent && selectedInformative) {
+    if (selectedRange?.key == "READ_ALL" && selectedContent && selectedInformative) {
       return '리뷰 등록하기'
     }
     if (selectedContent && selectedInformative && selectedReadMore) {
@@ -189,7 +250,7 @@ function ReviewAddPage(): ReactElement {
 
   const isConfirmButtonDisabled = () => {
     if (stage == THIRD_STEP) {
-      if (selectedAmount?.key == "READ_ALL" && selectedContent && selectedInformative) {
+      if (selectedRange?.key == "READ_ALL" && selectedContent && selectedInformative) {
         return false
       }
       if (selectedContent && selectedInformative && selectedReadMore) {
@@ -252,7 +313,7 @@ function ReviewAddPage(): ReactElement {
     if (!selectedBook?.selected || !selectedBook.book) {
       return
     }
-    if (!selectedAmount) {
+    if (!selectedRange) {
       return
     }
     if (!selectedContent) {
@@ -261,12 +322,12 @@ function ReviewAddPage(): ReactElement {
     if (!selectedInformative) {
       return
     }
-    if (selectedAmount.key != "READ_ALL" && !selectedReadMore) {
+    if (selectedRange.key != "READ_ALL" && !selectedReadMore) {
       return
     }
     const review: ReviewSubmit = {
       isbn: selectedBook.book.isbn,
-      range: selectedAmount.key,
+      range: selectedRange.key,
       content: selectedContent.name,
       informative: selectedInformative.name,
       readMore: selectedReadMore?.name,
@@ -348,12 +409,12 @@ function ReviewAddPage(): ReactElement {
       {/* second step components*/}
       {selectedBook?.selected
         ? <Plain title='얼마나 읽으셨나요?'
-                 subTitle={selectedAmount ? undefined : '지금 읽은 만큼의 리뷰도 도움이 될 수 있어요'}
+                 subTitle={selectedRange ? undefined : '지금 읽은 만큼의 리뷰도 도움이 될 수 있어요'}
                  subTitleMargin='0 1rem 6px 1rem'
                  margin='0 1rem 2rem 1rem'>
           <Card backgroundColor='white'
-                boxShadow={selectedAmount ? undefined : 'rgba(0, 0, 0, 0.24) 0px 3px 8px'}>
-            <Selector selectedItem={selectedAmount}
+                boxShadow={selectedRange ? undefined : 'rgba(0, 0, 0, 0.24) 0px 3px 8px'}>
+            <Selector selectedItem={selectedRange}
                       placeHolder={'이만큼 읽었어요'}
                       initButtonName={'다시 고르기'}
                       onOpen={() => setUseSelector(true)}
@@ -369,7 +430,7 @@ function ReviewAddPage(): ReactElement {
         }))} itemOnClick={onSelectorSelect}/>
       </PopupBackground>
 
-      {selectedAmount
+      {selectedRange
         ? <>
           <Plain title='어떤 책이었나요?'
                  subTitle='책을 설명할 수 있는 키워드를 선택해주세요'
@@ -401,7 +462,7 @@ function ReviewAddPage(): ReactElement {
                   </ScrollElements>
                 </Content>
               </Row>
-              {selectedAmount.key == 'READ_ALL' ? null : <Row>
+              {selectedRange.key == 'READ_ALL' ? null : <Row>
                 <Title>나머지 부분은</Title>
                 <Content>
                   <ScrollElements className='scroll-hidden'>
