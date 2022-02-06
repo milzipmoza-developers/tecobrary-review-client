@@ -1,4 +1,4 @@
-import React, {ReactElement, useState} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import Plain from "../../components/plain/Plain";
 import styled from "styled-components";
 import {Book} from "../../interfaces";
@@ -18,9 +18,20 @@ import {SelectableCheckboxTextButtons} from "../../components/buttons/Selectable
 import {SearchDivider} from "../../components/divider";
 import {TextButton} from "../../components/buttons/TextButton";
 import {ReviewApi} from "../../api/review/review.service";
-import {ReviewSearchBook} from "../../api/review/review.model";
-import {useRecoilValue} from "recoil";
+import {
+  ReviewKeyword,
+  ReviewKeywordConverter,
+  ReviewSearchBook,
+  ReviewSelectableRanges,
+  ReviewSubmit,
+  SelectedReviewRange
+} from "../../api/review/review.model";
+import {useRecoilValue, useSetRecoilState} from "recoil";
 import {userState} from "../../states/User";
+import {NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
+import {DraftReview} from "../../api/review/draftReview.utils";
+import {loginModalState} from "../../states/LoginModal";
+import {useHistory} from "react-router-dom";
 
 interface Search {
   keyword: string
@@ -29,11 +40,6 @@ interface Search {
 interface SelectedBook {
   selected: boolean
   book?: Book
-}
-
-interface SelectedAmount {
-  value: string
-  displayName: string
 }
 
 const FIRST_STEP: ReviewStage = {
@@ -67,7 +73,11 @@ const selectBook = (book: ReviewSearchBook): SelectedBook => ({
 
 function ReviewAddPage(): ReactElement {
 
+  const history = useHistory()
+
+  const setPop = useSetRecoilState(popState)
   const user = useRecoilValue(userState)
+  const setLoginModal = useSetRecoilState(loginModalState)
 
   const [useSearch, setUseSearch] = useState(false)
   const [search, setSearch] = useState<Search>({keyword: ''})
@@ -76,12 +86,23 @@ function ReviewAddPage(): ReactElement {
   const [selectedBook, setSelectedBook] = useState<SelectedBook>()
 
   const [useSelector, setUseSelector] = useState(false)
-  const [selectedAmount, setSelectedAmount] = useState<SelectedAmount>()
+  const [selectedAmount, setSelectedAmount] = useState<SelectedReviewRange>()
+  const [selectableRanges, setSelectableRanges] = useState<ReviewSelectableRanges>()
 
-  const [selectedHard, setSelectedHard] = useState(-1)
-  const [selectedHelped, setSelectedHelped] = useState(-1)
-  const [selectedLeft, setSelectedLeft] = useState(-1)
-  const [selectedSpec, setSelectedSpec] = useState<number[]>([])
+  const [selectedContent, setSelectedContent] = useState<ReviewKeyword>()
+  const [selectedInformative, setSelectedInformative] = useState<ReviewKeyword>()
+  const [selectedReadMore, setSelectedReadMore] = useState<ReviewKeyword>()
+  const [selectedSelectables, setSelectedSelectables] = useState<ReviewKeyword[]>([])
+
+  useEffect(() => {
+    const find = selectableRanges?.ranges.find(it => it.disabled == false)
+    if (selectedBook && selectedBook.book && !find) {
+      setPop({open: true, message: `이미 리뷰를 남겨주셨어요. 다른 책도 리뷰를 기다리고 있어요.`, color: "WARN", duration: 3000})
+      setSelectedBook(initSelectedBook)
+      setSearchBooks([])
+      search.keyword = ''
+    }
+  }, [selectableRanges])
 
   const fetchSearchBooks = async () => {
     if (search.keyword.length >= 2) {
@@ -101,19 +122,26 @@ function ReviewAddPage(): ReactElement {
 
   const itemOnClick = async (id: string) => {
     const selectedBook = searchBooks.find(it => it.isbn == id)
-    console.log(selectedBook)
-    if (selectedBook) {
-      const searchBook = await ReviewApi.selectBook(selectedBook, user.token, user.deviceId)
-      if (!searchBook) {
-        throw Error('선택한 책이 존재하지 않습니다.')
-      }
-      setUseSearch(false)
-      setSelectedBook(selectBook(selectedBook))
-      setStage(SECOND_STEP)
+    if (!selectedBook) {
+      return
     }
+    await ReviewApi.selectBook(selectedBook, user.token, user.deviceId)
+    setUseSearch(false)
+    doFirstStep(selectedBook)
+    const reviewSelectableRanges = await ReviewApi.getAvailableRanges(selectedBook.isbn, user.token, user.deviceId);
+    setSelectableRanges(reviewSelectableRanges)
   }
 
-  const onInitSelectBook = () => {
+  const doFirstStep = (book: ReviewSearchBook) => {
+    setSelectedBook(selectBook(book))
+    setStage(SECOND_STEP)
+    DraftReview.setBook(book)
+  }
+
+  const initFirstStep = () => {
+    DraftReview.removeKeywords()
+    DraftReview.removeRange()
+    DraftReview.removeBook()
     setSearchBooks([])
     search.keyword = ''
     setSelectedAmount(undefined)
@@ -121,34 +149,39 @@ function ReviewAddPage(): ReactElement {
     setStage(FIRST_STEP)
   }
 
-  const onInitSelectAmount = () => {
-    setSelectedAmount(undefined)
-    setStage(SECOND_STEP)
-  }
-
-  const onAmountChange = (it: SelectedAmount) => {
-    if (it) {
-      setSelectedAmount(it)
-      setStage(THIRD_STEP)
-    }
-  }
-
   const onSelectorSelect = (item: SelectorItem) => () => {
-    onAmountChange(item)
+    doSecondStep(item)
     setUseSelector(false)
   }
 
+  const doSecondStep = (it: SelectedReviewRange) => {
+    if (it) {
+      setSelectedAmount(it)
+      setStage(THIRD_STEP)
+      DraftReview.setRange(it)
+    }
+  }
+
+  const initSecondStep = () => {
+    setSelectedAmount(undefined)
+    setStage(SECOND_STEP)
+    DraftReview.removeRange()
+  }
+
   const confirmButtonName = () => {
-    if (stage === FIRST_STEP) {
+    if (stage == FIRST_STEP) {
       return '리뷰 완료까지 두 단계 남았어요'
     }
-    if (stage === SECOND_STEP) {
+    if (stage == SECOND_STEP) {
       return '리뷰 완료까지 한 단계 남았어요'
     }
-    if (selectedHard != -1 && selectedHelped != -1 && selectedLeft != -1) {
+    if (selectedAmount?.key == "READ_ALL" && selectedContent && selectedInformative) {
       return '리뷰 등록하기'
     }
-    if (stage === THIRD_STEP) {
+    if (selectedContent && selectedInformative && selectedReadMore) {
+      return '리뷰 등록하기'
+    }
+    if (stage == THIRD_STEP) {
       return '마지막 단계예요'
     }
     return '리뷰 등록하기'
@@ -156,7 +189,10 @@ function ReviewAddPage(): ReactElement {
 
   const isConfirmButtonDisabled = () => {
     if (stage == THIRD_STEP) {
-      if (selectedHard != -1 && selectedHelped != -1 && selectedLeft != -1) {
+      if (selectedAmount?.key == "READ_ALL" && selectedContent && selectedInformative) {
+        return false
+      }
+      if (selectedContent && selectedInformative && selectedReadMore) {
         return false
       }
     }
@@ -166,25 +202,90 @@ function ReviewAddPage(): ReactElement {
     return true
   }
 
-  const onHardItemClick = (index: number) => () => {
-    setSelectedHard(index)
+  const onContentItemClick = (index: number) => () => {
+    const selectedItem = {
+      index: index,
+      name: ReviewKeywordConverter.convertContent(index)
+    }
+    setSelectedContent(selectedItem)
+    DraftReview.setKeywordContent(selectedItem)
   }
 
-  const onHelpItemClick = (index: number) => () => {
-    setSelectedHelped(index)
+  const onInformativeItemClick = (index: number) => () => {
+    const selectedItem = {
+      index: index,
+      name: ReviewKeywordConverter.convertInformative(index)
+    }
+    setSelectedInformative(selectedItem)
+    DraftReview.setKeywordInformative(selectedItem)
   }
 
-  const onLeftItemClick = (index: number) => () => {
-    setSelectedLeft(index)
+  const onReadMoreItemClick = (index: number) => () => {
+    const selectedItem = {
+      index: index,
+      name: ReviewKeywordConverter.convertReadMore(index)
+    }
+    setSelectedReadMore(selectedItem)
+    DraftReview.setKeywordReadMore(selectedItem)
   }
 
-  const onSpecItemClick = (index: number) => () => {
-    if (selectedSpec.includes(index)) {
-      const removedSpec = selectedSpec.filter(it => it != index);
-      setSelectedSpec(removedSpec)
+  const onSelectableItemClick = (index: number) => () => {
+    const selectedItem = {
+      index: index,
+      name: ReviewKeywordConverter.convertSelectables(index)
+    }
+    if (selectedSelectables.find(it => it.index == index)) {
+      const removedSpec = selectedSelectables.filter(it => it.index != index)
+      DraftReview.setKeywordSelectables(removedSpec)
+      setSelectedSelectables(removedSpec)
     } else {
-      const addSelectedSpec = selectedSpec.concat([index])
-      setSelectedSpec(addSelectedSpec)
+      if (selectedSelectables.length > 2) {
+        return
+      }
+      const addSelectedSpec = selectedSelectables.concat([selectedItem])
+      DraftReview.setKeywordSelectables(addSelectedSpec)
+      setSelectedSelectables(addSelectedSpec)
+    }
+  }
+
+  const onSubmit = async () => {
+    if (!selectedBook?.selected || !selectedBook.book) {
+      return
+    }
+    if (!selectedAmount) {
+      return
+    }
+    if (!selectedContent) {
+      return
+    }
+    if (!selectedInformative) {
+      return
+    }
+    if (selectedAmount.key != "READ_ALL" && !selectedReadMore) {
+      return
+    }
+    const review: ReviewSubmit = {
+      isbn: selectedBook.book.isbn,
+      range: selectedAmount.key,
+      content: selectedContent.name,
+      informative: selectedInformative.name,
+      readMore: selectedReadMore?.name,
+      selectables: selectedSelectables.map(it => it.name)
+    }
+    try {
+      const result = await ReviewApi.submit(review, user.token, user.deviceId)
+      if (result) {
+        DraftReview.clear()
+        setPop({open: true, message: `리뷰가 등록되었어요.`, color: "SUCCESS", duration: 3000})
+        history.push(`/books/${selectedBook.book.isbn}`)
+      }
+    } catch (e) {
+      if (e.response && (400 <= e.response.status && e.response.status < 500)) {
+        setLoginModal({open: true, message: "로그인하면 리뷰를 완료할 수 있어요"})
+        return
+      }
+
+      setPop(NETWORK_ERROR_DEFAULT)
     }
   }
 
@@ -207,7 +308,7 @@ function ReviewAddPage(): ReactElement {
              margin='0 1rem 2rem 1rem'>
         {selectedBook?.book
           ? <Card backgroundColor='white'>
-            <SelectedReviewBook book={selectedBook.book} onInitButtonClick={onInitSelectBook}/>
+            <SelectedReviewBook book={selectedBook.book} onInitButtonClick={initFirstStep}/>
           </Card>
           : <Card backgroundColor='white'
                   boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
@@ -222,9 +323,9 @@ function ReviewAddPage(): ReactElement {
             <BookSearchInput placeholder='리뷰 남길 책을 검색해보세요'
                              focused={useSearch}
                              value={search.keyword}
-                             onKeyPress={(e) => {
+                             onKeyPress={async (e) => {
                                if (e.key == 'Enter') {
-                                 fetchSearchBooks()
+                                 await fetchSearchBooks()
                                }
                              }}
                              onChange={onChange}
@@ -256,18 +357,16 @@ function ReviewAddPage(): ReactElement {
                       placeHolder={'이만큼 읽었어요'}
                       initButtonName={'다시 고르기'}
                       onOpen={() => setUseSelector(true)}
-                      onInit={onInitSelectAmount}/>
+                      onInit={initSecondStep}/>
           </Card>
         </Plain>
         : null}
       <PopupBackground active={useSelector} onClose={() => setUseSelector(false)}>
-        <SelectorMenu items={[
-          {value: 'ABSTRACT', displayName: '서론만 읽었어요', disabled: true},
-          {value: 'LITTLE', displayName: '조금 읽어봤어요', disabled: true},
-          {value: 'ONE_CHAPTER', displayName: '한 챕터 읽었어요', disabled: true},
-          {value: 'CHAPTERS', displayName: '여러 챕터 읽었어요', disabled: false},
-          {value: 'ALL', displayName: '전부 읽었어요', disabled: false},
-        ]} itemOnClick={onSelectorSelect}/>
+        <SelectorMenu items={selectableRanges?.ranges.map(range => ({
+          key: range.key,
+          displayName: range.displayName,
+          disabled: range.disabled
+        }))} itemOnClick={onSelectorSelect}/>
       </PopupBackground>
 
       {selectedAmount
@@ -284,8 +383,8 @@ function ReviewAddPage(): ReactElement {
                   <ScrollElements className='scroll-hidden'>
                     <SelectableRadioTextButtons
                       items={["💧 매우 쉬워요", "쉬워요", "보통이예요", "어려워요", "🔥 매우 어려워요"]}
-                      selected={selectedHard}
-                      onItemClick={onHardItemClick}
+                      selected={selectedContent?.index}
+                      onItemClick={onContentItemClick}
                     />
                   </ScrollElements>
                 </Content>
@@ -296,20 +395,20 @@ function ReviewAddPage(): ReactElement {
                   <ScrollElements className='scroll-hidden'>
                     <SelectableRadioTextButtons
                       items={["🙅 전혀 안되었어요", "🤦 안되었어요", "🤷 되었어요", "🙆 많이 되었어요"]}
-                      selected={selectedHelped}
-                      onItemClick={onHelpItemClick}
+                      selected={selectedInformative?.index}
+                      onItemClick={onInformativeItemClick}
                     />
                   </ScrollElements>
                 </Content>
               </Row>
-              {selectedAmount.value == 'ALL' ? null : <Row>
+              {selectedAmount.key == 'READ_ALL' ? null : <Row>
                 <Title>나머지 부분은</Title>
                 <Content>
                   <ScrollElements className='scroll-hidden'>
                     <SelectableRadioTextButtons
                       items={["안 읽을래요", "필요한 부분만 읽을래요", "다 읽을래요"]}
-                      selected={selectedLeft}
-                      onItemClick={onLeftItemClick}
+                      selected={selectedReadMore?.index}
+                      onItemClick={onReadMoreItemClick}
                     />
                   </ScrollElements>
                 </Content>
@@ -320,8 +419,8 @@ function ReviewAddPage(): ReactElement {
                   <ScrollElements className='scroll-hidden'>
                     <SelectableCheckboxTextButtons
                       items={["✏️ 개념 위주예요", "🔬 특정 기술 위주예요", "💻 예제 코드가 꼼꼼해요", "📄 설명이 잘 되어있어요", "👍 번역이 잘 되어있어요", "🛠 오탈자가 많아요"]}
-                      selects={selectedSpec}
-                      onItemClick={onSpecItemClick}
+                      selects={selectedSelectables.map(it => it.index)}
+                      onItemClick={onSelectableItemClick}
                     />
                   </ScrollElements>
                 </Content>
@@ -335,7 +434,7 @@ function ReviewAddPage(): ReactElement {
         <Plain>
           <DisableableButton name={confirmButtonName()}
                              disabled={isConfirmButtonDisabled()}
-                             onClick={() => console.log('제출하기')}/>
+                             onClick={onSubmit}/>
         </Plain>
       </SubmitButtonWrapper>
     </UserPageFrame>

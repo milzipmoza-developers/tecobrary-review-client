@@ -2,6 +2,7 @@ import {atom} from "recoil";
 
 interface LoginModal {
   open: boolean
+  message?: string
 }
 
 const defaultState = (): LoginModal => ({

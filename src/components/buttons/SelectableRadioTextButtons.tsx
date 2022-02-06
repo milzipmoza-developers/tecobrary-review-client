@@ -3,7 +3,7 @@ import {ReactElement} from "react";
 
 interface Props {
   items: string[]
-  selected: number
+  selected?: number
   onItemClick: (index: number) => () => void
 }
 
@@ -12,7 +12,8 @@ export const SelectableRadioTextButtons = (props: Props): ReactElement => {
 
   return (
     <>{items.map((it: string, index: number) => (
-      <SelectableTextButton selected={index == selected} onClick={onItemClick(index)}>{it}</SelectableTextButton>
+      <SelectableTextButton key={index} selected={index == selected}
+                            onClick={onItemClick(index)}>{it}</SelectableTextButton>
     ))}</>
   )
 }

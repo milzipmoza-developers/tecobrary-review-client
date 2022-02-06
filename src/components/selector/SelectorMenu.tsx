@@ -3,13 +3,13 @@ import {SelectorElement} from "./SelectorElement";
 import styled from "styled-components";
 
 export interface SelectorItem {
-  value: string
+  key: string
   disabled: boolean
   displayName: string
 }
 
 interface Props {
-  items: SelectorItem[]
+  items?: SelectorItem[]
   itemOnClick: (item: SelectorItem) => () => void
 }
 
@@ -17,7 +17,7 @@ export const SelectorMenu = ({items, itemOnClick}: Props): ReactElement => {
   return (
     <Wrapper>
       <Menu>
-        {items.map((it: SelectorItem, index: number) => (
+        {items?.map((it: SelectorItem, index: number) => (
           <SelectorElement key={index} itemName={it.displayName} onClick={itemOnClick(it)} disabled={it.disabled}/>
         ))}
       </Menu>

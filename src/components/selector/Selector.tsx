@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 
 interface SelectedAmount {
-  value: string
+  key: string
   displayName: string
 }
 

@@ -12,7 +12,8 @@ export const SelectableCheckboxTextButtons = (props: Props): ReactElement => {
 
   return (
     <>{items.map((it: string, index: number) => (
-      <SelectableTextButton selected={selects.includes(index)} onClick={onItemClick(index)}>{it}</SelectableTextButton>
+      <SelectableTextButton key={index} selected={selects.includes(index)}
+                            onClick={onItemClick(index)}>{it}</SelectableTextButton>
     ))}</>
   )
 }

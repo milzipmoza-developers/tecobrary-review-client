@@ -37,7 +37,7 @@ const UnderPopModal = (): ReactElement | null => {
     <PopupBackground active={loginModal.open} onClose={onModalClose}>
       <Wrapper onClick={(e) => e.stopPropagation()}>
         <Card>
-          <Title>로그인하고 더 많은 기능을 사용해보세요</Title>
+          <Title>{loginModal.message ? loginModal.message : '로그인하고 더 많은 기능을 사용해보세요'}</Title>
           <LoginButtons>
             <GithubLogo style={{width: '4rem', height: '4rem', cursor: 'pointer'}} onClick={onClick}/>
           </LoginButtons>
