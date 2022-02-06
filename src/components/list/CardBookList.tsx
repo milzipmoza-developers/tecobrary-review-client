@@ -48,22 +48,42 @@ export const CardBookList = (props: Props): ReactElement => {
     return <></>
   }
 
-  return (<>
-    {loading && !books
-      ? ([1, 2, 3].map((index: number) => (
+  if (loading && !books) {
+    return <>
+      {([1, 2, 3].map((index: number) => (
         <CardBookElementSkeleton key={index}/>
-      )))
-      : (books?.map((book: Book, index: number) => (
-        <CardBookListElement {...book}
-                             key={index}
-                             iconBadge={conditionalCountedIconBadge(book)}
-                             itemOnClick={itemOnClick}/>
-      )))
-    }
+      )))}
+    </>
+  }
+
+  if (!loading && books?.length == 0) {
+    return <Empty>
+      <EmptyText>아직 없어요 !</EmptyText>
+    </Empty>
+  }
+
+  return (<>
+    {books?.map((book: Book, index: number) => (
+      <CardBookListElement {...book}
+                           key={index}
+                           iconBadge={conditionalCountedIconBadge(book)}
+                           itemOnClick={itemOnClick}/>
+    ))}
   </>)
 }
 
 const IconWrapper = styled.div`
   display: flex;
   flex-direction: row;
+`
+
+const Empty = styled.div`
+  height: 18rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const EmptyText = styled.div`
+
 `
