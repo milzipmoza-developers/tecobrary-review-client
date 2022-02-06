@@ -7,6 +7,7 @@ import {MarkApi} from "../../api/mark/mark.service";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {userState} from "../../states/User";
 import {NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
+import {loginModalState} from "../../states/LoginModal";
 
 interface Props {
   isbn: string
@@ -19,6 +20,7 @@ interface Props {
 
 export const BookDetailActionButtons = (props: Props): ReactElement => {
 
+  const setLoginModal = useSetRecoilState(loginModalState)
   const user = useRecoilValue(userState)
   const setPop = useSetRecoilState(popState)
 
@@ -52,8 +54,13 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
         }
       }
     } catch (e) {
+      if (e.response && e.response.status == 401) {
+        setLoginModal({open: true, message: "로그인하면 북마크 목록에 추가할 수 있어요"})
+        return
+      }
+
       if (e.response && (400 <= e.response.status && e.response.status < 500)) {
-        setPop({message: "로그인하고 좋아요 목록에 추가하실래요?", open: true, duration: 3000, color: "WARN"})
+        setPop({message: `${e.response.data.message}`, open: true, duration: 3000, color: "WARN"})
         return
       }
 
@@ -85,8 +92,13 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
         }
       }
     } catch (e) {
+      if (e.response && e.response.status == 401) {
+        setLoginModal({open: true, message: "로그인하면 북마크 목록에 추가할 수 있어요"})
+        return
+      }
+
       if (e.response && (400 <= e.response.status && e.response.status < 500)) {
-        setPop({message: "로그인하고 북마크 목록에 추가하실래요?", open: true, duration: 3000, color: "WARN"})
+        setPop({message: `${e.response.data.message}`, open: true, duration: 3000, color: "WARN"})
         return
       }
 
