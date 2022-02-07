@@ -7,12 +7,13 @@ import Plain from "../../components/plain/Plain";
 import {PageContent} from "../../components/page/PageContent";
 import BookReviewCard from "./BookReviewCard";
 import {UserPageFrame} from "../../components/page/UserPageFrame";
-import {DisplayApi} from "../../api/display/display.service";
-import {DisplayBookDetail, DisplayBookMark, DisplayBookTag} from "../../api/display/display.model";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {userState} from "../../states/User";
 import {NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
 import {RequestAction, requestTemplate} from "../../api";
+import {DisplayBookApi} from "../../api/display/display.book.service";
+import {DisplayBookDetail, DisplayBookMark} from "../../api/display/display.book.model";
+import {DisplayBookTag} from "../../api/display/display.model";
 
 interface Params {
   isbn?: string
@@ -46,7 +47,7 @@ function BookDetailPage(): ReactElement {
         history.goBack()
         return
       }
-      const foundBook = await DisplayApi.getBook(isbn, user.deviceId, user.token)
+      const foundBook = await DisplayBookApi.getBook(isbn, user.deviceId, user.token)
       setBook(foundBook.book)
       setMark(foundBook.mark)
       setTags(foundBook.tags)

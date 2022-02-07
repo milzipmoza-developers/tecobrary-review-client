@@ -4,10 +4,10 @@ export interface TecobraryHeaders {
 
 export const createHeaders = (token?: string, deviceId?: string) => {
   const headers: TecobraryHeaders = {}
-  if (token) {
+  if (token && token.length != 0) {
     headers["Authorization"] = `token ${token}`
   }
-  if (deviceId) {
+  if (deviceId && deviceId.length != 0) {
     headers["X-TECOBRARY-DEVICE-ID"] = deviceId
   }
   return headers
