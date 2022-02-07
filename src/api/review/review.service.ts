@@ -2,6 +2,7 @@ import {AxiosResponse} from "axios";
 import * as Api from "../../admin/api/axios.config";
 import {ReviewSearchBook, ReviewSelectableRanges, ReviewSubmit} from "./review.model";
 import {PageData} from "../model";
+import {createHeaders} from "../header";
 
 const searchBooks = async (keyword: string, token?: string, deviceId?: string): Promise<PageData<ReviewSearchBook>> => {
   const response = await requestSearchReviewBooks(keyword, token, deviceId)
@@ -10,13 +11,7 @@ const searchBooks = async (keyword: string, token?: string, deviceId?: string): 
 }
 
 const requestSearchReviewBooks = async (keyword: string, token?: string, deviceId?: string): Promise<AxiosResponse> => {
-  const headers: TecobraryHeaders = {}
-  if (token) {
-    headers["Authorization"] = `token ${token}`
-  }
-  if (deviceId) {
-    headers["X-TECOBRARY-DEVICE-ID"] = deviceId
-  }
+  const headers = createHeaders(token, deviceId)
 
   return await Api.server()
     .get("/api/reviews/search-books", {
@@ -33,13 +28,7 @@ const selectBook = async (selectBook: ReviewSearchBook, token?: string, deviceId
 }
 
 const requestSelectBook = async (selectBook: ReviewSearchBook, token?: string, deviceId?: string): Promise<AxiosResponse> => {
-  const headers: TecobraryHeaders = {}
-  if (token) {
-    headers["Authorization"] = `token ${token}`
-  }
-  if (deviceId) {
-    headers["X-TECOBRARY-DEVICE-ID"] = deviceId
-  }
+  const headers = createHeaders(token, deviceId)
 
   return await Api.server()
     .post("/api/reviews/select-book", {
@@ -58,13 +47,7 @@ const getAvailableRanges = async (isbn: string, token?: string, deviceId?: strin
 }
 
 const requestAvailableRanges = async (isbn: string, token?: string, deviceId?: string): Promise<AxiosResponse> => {
-  const headers: TecobraryHeaders = {}
-  if (token) {
-    headers["Authorization"] = `token ${token}`
-  }
-  if (deviceId) {
-    headers["X-TECOBRARY-DEVICE-ID"] = deviceId
-  }
+  const headers = createHeaders(token, deviceId)
 
   return await Api.server()
     .get("/api/reviews/available-ranges", {
@@ -81,13 +64,7 @@ const submit = async (review: ReviewSubmit, token?: string, deviceId?: string): 
 }
 
 const requestSubmitReview = async (review: ReviewSubmit, token?: string, deviceId?: string): Promise<AxiosResponse> => {
-  const headers: TecobraryHeaders = {}
-  if (token) {
-    headers["Authorization"] = `token ${token}`
-  }
-  if (deviceId) {
-    headers["X-TECOBRARY-DEVICE-ID"] = deviceId
-  }
+  const headers = createHeaders(token, deviceId)
 
   return await Api.server()
     .post("/api/reviews/submit", {
@@ -95,10 +72,6 @@ const requestSubmitReview = async (review: ReviewSubmit, token?: string, deviceI
     }, {
       headers: headers
     })
-}
-
-interface TecobraryHeaders {
-  [key: string]: string
 }
 
 export const ReviewApi = {
