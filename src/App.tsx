@@ -80,7 +80,9 @@ function App(): ReactElement {
           profileImageUrl: memberInfo.profileImageUrl
         }
       }))
-      setPop({message: `${memberInfo.memberName} 님 반갑습니다 😀`, open: true, duration: 3000, color: "INFO"})
+      if (history.location.pathname == "/") {
+        setPop({message: `${memberInfo.memberName} 님 반갑습니다 😀`, open: true, duration: 3000, color: "INFO"})
+      }
     },
     doOnAuthError: () => {
       _removeLoginInfo()
