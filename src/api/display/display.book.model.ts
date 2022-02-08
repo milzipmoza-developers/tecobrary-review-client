@@ -37,3 +37,14 @@ interface DisplayBookCategory {
   no: string
   imageUrl: string
 }
+
+export interface DisplayBookReviewSummary {
+  total: number
+  ranges: DisplayBookReviewSummaryRange[]
+}
+
+export interface DisplayBookReviewSummaryRange {
+  range: string
+  displayName: string
+  count: number
+}

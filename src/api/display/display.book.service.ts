@@ -1,6 +1,6 @@
 import {AxiosResponse} from "axios";
 import * as Api from "../../admin/api/axios.config";
-import {DisplayBook} from "./display.book.model";
+import {DisplayBook, DisplayBookReviewSummary} from "./display.book.model";
 import {createHeaders} from "../header";
 
 
@@ -25,6 +25,22 @@ const requestDisplayBook = async (isbn: string, deviceId?: string, token?: strin
     })
 }
 
+const getReviewSummary = async (isbn: string): Promise<DisplayBookReviewSummary> => {
+  const response = await requestDisplayBookReviewSummary(isbn)
+  const {total, ranges} = response.data.data
+
+  return {
+    total,
+    ranges
+  }
+}
+
+const requestDisplayBookReviewSummary = async (isbn: string): Promise<AxiosResponse> => {
+  return await Api.server()
+    .get(`/api/displays/books/${isbn}/review-ranges`)
+}
+
 export const DisplayBookApi = {
-  getBook
+  getBook,
+  getReviewSummary
 }

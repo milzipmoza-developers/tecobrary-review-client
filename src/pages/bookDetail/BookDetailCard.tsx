@@ -6,14 +6,18 @@ import styled from "styled-components";
 import {BookMarks, BookTechDetail, Tag} from "../../interfaces";
 import Plain from "../../components/plain/Plain";
 
-interface Props {
+interface BookDetail {
   isbn: string
   imageUrl: string
   title: string
-  author: string
   publisher: string
-  description: string
+  author: string
   publishDate: string
+  description: string
+}
+
+interface Props {
+  book: BookDetail
   tags?: Tag[]
   marks?: BookMarks
   techDetail?: BookTechDetail
@@ -21,17 +25,19 @@ interface Props {
 
 function BookDetailCard(props: Props): ReactElement {
 
+  const {book, tags, marks, techDetail} = props
+
   const BookPublishInfo = () => (
     <BookPublishInfoWrapper>
-      <div>{props.publisher}</div>
-      <div>{props.author}</div>
+      <div>{book?.publisher}</div>
+      <div>{book?.author}</div>
     </BookPublishInfoWrapper>
   )
 
   const BookSubInfo = () => (
     <BookSubInfoWrapper>
-      <BookPublishDateWrapper>출판일 {parseDate(props.publishDate)}</BookPublishDateWrapper>
-      <BookDetailActionButtons isbn={props.isbn}
+      <BookPublishDateWrapper>출판일 {parseDate(book.publishDate)}</BookPublishDateWrapper>
+      <BookDetailActionButtons isbn={book.isbn}
                                like={props.marks ? props.marks.like.liked : false}
                                likeCounts={props.marks ? props.marks.like.counts : 0}
                                favorite={props.marks ? props.marks.favorite.marked : false}
@@ -58,36 +64,41 @@ function BookDetailCard(props: Props): ReactElement {
   )
 
   return (
-    <Wrapper>
-      <ImageWrapper>
-        <Image src={props.imageUrl}/>
-      </ImageWrapper>
-      <BookDetailWrapper>
-        <TagBadges tags={props.tags ? props.tags : []}/>
-        <BookTitleWrapper>{props.title}</BookTitleWrapper>
-        <BookPublishInfo/>
-        <BookSubInfo/>
-        <BookDescriptionWrapper>
-          {props.description}
-        </BookDescriptionWrapper>
-      </BookDetailWrapper>
-      <BookTechInfo/>
-    </Wrapper>
+    <>
+      <Space/>
+      <Wrapper>
+        <ImageWrapper>
+          <Image src={book.imageUrl}/>
+        </ImageWrapper>
+        <BookDetailWrapper>
+          <TagBadges tags={props.tags ? props.tags : []}/>
+          <BookTitleWrapper>{book.title}</BookTitleWrapper>
+          <BookPublishInfo/>
+          <BookSubInfo/>
+          <BookDescriptionWrapper>
+            {book.description}
+          </BookDescriptionWrapper>
+        </BookDetailWrapper>
+        <BookTechInfo/>
+      </Wrapper>
+    </>
   )
 }
 
 export default BookDetailCard
 
+const Space = styled.div`
+  height: 8rem;
+  width: auto;
+`
+
 const Wrapper = styled.div`
   position: relative;
-  top: 13rem;
   width: auto;
-  height: fit-content;
   background-color: white;
   color: black;
   border-radius: 2rem;
   padding: 1rem;
-  margin-bottom: 13rem; // top 13rem
 `
 
 const ImageWrapper = styled.div`
@@ -97,9 +108,9 @@ const ImageWrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   height: 12.5rem;
-  transform: translate3d(0, -50%, 0);
+  top: -8rem;
   border-radius: 1rem;
-  margin-bottom: -4rem;
+  margin-bottom: -6rem;
 `
 
 const Image = styled.img`

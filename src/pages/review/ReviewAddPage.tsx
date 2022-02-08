@@ -207,6 +207,7 @@ function ReviewAddPage(): ReactElement {
     search.keyword = ''
     setSelectedRange(undefined)
     setSelectedBook(initSelectedBook)
+    initThirdStep()
     setStage(FIRST_STEP)
   }
 
@@ -226,7 +227,15 @@ function ReviewAddPage(): ReactElement {
   const initSecondStep = () => {
     setSelectedRange(undefined)
     setStage(SECOND_STEP)
+    initThirdStep()
     DraftReview.removeRange()
+  }
+
+  const initThirdStep = () => {
+    setSelectedContent(undefined)
+    setSelectedInformative(undefined)
+    setSelectedReadMore(undefined)
+    setSelectedSelectables([])
   }
 
   const confirmButtonName = () => {
@@ -341,8 +350,11 @@ function ReviewAddPage(): ReactElement {
         history.push(`/books/${selectedBook.book.isbn}`)
       }
     } catch (e) {
-      if (e.response && (400 <= e.response.status && e.response.status < 500)) {
+      if (e.response && e.response.status == 401) {
         setLoginModal({open: true, message: "로그인하면 리뷰를 완료할 수 있어요"})
+      }
+      if (e.response && (400 <= e.response.status && e.response.status < 500)) {
+        setPop({message: `${e.response.data.message}`, open: true, duration: 3000, color: "WARN"})
         return
       }
 
