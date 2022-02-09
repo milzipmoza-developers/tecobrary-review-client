@@ -32,6 +32,7 @@ import {CLOSE, NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
 import {DraftReview, DraftReviewLoader} from "../../api/review/draftReview.utils";
 import {loginModalState} from "../../states/LoginModal";
 import {useHistory} from "react-router-dom";
+import {useQueryString} from "../../hooks";
 
 interface Search {
   keyword: string
@@ -71,7 +72,13 @@ const selectBook = (book: ReviewSearchBook): SelectedBook => ({
   book
 })
 
+interface QueryString {
+  isbn?: string
+}
+
 function ReviewAddPage(): ReactElement {
+
+  const {isbn}: QueryString = useQueryString()
 
   const history = useHistory()
 
@@ -95,6 +102,13 @@ function ReviewAddPage(): ReactElement {
   const [selectedSelectables, setSelectedSelectables] = useState<ReviewKeyword[]>([])
 
   useEffect(() => {
+    if (isbn) {
+      (async () => {
+        await loadDraftReview()
+      })()
+      return
+    }
+
     if (DraftReview.hasAny() && stage == FIRST_STEP) {
       setPop({
         open: true,
@@ -109,6 +123,7 @@ function ReviewAddPage(): ReactElement {
           }
         }
       })
+      return
     }
   }, [])
 
