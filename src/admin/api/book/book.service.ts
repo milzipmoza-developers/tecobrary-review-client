@@ -2,6 +2,7 @@ import {ApiCreateRequest, ApiUpdateRequest, PageData, PageRequest} from "../inte
 import {AxiosResponse} from "axios";
 import * as Api from "../axios.config";
 import {Book, BookCategory, BookTag, CreateBook, SearchBook, SearchBookQuery} from "./book.model";
+import {headers} from "../header";
 
 const create = async (createDto: CreateBook): Promise<boolean> => {
   const response = await requestCreateBook({create: createDto})
@@ -10,7 +11,9 @@ const create = async (createDto: CreateBook): Promise<boolean> => {
 
 const requestCreateBook = async (requestBody: ApiCreateRequest<CreateBook>): Promise<AxiosResponse> => {
   return await Api.server()
-    .post("/api/books", requestBody)
+    .post("/api/books", requestBody, {
+      headers: headers()
+    })
 }
 
 const addCategory = async (isbn: string, categoryDto: BookCategory): Promise<boolean> => {
@@ -20,7 +23,9 @@ const addCategory = async (isbn: string, categoryDto: BookCategory): Promise<boo
 
 const requestBookAddCategory = async (isbn: string, requestBody: ApiUpdateRequest<BookCategory>): Promise<AxiosResponse> => {
   return await Api.server()
-    .post(`/api/books/${isbn}/add-category`, requestBody)
+    .post(`/api/books/${isbn}/add-category`, requestBody, {
+      headers: headers()
+    })
 }
 
 const clearCategory = async (isbn: string): Promise<boolean> => {
@@ -30,7 +35,9 @@ const clearCategory = async (isbn: string): Promise<boolean> => {
 
 const requestBookClearCategory = async (isbn: string): Promise<AxiosResponse> => {
   return await Api.server()
-    .post(`/api/books/${isbn}/clear-category`)
+    .post(`/api/books/${isbn}/clear-category`, {
+      headers: headers()
+    })
 }
 
 const addTags = async (isbn: string, tagDtos: BookTag[]): Promise<boolean> => {
@@ -40,7 +47,9 @@ const addTags = async (isbn: string, tagDtos: BookTag[]): Promise<boolean> => {
 
 const requestBookAddTags = async (isbn: string, requestBody: ApiUpdateRequest<BookTag[]>): Promise<AxiosResponse> => {
   return await Api.server()
-    .post(`/api/books/${isbn}/add-tag`, requestBody)
+    .post(`/api/books/${isbn}/add-tag`, requestBody, {
+      headers: headers()
+    })
 }
 
 const getAll = async (pageRequest: PageRequest): Promise<PageData<Book>> => {

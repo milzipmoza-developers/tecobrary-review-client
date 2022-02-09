@@ -2,6 +2,7 @@ import {ApiCreateRequest, PageData, PageRequest} from "../interfaces";
 import {AxiosResponse} from "axios";
 import * as Api from "../axios.config"
 import {CreateTag, SearchTag, Tag} from "./tag.model";
+import {headers} from "../header";
 
 const create = async (createDto: CreateTag): Promise<boolean> => {
   const response = await requestCreateTag({create: createDto})
@@ -10,7 +11,9 @@ const create = async (createDto: CreateTag): Promise<boolean> => {
 
 const requestCreateTag = async (requestBody: ApiCreateRequest<CreateTag>): Promise<AxiosResponse> => {
   return await Api.server()
-    .post("/api/tags", requestBody)
+    .post("/api/tags", requestBody, {
+      headers: headers()
+    })
 }
 
 const get = async (pageRequest: PageRequest, search: SearchTag): Promise<PageData<Tag>> => {
