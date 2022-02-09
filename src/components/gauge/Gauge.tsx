@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {ReactElement, useRef} from "react";
+import {ReactElement, useEffect, useRef, useState} from "react";
 
 interface Props {
   name: string
@@ -12,15 +12,19 @@ export const Gauge = (props: Props): ReactElement => {
   const {name, total, count, color} = props
 
   const wrapperRef = useRef<HTMLDivElement>(null)
+  const [percent, setPercent] = useState(0)
 
-  const percent = (count / total) * 100
+  useEffect(() => {
+    const _percent = Math.round((count / total) * 100)
+    setPercent(_percent)
+  }, [])
 
   return (
     <Wrapper ref={wrapperRef}>
       <Filler width={percent} color={color}>
         <Name content={name} width={`${wrapperRef.current?.offsetWidth ?? 0}px`}/>
       </Filler>
-      <Count content={`${count}`}/>
+      <Count content={`${percent}%`}/>
     </Wrapper>
   )
 }
