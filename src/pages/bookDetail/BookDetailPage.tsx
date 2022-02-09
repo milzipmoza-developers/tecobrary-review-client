@@ -104,11 +104,11 @@ function BookDetailPage(): ReactElement {
       setReviewLoading(true)
       const reviewSummary = await DisplayBookApi.getReviewSummary(isbn)
       const keywords = await DisplayBookApi.getReviewKeywords(isbn)
-      console.log(reviewSummary)
-      console.log(keywords)
       setReviewLoading(false)
 
       if (!reviewLoading) {
+        setReviewTotal(reviewSummary.total)
+
         const ranges = reviewSummary.ranges
           .map(it => new ReviewRange(it.range, it.count))
         setReviewRanges(ranges)
@@ -194,7 +194,13 @@ function BookDetailPage(): ReactElement {
             </Row> : null}
           </Table>
         </SpannedCard>
-        : null}
+        : <Card backgroundColor='white'
+                boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'
+                margin='0 1rem 0 1rem'>
+          <EmptyReviewWrapper onClick={() => history.push(`/reviews?isbn=${isbn}`)}>
+            <div>첫 번째 리뷰 작성하러가기</div>
+          </EmptyReviewWrapper>
+        </Card>}
 
       {reviewRanges && reviewTotal != 0 ?
         <PageContent marginBottom={'2rem'} marginTop={'2rem'}>
@@ -254,4 +260,14 @@ const Title = styled.div`
   margin-bottom: 4px;
   justify-content: flex-start;
   align-items: center;
+`
+
+const EmptyReviewWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  cursor: pointer;
 `
