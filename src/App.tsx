@@ -1,6 +1,6 @@
 import React, {ReactElement, useEffect, useState} from "react";
 import {Route, Switch, useHistory} from "react-router-dom";
-import TimelinePage from "./pages/TimelinePage";
+import IntroductionPage from "./pages/TimelinePage";
 import MyPage from "./pages/MyPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import BookDetailPage from "./pages/bookDetail/BookDetailPage";
@@ -177,7 +177,7 @@ function App(): ReactElement {
     <>
       <Switch>
         <Route exact path={'/'} component={HomePage}/>
-        <Route exact path={'/timeline'} component={TimelinePage}/>
+        <Route exact path={'/introduction'} component={IntroductionPage}/>
         <Route exact path={'/my-page'} component={MyPage}/>
         <Route exact path={'/reviews'} component={ReviewAddPage}/>
         <Route exact path={'/books/:isbn'} component={BookDetailPage}/>
