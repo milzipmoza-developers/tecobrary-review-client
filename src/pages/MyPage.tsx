@@ -57,8 +57,14 @@ function MyPage(): ReactElement {
       <PageContent style={{margin: '3rem 1rem 3rem 1rem'}}>
         <Card backgroundColor='white'
               boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
-          <ProfileImage src={myInfo?.member.profileImageUrl}/>
-          {JSON.stringify(myInfo)}
+          <ProfileWrapper>
+            <ProfileImage src={myInfo?.member.profileImageUrl}/>
+            <InfoWrapper>
+              <InfoText>{myInfo?.member.name}</InfoText>
+              <InfoText>{myInfo?.member.email}</InfoText>
+              <InfoText>{myInfo?.member.description}</InfoText>
+            </InfoWrapper>
+          </ProfileWrapper>
         </Card>
 
         <LogoutWrapper>
@@ -83,6 +89,11 @@ const ProfileImage = styled.img`
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 `
 
+const ProfileWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+`
+
 const LogoutText = styled.div`
   color: rgb(60, 63, 65);
   cursor: pointer;
@@ -92,4 +103,14 @@ const LogoutText = styled.div`
   margin-left: auto;
   align-self: flex-end;
   font-size: small;
+`
+
+const InfoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 1rem;
+`
+
+const InfoText = styled.div`
+  margin-bottom: 1rem;
 `
