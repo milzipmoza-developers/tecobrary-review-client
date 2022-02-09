@@ -1,8 +1,5 @@
 import React, {ReactElement, useEffect, useState} from "react";
 import {useHistory, useParams} from "react-router-dom";
-import {BookDetail} from "../../interfaces";
-import {getBookDetail} from "../../api/bookDetail";
-import BookDetailCard from "./BookDetailCard";
 import Plain from "../../components/plain/Plain";
 import {PageContent} from "../../components/page/PageContent";
 import {UserPageFrame} from "../../components/page/UserPageFrame";
@@ -22,6 +19,7 @@ import {ReviewContentItem} from "../../model/review/ReviewContentItem";
 import {ReviewInformativeItem} from "../../model/review/ReviewInformativeItem";
 import {ReviewSelectableItem} from "../../model/review/ReviewSelectableItem";
 import {DraftReview} from "../../api/review/draftReview.utils";
+import {BookDetailSection} from "./BookDetailSection";
 
 interface Params {
   isbn?: string
@@ -46,9 +44,6 @@ function BookDetailPage(): ReactElement {
   const [keywordContents, setKeywordContents] = useState<ReviewContentItem[]>()
   const [keywordInformatives, setKeywordInformatives] = useState<ReviewInformativeItem[]>()
   const [keywordSelectables, setKeywordSelectables] = useState<ReviewSelectableItem[]>()
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const [bookDetail] = useState<BookDetail>(getBookDetail.get(1)!)
 
   useEffect(() => {
     if (!isbn) {
@@ -146,7 +141,7 @@ function BookDetailPage(): ReactElement {
 
   const reviewContentTitle = () => {
     if (reviewTotal && reviewTotal != 0) {
-      return `${reviewTotal}명이 남긴 리뷰를 요약했어요`
+      return `${reviewTotal}개의 리뷰를 요약했어요`
     }
     return "아직 리뷰가 없어요"
   }
@@ -154,8 +149,8 @@ function BookDetailPage(): ReactElement {
   return (
     <UserPageFrame header={{useProfileButton: true, useBackButton: true}}>
       <PageContent marginBottom={'2rem'}>
-        <BookDetailCard
-          book={book ? book : bookDetail}
+        <BookDetailSection
+          book={book ? book : undefined}
           marks={mark ? {...mark} : undefined}
           tags={tags?.map(it => ({...it}))}/>
       </PageContent>
@@ -199,7 +194,6 @@ function BookDetailPage(): ReactElement {
                 boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'
                 margin='0 1rem 0 1rem'>
           <EmptyReviewWrapper onClick={() => {
-            console.log(book, tags)
             if (book && tags) {
               DraftReview.setBook({
                 isbn: book.isbn,
@@ -214,7 +208,7 @@ function BookDetailPage(): ReactElement {
               history.push(`/reviews?isbn=${isbn}`)
             }
           }}>
-            <div>첫 번째 리뷰 작성하러가기</div>
+            첫 번째 리뷰 작성하러가기
           </EmptyReviewWrapper>
         </Card>}
 
@@ -283,7 +277,5 @@ const EmptyReviewWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
   cursor: pointer;
 `

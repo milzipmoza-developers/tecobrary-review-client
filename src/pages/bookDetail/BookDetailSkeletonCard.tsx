@@ -1,62 +1,49 @@
 import React, {ReactElement} from "react";
-import {TagBadges} from "../../components/badges/TagBadges";
-import {parseDate} from "../../utils/date";
-import {BookDetailActionButtons} from "./BookDetailActionButtons";
 import styled from "styled-components";
-import {BookMarks, Tag} from "../../interfaces";
+import {Skeleton} from "@mui/material";
 
-interface BookDetail {
-  isbn: string
-  imageUrl: string
-  title: string
-  publisher: string
-  author: string
-  publishDate: string
-  description: string
-}
-
-interface Props {
-  book: BookDetail
-  tags?: Tag[]
-  marks?: BookMarks
-}
-
-function BookDetailCard(props: Props): ReactElement {
-
-  const {book, tags, marks} = props
+function BookDetailSkeletonCard(): ReactElement {
 
   const BookPublishInfo = () => (
     <BookPublishInfoWrapper>
-      <div>{book?.publisher}</div>
-      <div>{book?.author}</div>
+      <div>
+        <Skeleton variant="text" width={"6rem"} height={'24px'}/>
+      </div>
+      <div>
+        <Skeleton variant="text" width={"8rem"} height={'24px'}/>
+      </div>
     </BookPublishInfoWrapper>
   )
 
-  const BookSubInfo = () => (
-    <BookSubInfoWrapper>
-      <BookPublishDateWrapper>출판일 {parseDate(book.publishDate)}</BookPublishDateWrapper>
-      <BookDetailActionButtons isbn={book.isbn}
-                               like={props.marks ? props.marks.like.liked : false}
-                               likeCounts={props.marks ? props.marks.like.counts : 0}
-                               favorite={props.marks ? props.marks.favorite.marked : false}
-                               favoriteCounts={props.marks ? props.marks.favorite.counts : 0}/>
-    </BookSubInfoWrapper>
-  )
+  const BookSubInfo = () => {
+    return (
+      <BookSubInfoWrapper>
+        <BookPublishDateWrapper>
+          <Skeleton variant="text" width={"8rem"} height={'36px'}/>
+        </BookPublishDateWrapper>
+        <Skeleton variant="text" width={"4rem"} height={'36px'}/>
+      </BookSubInfoWrapper>
+    )
+  }
 
   return (
     <>
       <Space/>
       <Wrapper>
         <ImageWrapper>
-          <Image src={book.imageUrl}/>
+          <Skeleton variant="rectangular" height={"12.5rem"} width={"10rem"} style={{borderRadius: "inherit"}}/>
         </ImageWrapper>
         <BookDetailWrapper>
-          <TagBadges tags={props.tags ? props.tags : []}/>
-          <BookTitleWrapper>{book.title}</BookTitleWrapper>
+          <div style={{margin: '1rem'}}>
+            {/*<Skeleton variant="text" width={"8rem"}/>*/}
+          </div>
+          <BookTitleWrapper>
+            <Skeleton variant="text" width={"8rem"} height={'2rem'}/>
+          </BookTitleWrapper>
           <BookPublishInfo/>
           <BookSubInfo/>
           <BookDescriptionWrapper>
-            {book.description}
+            <Skeleton variant="text" width={"100%"} height={'8rem'}/>
           </BookDescriptionWrapper>
         </BookDetailWrapper>
       </Wrapper>
@@ -64,7 +51,7 @@ function BookDetailCard(props: Props): ReactElement {
   )
 }
 
-export default BookDetailCard
+export default BookDetailSkeletonCard
 
 const Space = styled.div`
   height: 8rem;
@@ -107,11 +94,9 @@ const BookDetailWrapper = styled.div`
 `
 
 const BookTitleWrapper = styled.div`
-  width: auto;
-  font-weight: bold;
-  font-size: 1.5em;
-  text-align: center;
-  margin: 1rem 0 0.5rem 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 `
 
 const BookPublishInfoWrapper = styled.div`
