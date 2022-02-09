@@ -1,5 +1,5 @@
 import {Gauge} from "./Gauge";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import styled from "styled-components";
 
 interface Item {
@@ -9,26 +9,16 @@ interface Item {
 }
 
 interface Props {
-  items?: Item[]
+  items: Item[]
 }
 
 export const ReviewGauges = ({items}: Props) => {
 
-  const [total, setTotal] = useState(1)
-
-  useEffect(() => {
-    if (items) {
-      const countedTotal = items.map(it => it.count)
-        .reduce((a, b) => a + b)
-      setTotal(countedTotal)
-    }
-  }, [items])
-
-  if (!items) {
-    return null
-  }
+  const total = items.map(it => it.count)
+    .reduce((a, b) => a + b)
 
   const desc = (a: Item, b: Item) => b.displayOrder - a.displayOrder
+
   const sortedItem = items.sort(desc)
 
   return (

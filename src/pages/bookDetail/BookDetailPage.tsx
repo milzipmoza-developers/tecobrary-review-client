@@ -14,10 +14,13 @@ import {DisplayBookDetail, DisplayBookMark} from "../../api/display/display.book
 import {DisplayBookTag} from "../../api/display/display.model";
 import Card from "../../components/card/Card";
 import styled from "styled-components";
-import {ReviewRanges} from "../../model/review/ReviewRanges";
-import {Gauge} from "../../components/gauge/Gauge";
+import {ReviewRange} from "../../model/review/ReviewRange";
 import {SortedTextBadges} from "../../components/badges/SortedTextBadges";
 import SpannedCard from "../../components/card/SpannedCard";
+import {ReviewGauges} from "../../components/gauge/ReviewGauges";
+import {ReviewContentItem} from "../../model/review/ReviewContentItem";
+import {ReviewInformativeItem} from "../../model/review/ReviewInformativeItem";
+import {ReviewSelectableItem} from "../../model/review/ReviewSelectableItem";
 
 interface Params {
   isbn?: string
@@ -29,41 +32,98 @@ function BookDetailPage(): ReactElement {
 
   const {isbn} = useParams<Params>()
   const history = useHistory()
+
   const [bookLoading, setBookLoading] = useState(false)
   const [book, setBook] = useState<DisplayBookDetail>()
   const [mark, setMark] = useState<DisplayBookMark>()
   const [tags, setTags] = useState<DisplayBookTag[]>()
+
+  const [reviewLoading, setReviewLoading] = useState(false)
   const [reviewTotal, setReviewTotal] = useState<number>()
-  const [reviewSummary, setReviewSummary] = useState<ReviewRanges>()
+  const [reviewRanges, setReviewRanges] = useState<ReviewRange[]>()
+
+  const [keywordContents, setKeywordContents] = useState<ReviewContentItem[]>()
+  const [keywordInformatives, setKeywordInformatives] = useState<ReviewInformativeItem[]>()
+  const [keywordSelectables, setKeywordSelectables] = useState<ReviewSelectableItem[]>()
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [bookDetail] = useState<BookDetail>(getBookDetail.get(1)!)
 
   useEffect(() => {
+    if (!isbn) {
+      history.goBack()
+      return
+    }
     _initPageBookData()
+    _initReviewData()
     return () => {
       setBookLoading(true)
+      setReviewLoading(true)
     }
   }, [])
 
   const _initPageBookData = async () => {
     try {
       if (!isbn) {
-        history.goBack()
         return
       }
 
       setBookLoading(true)
       const foundBook = await DisplayBookApi.getBook(isbn, user.deviceId, user.token)
-      const _reviewSummary = await DisplayBookApi.getReviewSummary(isbn)
       setBookLoading(false)
 
       if (!bookLoading) {
         setBook(foundBook.book)
         setMark(foundBook.mark)
         setTags(foundBook.tags)
-        setReviewTotal(_reviewSummary.total)
-        setReviewSummary(new ReviewRanges(_reviewSummary))
+      }
+    } catch (e) {
+      if (e.response && (400 <= e.response.status && e.response.status < 500)) {
+        setPop({message: e.response.data.message, open: true, duration: 3000, color: "WARN"})
+        history.goBack()
+        return
+      }
+
+      if (e.response && (500 <= e.response.status && e.response.status < 600)) {
+        setPop({message: e.response.data.message, open: true, duration: 3000, color: "ERROR"})
+        history.goBack()
+        return
+      }
+
+      setPop(NETWORK_ERROR_DEFAULT)
+      return;
+    }
+  }
+
+  const _initReviewData = async () => {
+    try {
+      if (!isbn) {
+        return
+      }
+
+      setReviewLoading(true)
+      const reviewSummary = await DisplayBookApi.getReviewSummary(isbn)
+      const keywords = await DisplayBookApi.getReviewKeywords(isbn)
+      console.log(reviewSummary)
+      console.log(keywords)
+      setReviewLoading(false)
+
+      if (!reviewLoading) {
+        const ranges = reviewSummary.ranges
+          .map(it => new ReviewRange(it.range, it.count))
+        setReviewRanges(ranges)
+
+        const contents = keywords.content
+          .map(it => new ReviewContentItem(it.keyword, it.count))
+        setKeywordContents(contents)
+
+        const informatives = keywords.informative
+          .map(it => new ReviewInformativeItem(it.keyword, it.count))
+        setKeywordInformatives(informatives)
+
+        const selectables = keywords.selectables
+          .map(it => new ReviewSelectableItem(it.keyword, it.count))
+        setKeywordSelectables(selectables)
       }
     } catch (e) {
       if (e.response && (400 <= e.response.status && e.response.status < 500)) {
@@ -85,7 +145,7 @@ function BookDetailPage(): ReactElement {
 
   const reviewContentTitle = () => {
     if (reviewTotal && reviewTotal != 0) {
-      return `리뷰가 ${reviewTotal}개 있어요`
+      return `${reviewTotal}명이 남긴 리뷰를 요약했어요`
     }
     return "아직 리뷰가 없어요"
   }
@@ -102,104 +162,56 @@ function BookDetailPage(): ReactElement {
       <Plain title={reviewContentTitle()}
              margin='0 1rem 0 1rem'>
       </Plain>
-      <SpannedCard padding={'2rem 0 2rem 0'}>
-        <Table>
-          <Row>
-            <Title>내용이</Title>
-            <Content>
-              <ScrollElements className='scroll-hidden'>
-                <SortedTextBadges
-                  items={[
-                    {name: "💧 매우 쉬워요", count: 20},
-                    {name: "쉬워요", count: 5},
-                    {name: "보통이예요", count: 30},
-                    {name: "어려워요", count: 20},
-                    {name: "🔥 매우 어려워요", count: 35},
-                  ]}/>
-              </ScrollElements>
-            </Content>
-          </Row>
-          <Row>
-            <Title>도움이</Title>
-            <Content>
-              <ScrollElements className='scroll-hidden'>
-                <SortedTextBadges
-                  items={[
-                    {name: "🙅 전혀 안되었어요", count: 20},
-                    {name: "🤷 되었어요", count: 30},
-                    {name: "🙆 많이 되었어요", count: 20},
-                    {name: "🤦 안되었어요", count: 35},
-                  ]}/>
-              </ScrollElements>
-            </Content>
-          </Row>
-          <Row>
-            <Title>이 책은</Title>
-            <Content>
-              <ScrollElements className='scroll-hidden'>
-                <SortedTextBadges
-                  items={[
-                    {name: "✏️ 개념 위주예요", count: 20},
-                    {name: "🔬 특정 기술 위주예요", count: 30},
-                    {name: "💻 예제 코드가 꼼꼼해요", count: 20},
-                    {name: "📄 설명이 잘 되어있어요", count: 35},
-                    {name: "👍 번역이 잘 되어있어요", count: 35},
-                    {name: "🛠 오탈자가 많아요", count: 35},
-                  ]}/>
-              </ScrollElements>
-            </Content>
-          </Row>
-        </Table>
-      </SpannedCard>
+      {reviewTotal != 0
+        ? <SpannedCard padding={'2rem 0 2rem 0'}>
+          <Table>
+            {keywordContents && keywordContents.length != 0 ? <Row>
+              <Title>내용이</Title>
+              <Content>
+                <ScrollElements className='scroll-hidden'>
+                  <SortedTextBadges
+                    items={keywordContents}/>
+                </ScrollElements>
+              </Content>
+            </Row> : null}
+            {keywordInformatives && keywordInformatives.length != 0 ? <Row>
+              <Title>도움이</Title>
+              <Content>
+                <ScrollElements className='scroll-hidden'>
+                  <SortedTextBadges
+                    items={keywordInformatives}/>
+                </ScrollElements>
+              </Content>
+            </Row> : null}
+            {keywordSelectables && keywordSelectables.length != 0 ? <Row>
+              <Title>이 책은</Title>
+              <Content>
+                <ScrollElements className='scroll-hidden'>
+                  <SortedTextBadges
+                    items={keywordSelectables}/>
+                </ScrollElements>
+              </Content>
+            </Row> : null}
+          </Table>
+        </SpannedCard>
+        : null}
 
-      <PageContent marginBottom={'2rem'} marginTop={'2rem'}>
-        <Plain title={"이만큼 읽고 리뷰를 남겼어요"} margin='0 1rem 0 1rem'>
-          <Card backgroundColor='white'
-                boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
-            <Gauge
-              name={reviewSummary?.readAll.displayName ?? ''}
-              count={reviewSummary?.readAll.count ?? 0}
-              total={reviewTotal ?? 1}
-              color={'rgb(39, 54, 70)'}/>
-            <Margin/>
-            <Gauge
-              name={reviewSummary?.multipleChapters.displayName ?? ''}
-              count={reviewSummary?.multipleChapters.count ?? 0}
-              total={reviewTotal ?? 1}
-              color={'rgb(39, 54, 70)'}/>
-            <Margin/>
-            <Gauge
-              name={reviewSummary?.oneChapter.displayName ?? ''}
-              count={reviewSummary?.oneChapter.count ?? 0}
-              total={reviewTotal ?? 1}
-              color={'rgb(39, 54, 70)'}/>
-            <Margin/>
-            <Gauge
-              name={reviewSummary?.aLittle.displayName ?? ''}
-              count={reviewSummary?.aLittle.count ?? 0}
-              total={reviewTotal ?? 1}
-              color={'rgb(39, 54, 70)'}/>
-            <Margin/>
-            <Gauge
-              name={reviewSummary?.introduction.displayName ?? ''}
-              count={reviewSummary?.introduction.count ?? 0}
-              total={reviewTotal ?? 1}
-              color={'rgb(39, 54, 70)'}/>
-          </Card>
-        </Plain>
-      </PageContent>
+      {reviewRanges && reviewTotal != 0 ?
+        <PageContent marginBottom={'2rem'} marginTop={'2rem'}>
+          <Plain title={"이만큼 읽고 리뷰를 남겼어요"} margin='0 1rem 0 1rem'>
+            <Card backgroundColor='white'
+                  boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
+              <ReviewGauges items={reviewRanges}/>
+            </Card>
+          </Plain>
+        </PageContent>
+        : null}
 
     </UserPageFrame>
   )
 }
 
 export default BookDetailPage
-
-const Margin = styled.div`
-  width: auto;
-  height: 5px;
-`
-
 
 const Table = styled.div`
   width: auto;

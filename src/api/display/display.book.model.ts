@@ -48,3 +48,15 @@ export interface DisplayBookReviewSummaryRange {
   displayName: string
   count: number
 }
+
+export interface DisplayBookReviewKeyword {
+  content: DisplayReviewKeyword[]
+  informative: DisplayReviewKeyword[]
+  readMore: DisplayReviewKeyword[]
+  selectables: DisplayReviewKeyword[]
+}
+
+interface DisplayReviewKeyword {
+  keyword: string
+  count: number
+}

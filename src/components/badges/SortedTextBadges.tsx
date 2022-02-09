@@ -2,7 +2,7 @@ import {ReactElement, useState} from "react";
 import {TextBadge} from "./TextBadge";
 
 interface Item {
-  name: string
+  displayName: string
   count: number
 }
 
@@ -10,7 +10,7 @@ interface Props {
   items: Item[]
 }
 
-export const SortedTextBadges = (props: Props): ReactElement => {
+export const SortedTextBadges = (props: Props): ReactElement | null => {
   const {items} = props
 
   const [total] = useState(items.map(it => it.count)
@@ -31,7 +31,7 @@ export const SortedTextBadges = (props: Props): ReactElement => {
         <TextBadge key={index}
                    percent={percent}
                    max={calculatePercent(maxCount)}>
-          {`${it.name} (${percent}%)`}
+          {`${it.displayName} (${percent}%)`}
         </TextBadge>
       );
     })}</>
