@@ -21,6 +21,7 @@ export const PageFrame = ({header, children}: Props): ReactElement => {
       <ChildrenWrapper>
         {children}
       </ChildrenWrapper>
+      <BottomSafetyArea/>
     </Wrapper>
   )
 }
@@ -32,11 +33,15 @@ const Wrapper = styled.div`
   background-color: #ecf0f1;
   position: relative;
   padding-top: 14vh;
-  padding-bottom: 5rem;
   display: flex;
   flex-direction: column;
 `
 
 const ChildrenWrapper = styled.div`
   //position: fixed;
+`
+
+const BottomSafetyArea = styled.div`
+  height: 5rem;
+  width: auto;
 `
