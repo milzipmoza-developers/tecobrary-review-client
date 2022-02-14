@@ -34,7 +34,7 @@ export const CategoryBadge = ({size, fontWeight, backgroundColor, children}: Pro
 
   return (
     <Wrapper style={{backgroundColor: backgroundColor}}>
-      <BadgeText style={{fontWeight, ...getSize(badgeSize)}}>
+      <BadgeText style={{fontWeight, ...getSize(badgeSize)}} color={choiceFontColor(backgroundColor)}>
         {children}
       </BadgeText>
     </Wrapper>
@@ -52,9 +52,24 @@ const Wrapper = styled.span`
   align-items: center;
 `
 
-const BadgeText = styled.a`
+interface TextProps {
+  color: string
+}
+
+const BadgeText = styled.a<TextProps>`
   width: fit-content;
   height: fit-content;
   font-size: small;
-  color: black;
+  color: ${props => props.color};
 `
+
+function choiceFontColor(hex: string) {
+  const c = hex.substring(1)
+  const rgb = parseInt(c, 16)
+  const r = (rgb >> 16) & 0xff
+  const g = (rgb >> 8) & 0xff
+  const b = (rgb >> 0) & 0xff
+  const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+  return luma < 127.5 ? "white" : "black"
+}
