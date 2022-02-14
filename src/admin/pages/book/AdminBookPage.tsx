@@ -23,11 +23,12 @@ import {useRecoilState} from "recoil";
 import {AdminAlertColor, adminAlertStatus} from "../../status/AdminAlertStatus";
 import styled from "styled-components";
 import {Book, SearchBook} from "../../api/book/book.model";
-import {PageData, PageRequest} from "../../api/interfaces";
+import {PageData} from "../../api/interfaces";
 import {BookApi} from "../../api/book/book.service";
 import {BookMapper} from "../../api/book/book.mapper";
 import {BookPreview} from "../../components/AdminBookPreview";
 import {useHistory} from "react-router-dom";
+import {adminBookPageStatus} from "../../status/AdminBookPageStatus";
 
 
 const headers: ListHeaderProps[] = [
@@ -72,6 +73,7 @@ function AdminBookPage(): ReactElement {
   const history = useHistory();
 
   const [alertStatus, setAlertStatus] = useRecoilState(adminAlertStatus)
+  const [bookPageStatus, setBookPageStatus] = useRecoilState(adminBookPageStatus)
   const [showDialog, setShowDialog] = useState(false)
 
   const [open, setOpen] = useState(false);
@@ -81,10 +83,6 @@ function AdminBookPage(): ReactElement {
   const [keyword, setKeyword] = useState('')
   const [selectedBook, setSelectedBook] = useState<OptionBook | null>(null)
 
-  const [pageRequest, setPageRequest] = useState<PageRequest>({
-    page: 0,
-    size: 10
-  })
   const [pageData, setPageData] = useState<PageData<Book>>({
     total: 0,
     size: 0,
@@ -95,7 +93,7 @@ function AdminBookPage(): ReactElement {
 
   useEffect(() => {
     QueryAction.getAll()
-  }, [pageRequest]);
+  }, [bookPageStatus]);
 
   useEffect(() => {
     if (!open) {
@@ -104,7 +102,6 @@ function AdminBookPage(): ReactElement {
   }, [open]);
 
   const _init = () => {
-    console.log('init')
     setSelectedBook(null)
     setOptions([])
   }
@@ -122,7 +119,7 @@ function AdminBookPage(): ReactElement {
   const QueryAction = {
     getAll: async () => {
       try {
-        const pageData = await BookApi.getAll(pageRequest)
+        const pageData = await BookApi.getAll(bookPageStatus)
         setPageData({...pageData})
       } catch (e) {
         if (e.response && (400 <= e.response.status && e.response.status < 500)) {
@@ -138,13 +135,11 @@ function AdminBookPage(): ReactElement {
   const DialogAction = {
     show: () => {
       _init()
-      console.log('show', showDialog)
       setShowDialog(true)
     },
 
     hide: () => {
       setShowDialog(false)
-      console.log('hide', showDialog)
       _init()
     },
 
@@ -244,24 +239,24 @@ function AdminBookPage(): ReactElement {
       if (isLast) {
         return
       }
-      setPageRequest({
-        ...pageRequest,
-        page: pageRequest.page + 1
-      })
+      setBookPageStatus((oldPageStatus) => ({
+        ...oldPageStatus,
+        page: oldPageStatus.page + 1
+      }))
     },
 
     pageDown: () => {
       const {isFirst} = pageData
-      const {page} = pageRequest
+      const {page} = bookPageStatus
 
       if (isFirst) {
         return
       }
       if (page > 0) {
-        setPageRequest({
-          ...pageRequest,
-          page: pageRequest.page - 1
-        })
+        setBookPageStatus((oldPageStatus) => ({
+          ...oldPageStatus,
+          page: oldPageStatus.page - 1
+        }))
       }
     }
   }
@@ -332,7 +327,7 @@ function AdminBookPage(): ReactElement {
       </ActionMenuWrapper>
       <AdminList title={"도서 목록"} headers={headers}
                  elements={BookMapper.mapToElementProps(pageData.items)}
-                 page={pageRequest.page}
+                 page={bookPageStatus.page}
                  pageUp={PageAction.pageUp}
                  pageDown={PageAction.pageDown}
                  isFirst={pageData.isFirst}
