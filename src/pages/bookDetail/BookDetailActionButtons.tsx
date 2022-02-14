@@ -1,16 +1,19 @@
 import {LikeIcon} from "../../components/icons/LikeIcon";
 import {BookmarkIcon} from "../../components/icons/BookmarkIcon";
 import styled from "styled-components";
-import React, {ReactElement, useState} from "react";
+import React, {createRef, ReactElement, useEffect, useRef, useState} from "react";
 import {CountActionButton} from "../../components/buttons/CountActionButton";
 import {MarkApi} from "../../api/mark/mark.service";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {userState} from "../../states/User";
 import {NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
 import {loginModalState} from "../../states/LoginModal";
+import {Share, ShareOutline} from "react-ionicons";
+import ReactTooltip from "react-tooltip";
 
 interface Props {
   isbn: string
+  title: string
   like: boolean
   likeCounts: number
   favorite: boolean
@@ -110,8 +113,27 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
     }
   }
 
+  const onClickShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: '새로운 기술 도서 & 핫한 기술 도서를 모아볼 수 있는 테코브러리',
+          url: document.location.href,
+          text: `${props.title} 리뷰 확인하고 읽어보는거 어때요 ?`
+        })
+        setPop({message: `책을 공유했어요 !`, open: true, duration: 2000, color: "SUCCESS"})
+      } catch (e) {
+        setPop({message: `책을 공유하지 못했어요 !`, open: true, duration: 2000, color: "WARN"})
+      }
+    }
+  }
+
   return (
     <ActionButtonWrapper>
+      <div style={{cursor: "pointer"}} onClick={onClickShare}>
+        <ShareOutline color={"#34495e"} width={"1.5rem"} height={"1.5rem"}/>
+      </div>
+      <Space/>
       <CountActionButton counts={likeMark.count} color={props.color ? props.color : "black"}>
         <LikeIcon like={likeMark.marked} color={props.color ? props.color : "#FF758F"}
                   onClick={onClickLike}/>
