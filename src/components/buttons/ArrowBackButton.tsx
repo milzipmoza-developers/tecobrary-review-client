@@ -7,7 +7,7 @@ export const ArrowBackButton = (): ReactElement => {
   const history = useHistory();
 
   const onClick = () => {
-    if (history.length == 0) {
+    if (history.length <= 1) {
       history.push("/")
       return
     }

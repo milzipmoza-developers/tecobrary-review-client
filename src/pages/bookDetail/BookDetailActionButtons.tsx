@@ -123,7 +123,7 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
         })
         setPop({message: `책을 공유했어요 !`, open: true, duration: 2000, color: "SUCCESS"})
       } catch (e) {
-        setPop({message: `책을 공유하지 못했어요 !`, open: true, duration: 2000, color: "WARN"})
+        console.log('공유하기 취소')
       }
     }
   }
