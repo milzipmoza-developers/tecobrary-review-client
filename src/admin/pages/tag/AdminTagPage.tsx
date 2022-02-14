@@ -12,6 +12,7 @@ import {TagApi} from "../../api/tag/tag.service";
 import {PageData, PageRequest} from "../../api/interfaces";
 import {TagMapper} from "../../api/tag/tag.mapper";
 import {HexColorPicker} from "react-colorful";
+import {adminTagPageStatus} from "../../status/AdminTagPageStatus";
 
 const headers: ListHeaderProps[] = [
   {
@@ -38,12 +39,9 @@ const headers: ListHeaderProps[] = [
 
 function AdminMarkPage(): ReactElement {
   const [alertStatus, setAlertStatus] = useRecoilState(adminAlertStatus)
+  const [pageStatus, setPageStatus] = useRecoilState(adminTagPageStatus)
 
   const [showDialog, setShowDialog] = useState(false)
-  const [pageRequest, setPageRequest] = useState<PageRequest>({
-    page: 0,
-    size: 10
-  })
   const [pageData, setPageData] = useState<PageData<Tag>>({
     total: 0,
     size: 0,
@@ -59,7 +57,7 @@ function AdminMarkPage(): ReactElement {
 
   useEffect(() => {
     QueryAction.getAll()
-  }, [pageRequest]);
+  }, [pageStatus]);
 
   const _init = () => {
     setInputs({
@@ -82,7 +80,7 @@ function AdminMarkPage(): ReactElement {
   const QueryAction = {
     getAll: async () => {
       try {
-        const pageData = await TagApi.get(pageRequest, {});
+        const pageData = await TagApi.get(pageStatus, {});
         setPageData({...pageData})
       } catch (e) {
         if (e.response && (400 <= e.response.status && e.response.status < 500)) {
@@ -101,24 +99,24 @@ function AdminMarkPage(): ReactElement {
       if (isLast) {
         return
       }
-      setPageRequest({
-        ...pageRequest,
-        page: pageRequest.page + 1
-      })
+      setPageStatus((old) => ({
+        ...old,
+        page: old.page + 1
+      }))
     },
 
     pageDown: () => {
       const {isFirst} = pageData
-      const {page} = pageRequest
+      const {page} = pageStatus
 
       if (isFirst) {
         return
       }
       if (page > 0) {
-        setPageRequest({
-          ...pageRequest,
-          page: pageRequest.page - 1
-        })
+        setPageStatus((old) => ({
+          ...old,
+          page: old.page - 1
+        }))
       }
     }
   }
@@ -235,7 +233,7 @@ function AdminMarkPage(): ReactElement {
       <AdminList title={"태그 정보 조회"}
                  headers={headers}
                  elements={TagMapper.mapper(pageData.items)}
-                 page={pageRequest.page}
+                 page={pageStatus.page}
                  pageUp={PageAction.pageUp}
                  pageDown={PageAction.pageDown}
                  isFirst={pageData.isFirst}

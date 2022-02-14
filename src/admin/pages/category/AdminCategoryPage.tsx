@@ -11,6 +11,7 @@ import {PageData, PageRequest} from "../../api/interfaces";
 import {Category, CategoryInput} from "../../api/category/category.model";
 import {CategoryMapper} from "../../api/category/category.mapper";
 import {ActionMenuWrapper} from "../../components/ActionMenuWrapper";
+import {adminCategoryPageStatus} from "../../status/AdminCategoryPageStatus";
 
 const headers: ListHeaderProps[] = [
   {
@@ -37,12 +38,9 @@ const headers: ListHeaderProps[] = [
 
 function AdminCategoryPage(): ReactElement {
   const [alertStatus, setAlertStatus] = useRecoilState(adminAlertStatus)
+  const [pageStatus, setPageStatus] = useRecoilState(adminCategoryPageStatus)
 
   const [showDialog, setShowDialog] = useState(false)
-  const [pageRequest, setPageRequest] = useState<PageRequest>({
-    page: 0,
-    size: 10
-  })
   const [pageData, setPageData] = useState<PageData<Category>>({
     total: 0,
     size: 0,
@@ -58,7 +56,7 @@ function AdminCategoryPage(): ReactElement {
 
   useEffect(() => {
     QueryAction.getAll()
-  }, [pageRequest]);
+  }, [pageStatus]);
 
   const _init = () => {
     setInputs({
@@ -81,7 +79,7 @@ function AdminCategoryPage(): ReactElement {
   const QueryAction = {
     getAll: async () => {
       try {
-        const pageData = await CategoryApi.get(pageRequest);
+        const pageData = await CategoryApi.get(pageStatus);
         setPageData({...pageData})
       } catch (e) {
         if (e.response && (400 <= e.response.status && e.response.status < 500)) {
@@ -120,13 +118,11 @@ function AdminCategoryPage(): ReactElement {
   const DialogAction = {
     show: () => {
       _init()
-      console.log('show', showDialog)
       setShowDialog(true)
     },
 
     hide: () => {
       setShowDialog(false)
-      console.log('hide', showDialog)
       _init()
     },
 
@@ -164,24 +160,24 @@ function AdminCategoryPage(): ReactElement {
       if (isLast) {
         return
       }
-      setPageRequest({
-        ...pageRequest,
-        page: pageRequest.page + 1
-      })
+      setPageStatus((old) => ({
+        ...old,
+        page: old.page + 1
+      }))
     },
 
     pageDown: () => {
       const {isFirst} = pageData
-      const {page} = pageRequest
+      const {page} = pageStatus
 
       if (isFirst) {
         return
       }
       if (page > 0) {
-        setPageRequest({
-          ...pageRequest,
-          page: pageRequest.page - 1
-        })
+        setPageStatus((old) => ({
+          ...old,
+          page: old.page - 1
+        }))
       }
     }
   }
@@ -230,7 +226,7 @@ function AdminCategoryPage(): ReactElement {
       <AdminList title={"카테고리 목록"}
                  headers={headers}
                  elements={CategoryMapper.mapper(pageData.items)}
-                 page={pageRequest.page}
+                 page={pageStatus.page}
                  pageUp={PageAction.pageUp}
                  pageDown={PageAction.pageDown}
                  isFirst={pageData.isFirst}
