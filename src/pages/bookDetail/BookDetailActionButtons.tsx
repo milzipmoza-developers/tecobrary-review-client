@@ -13,6 +13,7 @@ import ReactTooltip from "react-tooltip";
 
 interface Props {
   isbn: string
+  title: string
   like: boolean
   likeCounts: number
   favorite: boolean
@@ -112,8 +113,27 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
     }
   }
 
+  const onClickShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: '새로운 기술 도서 & 핫한 기술 도서를 모아볼 수 있는 테코브러리',
+          url: document.location.href,
+          text: `${props.title} 리뷰 확인하고 읽어보는거 어때요 ?`
+        })
+        setPop({message: `책을 공유했어요 !`, open: true, duration: 2000, color: "SUCCESS"})
+      } catch (e) {
+        setPop({message: `책을 공유하지 못했어요 !`, open: true, duration: 2000, color: "WARN"})
+      }
+    }
+  }
+
   return (
     <ActionButtonWrapper>
+      <div style={{cursor: "pointer"}} onClick={onClickShare}>
+        <ShareOutline color={"#34495e"} width={"1.5rem"} height={"1.5rem"}/>
+      </div>
+      <Space/>
       <CountActionButton counts={likeMark.count} color={props.color ? props.color : "black"}>
         <LikeIcon like={likeMark.marked} color={props.color ? props.color : "#FF758F"}
                   onClick={onClickLike}/>
@@ -123,16 +143,6 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
         <BookmarkIcon marked={favoriteMark.marked} color={props.color ? props.color : "#FFB700"}
                       onClick={onClickFavorite}/>
       </CountActionButton>
-      <Space/>
-      <div data-tip data-for='share-tooltip' style={{cursor: "pointer"}}>
-        <ShareOutline color={"#34495e"} width={"1.5rem"} height={"1.5rem"}/>
-      </div>
-      <ReactTooltip id='share-tooltip'
-                    backgroundColor={"#34495e"}
-                    textColor={"#FFF"}
-                    effect='solid'>
-        <span>책의 리뷰를 공유해보세요</span>
-      </ReactTooltip>
     </ActionButtonWrapper>
   )
 }

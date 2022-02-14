@@ -37,6 +37,7 @@ function BookDetailCard(props: Props): ReactElement {
     <BookSubInfoWrapper>
       <BookPublishDateWrapper>출판일 {parseDate(book.publishDate)}</BookPublishDateWrapper>
       <BookDetailActionButtons isbn={book.isbn}
+                               title={book.title ?? ''}
                                like={props.marks ? props.marks.like.liked : false}
                                likeCounts={props.marks ? props.marks.like.counts : 0}
                                favorite={props.marks ? props.marks.favorite.marked : false}
