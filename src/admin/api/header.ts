@@ -5,7 +5,6 @@ export interface TecobraryHeaders {
 export const headers = () => {
   const deviceId = localStorage.getItem("X-TECOBRARY-DEVICE-ID")
   const token = localStorage.getItem("X-TECOBRARY-AUTH-TOKEN")
-  console.log(deviceId, token)
   return createHeaders(token, deviceId)
 }
 
