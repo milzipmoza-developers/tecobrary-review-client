@@ -4,6 +4,7 @@ import {parseDate} from "../../utils/date";
 import {BookDetailActionButtons} from "./BookDetailActionButtons";
 import styled from "styled-components";
 import {BookMarks, Tag} from "../../interfaces";
+import {Heart, Share} from "react-ionicons";
 
 interface BookDetail {
   isbn: string

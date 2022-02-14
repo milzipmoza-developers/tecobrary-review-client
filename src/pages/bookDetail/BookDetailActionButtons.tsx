@@ -1,13 +1,15 @@
 import {LikeIcon} from "../../components/icons/LikeIcon";
 import {BookmarkIcon} from "../../components/icons/BookmarkIcon";
 import styled from "styled-components";
-import React, {ReactElement, useState} from "react";
+import React, {createRef, ReactElement, useEffect, useRef, useState} from "react";
 import {CountActionButton} from "../../components/buttons/CountActionButton";
 import {MarkApi} from "../../api/mark/mark.service";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {userState} from "../../states/User";
 import {NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
 import {loginModalState} from "../../states/LoginModal";
+import {Share, ShareOutline} from "react-ionicons";
+import ReactTooltip from "react-tooltip";
 
 interface Props {
   isbn: string
@@ -121,6 +123,16 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
         <BookmarkIcon marked={favoriteMark.marked} color={props.color ? props.color : "#FFB700"}
                       onClick={onClickFavorite}/>
       </CountActionButton>
+      <Space/>
+      <div data-tip data-for='share-tooltip' style={{cursor: "pointer"}}>
+        <ShareOutline color={"#34495e"} width={"1.5rem"} height={"1.5rem"}/>
+      </div>
+      <ReactTooltip id='share-tooltip'
+                    backgroundColor={"#34495e"}
+                    textColor={"#FFF"}
+                    effect='solid'>
+        <span>책의 리뷰를 공유해보세요</span>
+      </ReactTooltip>
     </ActionButtonWrapper>
   )
 }
