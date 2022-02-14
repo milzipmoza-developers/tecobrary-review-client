@@ -22,6 +22,7 @@ import {AuthenticationApi} from "./api/authentication/authentication.service";
 import {useQueryString} from "./hooks";
 import {PopColor, popState} from "./states/Pop";
 import {RequestAction, requestTemplate} from "./api";
+import ReactGA from 'react-ga';
 
 interface QueryString {
   code?: string
@@ -45,6 +46,14 @@ function App(): ReactElement {
     initDeviceId()
     reroute()
     // initQueryParams()
+  }, [])
+
+  useEffect(() => {
+    ReactGA.initialize("G-4P9D9VMEDK");
+    history.listen((location) => {
+      ReactGA.set({page: location.pathname})
+      ReactGA.pageview(location.pathname)
+    })
   }, [])
 
   const initUserState = () => {
