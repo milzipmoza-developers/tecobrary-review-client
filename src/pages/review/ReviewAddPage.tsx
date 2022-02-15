@@ -390,6 +390,7 @@ function ReviewAddPage(): ReactElement {
     } catch (e) {
       if (e.response && e.response.status == 401) {
         setLoginModal({open: true, message: "로그인하면 리뷰를 완료할 수 있어요"})
+        return
       }
       if (e.response && (400 <= e.response.status && e.response.status < 500)) {
         setPop({message: `${e.response.data.message}`, open: true, duration: 3000, color: "WARN"})
