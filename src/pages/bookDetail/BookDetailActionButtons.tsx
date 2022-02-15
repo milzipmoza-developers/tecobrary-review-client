@@ -121,10 +121,20 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
           url: document.location.href,
           text: `${props.title} 리뷰 확인하고 읽어보는거 어때요 ?`
         })
-        setPop({message: `책을 공유했어요 !`, open: true, duration: 2000, color: "SUCCESS"})
+        setPop({message: `책을 공유했어요 !`, open: true, duration: 2000, color: "INFO"})
       } catch (e) {
         console.log('공유하기 취소')
       }
+      return
+    }
+    if (navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(`[테코브러리] ${props.title} 리뷰 확인하고 읽어보는거 어때요 ?\n\n${document.location.href}`)
+        setPop({message: `클립보드에 복사되었어요 !`, open: true, duration: 2000, color: "INFO"})
+      } catch (e) {
+        console.log('클립보드 오류')
+      }
+      return
     }
   }
 
