@@ -33,6 +33,7 @@ import {DraftReview, DraftReviewLoader} from "../../api/review/draftReview.utils
 import {loginModalState} from "../../states/LoginModal";
 import {useHistory} from "react-router-dom";
 import {useQueryString} from "../../hooks";
+import {DisplayBookApi} from "../../api/display/display.book.service";
 
 interface Search {
   keyword: string
@@ -143,6 +144,28 @@ function ReviewAddPage(): ReactElement {
   const loadDraftReview = async () => {
     const loadedBook = DraftReviewLoader.loadBook()
     if (!loadedBook) {
+      if (!isbn) {
+        return
+      }
+      const foundBook = await DisplayBookApi.getBook(isbn, user.deviceId, user.token)
+
+      setSelectedBook(selectBook({
+        isbn: foundBook.book.isbn,
+        title: foundBook.book.title,
+        publisher: foundBook.book.publisher,
+        author: foundBook.book.author,
+        imageUrl: foundBook.book.imageUrl,
+        description: foundBook.book.description,
+        publishDate: foundBook.book.publishDate,
+        tags: foundBook.tags.map(it => ({
+          name: it.name,
+          colorCode: it.colorCode
+        }))
+      }))
+      setStage(SECOND_STEP)
+
+      const reviewSelectableRanges = await ReviewApi.getAvailableRanges(foundBook.book.isbn, user.token, user.deviceId);
+      setSelectableRanges(reviewSelectableRanges)
       return
     }
     setSelectedBook(selectBook(loadedBook))

@@ -17,6 +17,16 @@ export const AddReviewIcon = ({to}: Props): ReactElement => {
       action: "go to review add page",
       label: "review",
     })
+
+    const pathName = history.location.pathname
+
+    if (pathName.startsWith("/books")) {
+      const isbn = pathName.replace("/books", "")
+        .replace("/", "");
+      history.push(`/reviews?isbn=${isbn}`)
+      return
+    }
+
     history.push(to)
   }
 

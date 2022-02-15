@@ -190,7 +190,7 @@ function App(): ReactElement {
         <Route exact path={'/my-page'} component={MyPage}/>
         <Route exact path={'/reviews'} component={ReviewAddPage}/>
         <Route exact path={'/books/:isbn'} component={BookDetailPage}/>
-        <Route exact path={'/books/:bookId/reviews'} component={BookReviewPage}/>
+        {/*<Route exact path={'/books/:bookId/reviews'} component={BookReviewPage}/>*/}
         <Route exact path={'/books'} component={BookListPage}/>
         <Route exact path={'/categories'} component={CategoriesPage}/>
 
