@@ -74,7 +74,7 @@ function BookListPage(): ReactElement {
       const categoryBookPage = await BookApi.get(categoryNo, {page, size})
       const {pageData} = categoryBookPage
       setCategoryPageData({
-        ...categoryPageData,
+        ...pageData,
         items: categoryPageData.items.concat(pageData.items)
       })
       setPage(page + 1)
