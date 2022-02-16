@@ -193,21 +193,7 @@ function BookDetailPage(): ReactElement {
         : <Card backgroundColor='white'
                 boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'
                 margin='0 1rem 0 1rem'>
-          <EmptyReviewWrapper onClick={() => {
-            if (book && tags) {
-              DraftReview.setBook({
-                isbn: book.isbn,
-                title: book.title,
-                publisher: book.publisher,
-                author: book.author,
-                imageUrl: book.imageUrl,
-                description: book.description,
-                publishDate: book.publishDate,
-                tags: tags,
-              })
-              history.push(`/reviews?isbn=${isbn}`)
-            }
-          }}>
+          <EmptyReviewWrapper onClick={() => history.push(`/reviews?isbn=${isbn}`)}>
             첫 번째 리뷰 작성하러가기
           </EmptyReviewWrapper>
         </Card>}

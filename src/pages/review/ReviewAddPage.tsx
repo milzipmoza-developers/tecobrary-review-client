@@ -105,7 +105,7 @@ function ReviewAddPage(): ReactElement {
   useEffect(() => {
     if (isbn) {
       (async () => {
-        await loadDraftReview()
+        await loadSelectedBook()
       })()
       return
     }
@@ -141,12 +141,8 @@ function ReviewAddPage(): ReactElement {
     }
   }, [selectableRanges])
 
-  const loadDraftReview = async () => {
-    const loadedBook = DraftReviewLoader.loadBook()
-    if (!loadedBook) {
-      if (!isbn) {
-        return
-      }
+  const loadSelectedBook = async () => {
+    if (isbn) {
       const foundBook = await DisplayBookApi.getBook(isbn, user.deviceId, user.token)
 
       setSelectedBook(selectBook({
@@ -166,6 +162,13 @@ function ReviewAddPage(): ReactElement {
 
       const reviewSelectableRanges = await ReviewApi.getAvailableRanges(foundBook.book.isbn, user.token, user.deviceId);
       setSelectableRanges(reviewSelectableRanges)
+      return
+    }
+  }
+
+  const loadDraftReview = async () => {
+    const loadedBook = DraftReviewLoader.loadBook()
+    if (!loadedBook) {
       return
     }
     setSelectedBook(selectBook(loadedBook))
