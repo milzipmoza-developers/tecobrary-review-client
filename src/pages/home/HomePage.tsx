@@ -3,7 +3,6 @@ import {Category, NewBook} from "../../interfaces";
 import SpannedCard from "../../components/card/SpannedCard";
 import Plain from "../../components/plain/Plain";
 import {HomeNewBookCarousel} from "./newbook/HomeNewBookCarousel";
-import InterestCard from "./interest/InterestCard";
 import {PageContent} from "../../components/page/PageContent";
 import BookCategories from "./category/BookCategories";
 import {UserPageFrame} from "../../components/page/UserPageFrame";
@@ -13,19 +12,18 @@ import {NETWORK_ERROR_DEFAULT, popState, SERVER_ERROR_DEFAULT} from "../../state
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {RequestAction, requestTemplate} from "../../api";
 import Card from "../../components/card/Card";
-import {SelectedReviewBook} from "../review/SelectedReviewBook";
 import {BookSearchInputOpenButton} from "../../components/buttons/BookSearchInputOpenButton";
 import {PopupBackground} from "../../components/background/PopupBackground";
 import {BookSearchInput} from "../../components/input/BookSearchInput";
-import {SearchDivider} from "../../components/divider";
-import {TextButton} from "../../components/buttons/TextButton";
 import {BookSearchResult} from "../../components/list/BookSearchResult";
-import {ReviewApi} from "../../api/review/review.service";
 import {userState} from "../../states/User";
 import {SearchGuide} from "../../components/input/SearchGuide";
 import {ReviewSearchBook} from "../../api/review/review.model";
 import {useHistory} from "react-router-dom";
 import styled from "styled-components";
+import {MemoizedInterestCard} from "./interest/InterestCard";
+import {SearchApi} from "../../api/search/search.service";
+import {SearchBook} from "../../api/search/search.model";
 
 function categoryMapper(displayCategories?: DisplayMainCategory[]): Category[] {
   if (!displayCategories) {
@@ -60,7 +58,7 @@ function HomePage(): ReactElement {
 
   const [useSearch, setUseSearch] = useState(false)
   const [search, setSearch] = useState<Search>({keyword: ''})
-  const [searchBooks, setSearchBooks] = useState<ReviewSearchBook[]>([])
+  const [searchBooks, setSearchBooks] = useState<SearchBook[]>([])
 
   const [books, setBooks] = useState<DisplayMainNewBook[]>()
   const [categories, setCategories] = useState<DisplayMainCategory[]>()
@@ -100,7 +98,7 @@ function HomePage(): ReactElement {
 
   const fetchSearchBooks = async () => {
     if (search.keyword.length >= 2) {
-      const searchBooks = await ReviewApi.searchBooks(search.keyword, user.token, user.deviceId);
+      const searchBooks = await SearchApi.searchBooks(search.keyword, user.token, user.deviceId);
       setSearchBooks(searchBooks.items)
     }
   }
@@ -175,7 +173,7 @@ function HomePage(): ReactElement {
       </SpannedCard>
       <PageContent style={{margin: '3rem 1rem 3rem 1rem'}}>
         <Plain title='관심 받는 도서들이 있어요'>
-          <InterestCard/>
+          <MemoizedInterestCard/>
         </Plain>
       </PageContent>
       <PageContent style={{margin: '3rem 0 3rem 0'}}>
