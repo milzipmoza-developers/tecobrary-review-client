@@ -1,8 +1,8 @@
-import {ReactElement} from "react";
+import React, {ReactElement} from "react";
 import Card from "../../../components/card/Card";
 import {InterestCardNavigation} from "./InterestCardNavigation";
 
-function InterestCard(): ReactElement {
+export const InterestCard = (): ReactElement => {
 
   return (
     <Card backgroundColor='white'
@@ -12,4 +12,4 @@ function InterestCard(): ReactElement {
   )
 }
 
-export default InterestCard
+export const MemoizedInterestCard = React.memo(InterestCard)

@@ -34,6 +34,7 @@ import {loginModalState} from "../../states/LoginModal";
 import {useHistory} from "react-router-dom";
 import {useQueryString} from "../../hooks";
 import {DisplayBookApi} from "../../api/display/display.book.service";
+import {SearchGuide} from "../../components/input/SearchGuide";
 
 interface Search {
   keyword: string
@@ -446,14 +447,7 @@ function ReviewAddPage(): ReactElement {
                              onChange={onChange}
                              autoFocus={true}/>
             {search.keyword.length != 0 && searchBooks.length == 0 ?
-              <>
-                <SearchDivider/>
-                {search.keyword.length < 2 ?
-                  <SearchGuideInfo>두 글자 이상부터 검색이 가능해요</SearchGuideInfo>
-                  : <SearchGuide>
-                    <TextButton onClick={fetchSearchBooks}>{`'${search.keyword}' 로 검색하기`}</TextButton>
-                  </SearchGuide>}
-              </>
+              <SearchGuide keyword={search.keyword} onClick={fetchSearchBooks}/>
               : null}
             <BookSearchResult books={searchBooks} itemOnClick={itemOnClick}/>
           </Card>
@@ -556,44 +550,56 @@ function ReviewAddPage(): ReactElement {
   )
 }
 
-export default ReviewAddPage
+  export default ReviewAddPage
 
-const SubmitButtonWrapper = styled.div`
+  const SubmitButtonWrapper
+=
+  styled.div`
   margin: 0 1rem 4rem 1rem;
-`
+  `
 
-const Table = styled.div`
+  const Table
+=
+  styled.div`
   width: auto;
   height: fit-content;
   display: flex;
   flex-direction: column;
-`
+  `
 
-const Row = styled.div`
+  const Row
+=
+  styled.div`
   width: 100%;
   height: fit-content;
   display: flex;
   flex-direction: column;
   margin-bottom: 1rem;
-`
+  `
 
-const Content = styled.div`
+  const Content
+=
+  styled.div`
   height: fit-content;
   width: auto;
   display: flex;
   flex-direction: row;
   overflow-y: hidden;
-`
+  `
 
-const ScrollElements = styled.div`
+  const ScrollElements
+=
+  styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: row;
   width: fit-content;
   padding: 4px 10px 4px 10px;
-`
+  `
 
-const Title = styled.div`
+  const Title
+=
+  styled.div`
   display: flex;
   min-width: 3rem;
   height: 100%;
@@ -603,16 +609,4 @@ const Title = styled.div`
   margin-bottom: 4px;
   justify-content: flex-start;
   align-items: center;
-`
-
-const SearchGuide = styled.div`
-  width: auto;
-  justify-content: center;
-  align-items: center;
-`
-
-const SearchGuideInfo = styled.div`
-  text-align: right;
-  font-size: small;
-  color: grey;
-`
+  `

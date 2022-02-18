@@ -19,7 +19,6 @@ export const BookSearchInput = (props: Props): ReactElement => {
 
   useEffect(() => {
     if (focused) {
-      console.log('focused')
       searchElement.current.focus()
       searchElement.current.select()
     }
