@@ -7,10 +7,10 @@ import {timelineMapper} from "../../model/timeline/mapper";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {timelineState} from "../../states/Timeline";
 import styled from "styled-components";
-import {RefreshCircle} from "react-ionicons";
 import {NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {SyncLoader} from "react-spinners";
+import {Refresher} from "../../components/refresher/Refresher";
 
 function TimelinePage(): ReactElement {
 
@@ -112,23 +112,26 @@ function TimelinePage(): ReactElement {
     }
   };
 
+  const onClickRefresh = async () => {
+    clearInterval(polling);
+    setContentState((old) => ({
+      ...old,
+      hasMore: false
+    }));
+    await fetchInitialData();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <UserPageFrame header={{useProfileButton: true, useBackButton: true}}>
-      <Refresher onClick={async () => {
-        setContentState((old) => ({
-          ...old,
-          hasMore: false
-        }))
-        await fetchInitialData()
-      }} style={contentState.hasMore ? boxActive : boxHidden}>
-        <RefresherTitle>
-          <div style={{marginRight: "4px"}}>새로운 리뷰가 있어요</div>
-          <div style={{height: "22px", width: "22px"}}>
-            <RefreshCircle color={"white"}/>
-          </div>
-        </RefresherTitle>
-      </Refresher>
-      <Plain title='모든 리뷰를 모아볼 수 있어요'
+      <Refresher
+        title={"새로운 리뷰가 있어요"}
+        show={contentState.hasMore}
+        onClick={onClickRefresh}/>
+      <Plain title="모든 리뷰를 모아볼 수 있어요"
              margin='0 1rem'>
         <InfiniteScroll
           dataLength={contentState.contents.length}
@@ -152,35 +155,6 @@ function TimelinePage(): ReactElement {
 }
 
 export default TimelinePage;
-
-const boxActive = {
-  transition: "top 500ms",
-};
-
-const boxHidden = {
-  top: "-50px",
-  transition: "top 500ms",
-};
-
-const Refresher = styled.div`
-  position: fixed;
-  top: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 8px 1rem;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  background: rgb(36, 100, 224);
-  color: white;
-  z-index: 200;
-  border-radius: 20px;
-`
-
-const RefresherTitle = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`
 
 const LoaderWrapper = styled.div`
   width: 100%;
