@@ -1,6 +1,6 @@
 import React, {ReactElement, useEffect, useState} from "react";
 import {Route, Switch, useHistory} from "react-router-dom";
-import TimelinePage from "./pages/TimelinePage";
+import TimelinePage from "./pages/timeline/TimelinePage";
 import MyPage from "./pages/MyPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import BookDetailPage from "./pages/bookDetail/BookDetailPage";
