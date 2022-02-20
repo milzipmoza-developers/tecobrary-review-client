@@ -26,6 +26,7 @@ export interface TimelineBook {
 }
 
 export interface TimelineReview {
+  no: string
   range: ReviewRange
   content: ReviewContentItem
   informative: ReviewInformativeItem

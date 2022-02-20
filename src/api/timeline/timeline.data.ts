@@ -21,6 +21,7 @@ interface TimelineBook {
 }
 
 interface TimelineReview {
+  no: string
   range: string
   content: string
   informative: string

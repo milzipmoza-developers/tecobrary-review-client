@@ -10,6 +10,7 @@ export function timelineMapper(data: TimelineData): Timeline {
   return {
     ...data,
     review: {
+      no: data.review.no,
       range: new ReviewRange(data.review.range, 0),
       content: new ReviewContentItem(data.review.content, 0),
       informative: new ReviewInformativeItem(data.review.informative, 0),
