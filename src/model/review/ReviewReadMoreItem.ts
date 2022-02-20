@@ -15,7 +15,7 @@ export class ReviewReadMoreItem {
 }
 
 const ReviewReadMore: KeywordProps<IndexValue> = {
-  NEVER: {index: 0, displayName: "🙅 전혀 안되었어요"},
-  NO: {index: 1, displayName: "🤦 안되었어요"},
-  YES: {index: 2, displayName: "🤷 되었어요"},
+  NO_MORE: {index: 0, displayName: "안 읽을래요"},
+  NEEDED: {index: 1, displayName: "필요한 부분만 읽을래요"},
+  ALL: {index: 2, displayName: "다 읽을래요"},
 }

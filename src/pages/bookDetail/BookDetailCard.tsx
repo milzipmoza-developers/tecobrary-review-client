@@ -4,7 +4,6 @@ import {parseDate} from "../../utils/date";
 import {BookDetailActionButtons} from "./BookDetailActionButtons";
 import styled from "styled-components";
 import {BookMarks, Tag} from "../../interfaces";
-import {Heart, Share} from "react-ionicons";
 
 interface BookDetail {
   isbn: string
@@ -53,7 +52,9 @@ function BookDetailCard(props: Props): ReactElement {
           <Image src={book.imageUrl}/>
         </ImageWrapper>
         <BookDetailWrapper>
-          <TagBadges tags={props.tags ? props.tags : []}/>
+          <BookTagWrapper>
+            <TagBadges tags={props.tags ? props.tags : []}/>
+          </BookTagWrapper>
           <BookTitleWrapper>{book.title}</BookTitleWrapper>
           <BookPublishInfo/>
           <BookSubInfo/>
@@ -106,6 +107,11 @@ const BookDetailWrapper = styled.div`
   height: fit-content;
   display: flex;
   flex-direction: column;
+`
+
+const BookTagWrapper = styled.div`
+  display: flex;
+  justify-content: center;
 `
 
 const BookTitleWrapper = styled.div`
