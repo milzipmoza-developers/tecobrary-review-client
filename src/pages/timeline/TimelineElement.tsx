@@ -48,12 +48,15 @@ export const TimelineElement = ({member, book, review}: Props): ReactElement => 
               나머지는<TextIcon>{review.readMore.displayName}</TextIcon>
             </div>
             : null}
-          <div style={{margin: "4px 0", display: "flex", flexDirection: "row"}}>
-            <div style={{margin: "4px 0"}}>이 책은</div>
-            <div style={{flex: 1, lineHeight: "34px"}}>
-              {review.selectables.map((it, index) => (<TextIcon key={index}>{it.displayName}</TextIcon>))}
+          {review.selectables.length != 0 ?
+            <div style={{margin: "4px 0", display: "flex", flexDirection: "row"}}>
+              <div style={{margin: "4px 0"}}>이 책은</div>
+              <div style={{flex: 1, lineHeight: "34px"}}>
+                {review.selectables.map((it, index) => (<TextIcon key={index}>{it.displayName}</TextIcon>))}
+              </div>
             </div>
-          </div>
+            : null
+          }
         </div>
       </TimelineBookElement>
     </TimelineElementWrapper>
