@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import {UserPageFrame} from "../../components/page/UserPageFrame";
 import Plain from "../../components/plain/Plain";
 import {TimelineElement} from "./TimelineElement";
@@ -9,19 +9,24 @@ import {timelineState} from "../../states/Timeline";
 import styled from "styled-components";
 import {RefreshCircle} from "react-ionicons";
 import {NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
+import InfiniteScroll from "react-infinite-scroll-component";
+import {SyncLoader} from "react-spinners";
 
 function TimelinePage(): ReactElement {
 
-  const size = 10;
+  const size = 5;
+  let polling: NodeJS.Timeout;
+
   const [contentState, setContentState] = useRecoilState(timelineState);
   const setPop = useSetRecoilState(popState);
-  let polling: NodeJS.Timeout;
+
+  const [isLast, setIsLast] = useState(true);
 
   useEffect(() => {
     fetchInitialData();
     return () => {
       setContentState({
-        firstContent: undefined,
+        firstReviewNo: undefined,
         hasMore: false,
         contents: []
       });
@@ -32,13 +37,16 @@ function TimelinePage(): ReactElement {
   const fetchInitialData = async () => {
     try {
       const timelineContents = await TimelineApi.getTimeline(size);
-      const firstContentNo = timelineContents[0]?.review.no;
+      const firstReviewNo = timelineContents[0]?.review.no;
+      const lastReviewNo = timelineContents[timelineContents.length - 1].review.no;
       setContentState({
-        firstContent: firstContentNo,
+        firstReviewNo: firstReviewNo,
+        lastReviewNo: lastReviewNo,
         hasMore: false,
         contents: timelineContents.map(it => timelineMapper(it))
       });
-      initPolling(firstContentNo);
+      setIsLast(size > timelineContents.length);
+      initPolling(firstReviewNo);
     } catch (e) {
       if (e.response && (400 <= e.response.status && e.response.status < 500)) {
         setPop({message: `리뷰를 불러오는 도중에 문제가 발생했어요`, open: true, duration: 3000, color: "WARN"});
@@ -49,13 +57,14 @@ function TimelinePage(): ReactElement {
         setPop({message: `리뷰를 불러오는 도중에 문제가 발생했어요`, open: true, duration: 3000, color: "WARN"});
         return;
       }
+
       setPop(NETWORK_ERROR_DEFAULT);
     }
-  }
+  };
 
   const initPolling = (firstContentNo: string) => {
     polling = setInterval(async function () {
-      if (contentState.firstContent) {
+      if (firstContentNo) {
         try {
           const hasMore = await TimelineApi.hasMore(firstContentNo);
           if (hasMore) {
@@ -70,7 +79,39 @@ function TimelinePage(): ReactElement {
         }
       }
     }, 10000);
-  }
+  };
+
+  const loadMore = async () => {
+    try {
+      const timelineContents = await TimelineApi.getTimeline(size, contentState.lastReviewNo);
+      if (timelineContents.length == 0) {
+        setIsLast(true);
+        return;
+      }
+      const firstContentNo = timelineContents[0]?.review.no;
+      const lastReviewNo = timelineContents[timelineContents.length - 1].review.no;
+      setContentState((old) => ({
+        firstReviewNo: firstContentNo,
+        lastReviewNo: lastReviewNo,
+        hasMore: false,
+        contents: old.contents.concat(timelineContents.map(it => timelineMapper(it)))
+      }));
+      setIsLast(size > timelineContents.length);
+    } catch (e) {
+      if (e.response && (400 <= e.response.status && e.response.status < 500)) {
+        setPop({message: `리뷰를 불러오는 도중에 문제가 발생했어요`, open: true, duration: 3000, color: "WARN"});
+        return;
+      }
+
+      if (e.response && (500 <= e.response.status && e.response.status < 600)) {
+        setPop({message: `리뷰를 불러오는 도중에 문제가 발생했어요`, open: true, duration: 3000, color: "WARN"});
+        return;
+      }
+
+      setPop(NETWORK_ERROR_DEFAULT);
+    }
+  };
+
   return (
     <UserPageFrame header={{useProfileButton: true, useBackButton: true}}>
       <Refresher onClick={async () => {
@@ -89,12 +130,22 @@ function TimelinePage(): ReactElement {
       </Refresher>
       <Plain title='모든 리뷰를 모아볼 수 있어요'
              margin='0 1rem'>
-        {contentState.contents.map((content, index) => {
-          const {member, book, review} = content;
-          return (
-            <TimelineElement key={index} member={member} book={book} review={review}/>
-          )
-        })}
+        <InfiniteScroll
+          dataLength={contentState.contents.length}
+          next={loadMore}
+          hasMore={!isLast}
+          loader={
+            <LoaderWrapper>
+              <SyncLoader color={"rgb(39, 54, 60)"} margin={4} size={8}/>
+            </LoaderWrapper>
+          }>
+          {contentState.contents.map((content, index) => {
+            const {member, book, review} = content;
+            return (
+              <TimelineElement key={index} member={member} book={book} review={review}/>
+            )
+          })}
+        </InfiniteScroll>
       </Plain>
     </UserPageFrame>
   );
@@ -129,4 +180,13 @@ const RefresherTitle = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+`
+
+const LoaderWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 2rem;
 `

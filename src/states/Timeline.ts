@@ -2,7 +2,8 @@ import {Timeline} from "../model/timeline";
 import {atom} from "recoil";
 
 interface State {
-  firstContent?: string
+  firstReviewNo?: string
+  lastReviewNo?: string
   hasMore: boolean
   contents: Timeline[]
 }
