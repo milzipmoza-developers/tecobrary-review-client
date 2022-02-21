@@ -10,10 +10,8 @@ import {MemberMyInfo} from "../api/member/member.model";
 import {MemberApi} from "../api/member/member.service";
 import {RequestAction, requestTemplate} from "../api";
 import Plain from "../components/plain/Plain";
-import {TimeAGoBadge} from "../components/badges/TimeAGoBadge";
-import {TextButton} from "../components/buttons/TextButton";
-import {TagBadges} from "../components/badges/TagBadges";
 import {ChevronDownOutline} from "react-ionicons";
+import {BookmarkElement} from "../components/list/BookmarkElement";
 
 function MyPage(): ReactElement {
 
@@ -82,24 +80,13 @@ function MyPage(): ReactElement {
             {myInfo && myInfo.bookmarks && myInfo.bookmarks.length > 0
               ? myInfo.bookmarks.map((it, index) => (
                 <div key={index}>
-                  <ElementWrapper onClick={() => {
-                    history.push(`/books/${it.isbn}`);
-                  }}>
-                    <ElementImage src={it.imageUrl}/>
-                    <ElementBookInfoWrapper>
-                      <Title>{it.title}</Title>
-                      <TagBadges tags={it.tags} size='small' maxLength={3}/>
-                      <TimeWrapper>
-                        <TimeAGoBadge time={it.markDateTime}/>
-                      </TimeWrapper>
-                      <ReviewButtonWrapper>
-                        <TextButton onClick={(e) => {
-                          e.stopPropagation();
-                          history.push(`/reviews?isbn=${it.isbn}`)
-                        }}>리뷰 남기기</TextButton>
-                      </ReviewButtonWrapper>
-                    </ElementBookInfoWrapper>
-                  </ElementWrapper>
+                  <BookmarkElement
+                    isbn={it.isbn}
+                    title={it.title}
+                    imageUrl={it.imageUrl}
+                    tags={it.tags}
+                    markDateTime={it.markDateTime}
+                  />
                   {myInfo.bookmarks.length - 1 != index ? <Margin/> : null}
                 </div>
               ))

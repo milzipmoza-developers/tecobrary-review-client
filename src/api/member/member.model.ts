@@ -13,7 +13,7 @@ interface Member {
   description: string;
 }
 
-interface Bookmark {
+export interface Bookmark {
   isbn: string;
   title: string;
   imageUrl: string;
