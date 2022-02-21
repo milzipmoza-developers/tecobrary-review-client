@@ -12,6 +12,7 @@ const NavigationWrapper = styled.div`
   border-radius: 2rem 2rem 0 0;
   background-color: #ecf0f1;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+  z-index: 1000;
 `
 
 const NavigationContent = styled.div`
