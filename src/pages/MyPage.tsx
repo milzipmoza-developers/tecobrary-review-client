@@ -9,6 +9,7 @@ import Card from "../components/card/Card";
 import {MemberMyInfo} from "../api/member/member.model";
 import {MemberApi} from "../api/member/member.service";
 import {RequestAction, requestTemplate} from "../api";
+import Plain from "../components/plain/Plain";
 
 function MyPage(): ReactElement {
 
@@ -54,7 +55,7 @@ function MyPage(): ReactElement {
 
   return (
     <UserPageFrame>
-      <PageContent style={{margin: '3rem 1rem 3rem 1rem'}}>
+      <PageContent style={{margin: '3rem 1rem'}}>
         <Card backgroundColor='white'
               boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
           <ProfileWrapper>
@@ -66,7 +67,19 @@ function MyPage(): ReactElement {
             </InfoWrapper>
           </ProfileWrapper>
         </Card>
+      </PageContent>
 
+      <PageContent style={{margin: '0 1rem'}}>
+        <Plain title='북마크에 추가한 도서 목록을 확인해보세요'>
+          <Card
+            backgroundColor='white'
+            boxShadow='rgba(0, 0, 0, 0.24) 0px 3px 8px'>
+            <div onClick={() => history.push("/bookmarks")}>북마크</div>
+          </Card>
+        </Plain>
+      </PageContent>
+
+      <PageContent style={{margin: '3rem 1rem 3rem 1rem'}}>
         <LogoutWrapper>
           <LogoutText onClick={onClickLogout}>로그아웃</LogoutText>
         </LogoutWrapper>

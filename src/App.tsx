@@ -7,7 +7,6 @@ import BookDetailPage from "./pages/bookDetail/BookDetailPage";
 import HomePage from "./pages/home/HomePage";
 import CategoriesPage from "./pages/CategoriesPage";
 import BookListPage from "./pages/bookList/BookListPage";
-import BookReviewPage from "./pages/bookReview/BookReviewPage";
 import ReviewAddPage from "./pages/review/ReviewAddPage";
 import AdminHomePage from "./admin/pages/AdminHomePage";
 import AdminCategoryPage from "./admin/pages/category/AdminCategoryPage";
@@ -23,6 +22,7 @@ import {useQueryString} from "./hooks";
 import {PopColor, popState} from "./states/Pop";
 import {RequestAction, requestTemplate} from "./api";
 import ReactGA from 'react-ga';
+import BookmarkPage from "./pages/bookmark/BookmarkPage";
 
 interface QueryString {
   code?: string
@@ -192,6 +192,7 @@ function App(): ReactElement {
         <Route exact path={'/books/:isbn'} component={BookDetailPage}/>
         {/*<Route exact path={'/books/:bookId/reviews'} component={BookReviewPage}/>*/}
         <Route exact path={'/books'} component={BookListPage}/>
+        <Route exact path={'/bookmarks'} component={BookmarkPage}/>
         <Route exact path={'/categories'} component={CategoriesPage}/>
 
         <Route exact path={'/admin'} component={AdminHomePage}/>
