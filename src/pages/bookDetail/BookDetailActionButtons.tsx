@@ -1,15 +1,14 @@
 import {LikeIcon} from "../../components/icons/LikeIcon";
 import {BookmarkIcon} from "../../components/icons/BookmarkIcon";
 import styled from "styled-components";
-import React, {createRef, ReactElement, useEffect, useRef, useState} from "react";
+import React, {ReactElement, useState} from "react";
 import {CountActionButton} from "../../components/buttons/CountActionButton";
 import {MarkApi} from "../../api/mark/mark.service";
 import {useRecoilValue, useSetRecoilState} from "recoil";
 import {userState} from "../../states/User";
 import {NETWORK_ERROR_DEFAULT, popState} from "../../states/Pop";
 import {loginModalState} from "../../states/LoginModal";
-import {Share, ShareOutline} from "react-ionicons";
-import ReactTooltip from "react-tooltip";
+import {ShareOutline} from "react-ionicons";
 
 interface Props {
   isbn: string
@@ -58,7 +57,7 @@ export const BookDetailActionButtons = (props: Props): ReactElement => {
       }
     } catch (e) {
       if (e.response && e.response.status == 401) {
-        setLoginModal({open: true, message: "로그인하면 북마크 목록에 추가할 수 있어요"})
+        setLoginModal({open: true, message: "로그인하면 좋아요 목록에 추가할 수 있어요"})
         return
       }
 

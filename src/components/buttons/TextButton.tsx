@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import React, {ReactElement} from "react";
+import React, {MouseEvent, ReactElement} from "react";
 
 interface Props {
-  onClick?: () => void
+  onClick?: (e: MouseEvent<HTMLDivElement>) => void
   children: string
 }
 
@@ -20,4 +20,5 @@ const SelectInitButton = styled.div`
   padding: 4px;
   border-radius: 1rem;
   margin-left: auto;
+  cursor: pointer;
 `
