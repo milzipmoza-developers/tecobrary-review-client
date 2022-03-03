@@ -58,7 +58,7 @@ const Background = styled.div<BackgroundProps>`
   position: fixed;
   top: 0;
   display: ${props => props.display};
-  z-index: 100;
+  z-index: 300;
 `
 
 const Children = styled.div<BackgroundProps>`
