@@ -54,7 +54,7 @@ function MyPage(): ReactElement {
       token: '',
       userInfo: null
     }));
-    history.push("/");
+    history.replace("/");
   };
 
   return (

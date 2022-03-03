@@ -15,8 +15,6 @@ import {Selector} from "../../components/selector/Selector";
 import SpannedCard from "../../components/card/SpannedCard";
 import {SelectableRadioTextButtons} from "../../components/buttons/SelectableRadioTextButtons";
 import {SelectableCheckboxTextButtons} from "../../components/buttons/SelectableCheckboxTextButtons";
-import {SearchDivider} from "../../components/divider";
-import {TextButton} from "../../components/buttons/TextButton";
 import {ReviewApi} from "../../api/review/review.service";
 import {
   ReviewKeyword,
@@ -389,7 +387,7 @@ function ReviewAddPage(): ReactElement {
       if (result) {
         DraftReview.clear()
         setPop({open: true, message: `리뷰가 등록되었어요.`, color: "SUCCESS", duration: 3000})
-        history.push(`/books/${selectedBook.book.isbn}`)
+        history.replace(`/books/${selectedBook.book.isbn}`)
       }
     } catch (e) {
       if (e.response && e.response.status == 401) {
